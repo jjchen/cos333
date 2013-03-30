@@ -1,0 +1,188 @@
+/*
+ * style.css
+ *
+ * css stylesheet for the general html page
+ */
+
+#map-canvas { height: 100%; position: absolute; top: 65; bottom: 0; left: 0; right: 0; z-index: 0;}
+
+h1 {
+	/* font-weight: bold; */
+	font-size: 20px;
+	line-height: 32px;
+	color: #fff;
+	padding: 0;
+	margin: 3px 30px 10px;
+	text-align: right;
+	border-bottom: 1px solid #fff;
+	text-shadow: 0px 0px 5px rgba(0,0,0,.9);
+}
+
+h3 {
+	font-weight: normal;
+	color: #006633;
+	padding: 0;
+	margin: 0;
+	line-height: normal;
+	text-align: left;
+	text-transform: uppercase;
+}
+
+header {
+	padding: 10px 10px 10px 10px;
+	position: absolute; top: 0; left:0;
+	width: 100%;
+	background: -webkit-linear-gradient(#009900 0%, #006633 100%);
+	z-index: 100;
+	box-shadow: 0px 0px 20px rgba(0,0,0,0.5);	
+}
+
+div#side_panel{
+	position: absolute;
+	top: 100px;
+	right: 25px;
+	width: 15%;
+	height: 75%;
+	float: right;
+	background: #f9f9f9;
+	border: 1px solid #eee;
+	padding: 10px;
+	border-radius: 5px;
+	box-sizing: border-box;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+	box-sizing: border-box;
+	z-index: 1;
+}
+
+div#make_button{
+	position: absolute;
+	bottom: 20px;
+	left: 25px;
+	/*width: 20%; */
+	float: right;
+	background-color: rgba(255,255,255,0.7);
+	border: 1px solid #eee;
+	padding: 10px;
+	border-radius: 5px;
+	box-sizing: border-box;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+	box-sizing: border-box;
+	z-index: 1;
+}
+
+div#calendar_button{
+	position: absolute;
+	bottom: 20px;
+	left: 120px;
+	/*width: 20%; */
+	float: right;
+	background-color: rgba(255,255,255,0.7);
+	border: 1px solid #eee;
+	padding: 10px;
+	border-radius: 5px;
+	box-sizing: border-box;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+	box-sizing: border-box;
+	z-index: 1;
+}
+
+div#list_button{
+	position: absolute;
+	bottom: 20px;
+	left: 265px;
+	/*width: 20%; */
+	float: right;
+	background-color: rgba(255,255,255,0.7);
+	border: 1px solid #eee;
+	padding: 10px;
+	border-radius: 5px;
+	box-sizing: border-box;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+	box-sizing: border-box;
+	z-index: 1;
+}
+
+div#minus_button{
+	position: absolute;
+	bottom: 20px;
+	left: 350px;
+	/*width: 20%; */
+	float: right;
+	background-color: rgba(255,255,255,0.7);
+	border: 1px solid #eee;
+	padding: 10px;
+	border-radius: 5px;
+	box-sizing: border-box;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+	box-sizing: border-box;
+	z-index: 1;
+}
+
+
+div#list_content{
+	position: absolute;
+	bottom: 75px;
+	left: 25px;
+	width: 75%;
+	height: 70%;
+	/*width: 20%; */
+	float: right;
+	background-color: rgba(255,255,255,0.9);
+	border: 1px solid #eee;
+	padding: 10px;
+	border-radius: 5px;
+	box-sizing: border-box;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+	box-sizing: border-box;
+	z-index: -1;
+}
+
+div#make_content{
+	position: absolute;
+	bottom: 75px;
+	left: 25px;
+	width: 75%;
+	height: 70%;
+	/*width: 20%; */
+	float: right;
+	background-color: rgba(255,255,255,0.9);
+	border: 1px solid #eee;
+	padding: 10px;
+	border-radius: 5px;
+	box-sizing: border-box;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+	box-sizing: border-box;
+	z-index: -1;
+}
+
+div#calendar_content{
+	position: absolute;
+	bottom: 75px;
+	left: 25px;
+	width: 75%;
+	height: 70%;
+	/*width: 20%; */
+	float: right;
+	background-color: rgba(255,255,255,0.9);
+	border: 1px solid #eee;
+	padding: 10px;
+	border-radius: 5px;
+	box-sizing: border-box;
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+	box-sizing: border-box;
+	z-index: -1;
+}
+
+div#content_wrapper h3 {
+	border-bottom: 1px solid #000;
+	line-height: 32px;
+	padding: 5px;
+}
+
+div#links h3 {
+	color: #333;
+	font-weight: bold;
+	font-size: 15px;
+	text-align: left;
+	margin-bottom: 0px;
+}
