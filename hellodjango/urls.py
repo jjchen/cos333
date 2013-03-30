@@ -4,6 +4,10 @@ from django.conf.urls import patterns, include, url
 # from django.contrib import admin
 # admin.autodiscover()
 
+def current_datetime():
+    print "test 1"
+    return 2019
+
 urlpatterns = patterns('',
                        (r'^time/$', current_datetime)
     # Examples:
