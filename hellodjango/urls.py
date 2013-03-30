@@ -4,7 +4,13 @@ from django.conf.urls import patterns, include, url
 # from django.contrib import admin
 # admin.autodiscover()
 
+def current_datetime(arg):
+    print "test 1"
+    print arg
+    return 2019
+
 urlpatterns = patterns('',
+                       (r'^time/$', current_datetime)
     # Examples:
     # url(r'^$', 'hellodjango.views.home', name='home'),
     # url(r'^hellodjango/', include('hellodjango.foo.urls')),
