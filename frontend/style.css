@@ -173,6 +173,12 @@ div#calendar_content{
 	z-index: -1;
 }
 
+div#time_slider {
+	position: absolute;
+	bottom: 0;
+	padding: 10px;
+}
+
 div#content_wrapper h3 {
 	border-bottom: 1px solid #000;
 	line-height: 32px;
