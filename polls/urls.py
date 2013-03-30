@@ -4,11 +4,6 @@ from polls import views
 # from django.contrib import admin
 # admin.autodiscover()
 
-def current_datetime(arg):
-    print "test 1"
-    print arg
-    return 2019
-
 urlpatterns = patterns('',
     # ex: /polls/
     url(r'^$', views.index, name='index'),
