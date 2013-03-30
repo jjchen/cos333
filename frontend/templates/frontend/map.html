@@ -18,7 +18,7 @@
       	var center =  new google.maps.LatLng(40.344725, -74.655629);
       	geocoder = new google.maps.Geocoder();
 
-    	makeList();
+    	//makeList();
 
         var mapOptions = {
           center: center,
@@ -134,7 +134,7 @@
       {% if events_list %}
         <ul>
         {% for event in events_list %}
-          <li>{{event.name}}</li>
+          <li>{{event.name}} {{event.location}}</li>
         {% endfor %}
         </ul>
       {% else %}
