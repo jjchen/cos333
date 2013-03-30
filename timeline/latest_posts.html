@@ -1,0 +1,9 @@
+ <html><head><title>Latest Posts</title></head>
+<body>
+<h1>Posts</h1>
+<ul>
+{% for post in post_list %}
+<li>{{ post.title }} {{ post.text }}</li>
+{% endfor %}
+</ul>
+</body></html> 
