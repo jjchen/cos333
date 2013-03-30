@@ -1,8 +1,8 @@
 from django.conf.urls import patterns, include, url
-
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 # Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.contrib import admin
+admin.autodiscover()
 
 def current_datetime(arg):
     print "test 1"
@@ -10,7 +10,10 @@ def current_datetime(arg):
     return 2019
 
 urlpatterns = patterns('',
-                       (r'^time/$', current_datetime)
+                       url(r'^polls/', include('polls.urls')),
+                       url(r'^oc/', include('oc.urls')),
+                       url(r'^admin/', include(admin.site.urls)),
+#                       (r'^time/$', current_datetime)
     # Examples:
     # url(r'^$', 'hellodjango.views.home', name='home'),
     # url(r'^hellodjango/', include('hellodjango.foo.urls')),

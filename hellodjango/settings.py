@@ -11,14 +11,13 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-#        'ENGINE':'test',
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'd3mruqbl01mt9e',                      
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '/home/stanley/cos333-oc/db',
         # The following settings are not used with sqlite3:
-        'USER': 'gvvmlwjnckcrtz',
-        'PASSWORD': '8S9bKm59d8esQj7BYH1PbE9VP5',
-        'HOST': 'ec2-54-225-69-193.compute-1.amazonaws.com',                    
-        'PORT': '54',                      # Set to empty string for default.
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'PORT': '',                      # Set to empty string for default.
     }
 }
 
@@ -84,7 +83,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '0bs(o4o=tldtql8p&)tr=wggzmcm^v7!4#9tln*jf@7y6@svn4'
+SECRET_KEY = 'u3x7_a7=+a^mong!uz!m4!$1gx)%j1um*=#@%+6b+$d4!gn*ro'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -121,11 +120,12 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'polls'
+    'polls',
+    'oc',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'django.contrib.admindocs',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -156,10 +156,3 @@ LOGGING = {
         },
     }
 }
-
-# Parse database configuration from $DATABASE_URL
-import dj_database_url
-DATABASES['default'] =  dj_database_url.config()
-
-# Honor the 'X-Forwarded-Proto' header for request.is_secure()
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
