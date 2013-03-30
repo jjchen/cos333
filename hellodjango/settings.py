@@ -1,6 +1,6 @@
 # Django settings for hellodjango project.
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -12,14 +12,15 @@ MANAGERS = ADMINS
 '''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db',
+        'NAME': '/home/stanley/cos333-oc/db',
         # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
         'HOST': '',                    
         'PORT': '',                    
     }
-}'''
+}
+'''
 
 DATABASES = {
     'default': {
@@ -32,6 +33,7 @@ DATABASES = {
         'PORT': '54',                    
     }
 }
+
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
