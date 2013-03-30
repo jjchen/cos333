@@ -4,12 +4,10 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns(
-    '',
-    url(r'^polls/', include('polls.urls', namespace='polls')),
-    url(r'^timeline/', include('timeline.urls')),
-    url(r'^admin/', include(admin.site.urls)),
-    url('', include('frontend.urls'))
+urlpatterns = patterns('',
+                       url(r'^polls/', include('polls.urls')),
+#                       url(r'^oc/', include('oc.urls')),
+                       url(r'^admin/', include(admin.site.urls)),
 #                       (r'^time/$', current_datetime)
     # Examples:
     # url(r'^$', 'hellodjango.views.home', name='home'),
