@@ -8,6 +8,7 @@ urlpatterns = patterns('',
                        url(r'^polls/', include('polls.urls')),
                        url(r'^oc/', include('oc.urls')),
                        url(r'^admin/', include(admin.site.urls)),
+                       url('', include('oc.urls'))
 #                       (r'^time/$', current_datetime)
     # Examples:
     # url(r'^$', 'hellodjango.views.home', name='home'),
