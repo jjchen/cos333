@@ -99,6 +99,16 @@
 		<div id="list_content">
 			<h3> List </h3>
 			<div id="list_inner_wrapper">
+      {% if events_list %}
+        <ul>
+        {% for event in events_list %}
+          {% e%}
+          <li>{{event.name}} {{event.location}}</li>
+        {% endfor %}
+        </ul>
+      {% else %}
+        <p>No events :( </p>
+      {% endif %}
 			</div>
 		</div>
 
@@ -131,15 +141,6 @@
 		</div>
 		<div id="list_button" onclick="showContent('list_content');">
 			<h3>List</h3>
-      {% if events_list %}
-        <ul>
-        {% for event in events_list %}
-          <li>{{event.name}} {{event.location}}</li>
-        {% endfor %}
-        </ul>
-      {% else %}
-        <p>No events :( </p>
-      {% endif %}
 		</div>
 
 		<div id="minus_button" onclick="showContent('none');">
