@@ -101,8 +101,13 @@
 			<div id="list_inner_wrapper">
       {% if events_list %}
         <ul>
+<!--        {% last_date = date() %} -->
         {% for event in events_list %}
-          <li>{{event.name}} {{event.location}}</li>
+   <!--       {% if event.date != last_date %}
+            <li> {{event.date}} </li>
+            {% last_date = event.date %}
+          {% endif %} -->
+          <li>{{event.name}} {{event.location}} {{event.time}}</li>
         {% endfor %}
         </ul>
       {% else %}
