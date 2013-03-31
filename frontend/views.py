@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from frontend.models import NewEvent
 from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 import datetime
 
 # Create your views here.
