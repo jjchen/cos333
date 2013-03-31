@@ -114,6 +114,7 @@
 		<div id="make_content">
 			<h3> Make Event </h3>
       <form action="{% url 'frontend:add' %}" method="post">
+        {% csrf_token %}
         <label>Name:</label>
         <input type="text" id="event_name" name="event_name" required>
         <label>Date:</label>
