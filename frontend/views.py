@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from frontend.models import NewEvent
+from django.http import HttpResponseRedirect
 import datetime
 
 # Create your views here.
