@@ -20,4 +20,4 @@ def add(request):
 	new_event.save()
 
 	# return to index
-	return HttpResponseRedirect(reverse('polls:index'))
+	return HttpResponseRedirect(reverse('frontend:index'))
