@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from frontend.models import NewEvent
+import datetime
 
 # Create your views here.
 def index(request):
@@ -15,7 +16,7 @@ def add(request):
 	new_location = request.POST['location']
 	
 	# add to database
-	new_event = NewEvent(name=new_name, date=new_date, time=new_time, location=new_location)
+	new_event = NewEvent(name=new_name, date=datetime.date.today(), time=datetime.time(5,0,0,0), location=new_location)
 	new_event.save()
 
 	# return to index
