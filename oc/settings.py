@@ -3,6 +3,16 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+FACEBOOK_APP_ID = '431733443585073'
+FACEBOOK_API_SECRET = 'bee41bd237e61feb159d64f99e7db996'
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/login/'
+LOGIN_ERROR_URL = '/login/'
+
+SOCIAL_AUTH_COMPLETE_URL_NAME = 'socialauth_complete'
+SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -128,6 +138,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
+    'social_auth'
 )
 
 # A sample logging configuration. The only tangible logging
@@ -158,3 +169,9 @@ LOGGING = {
         },
     }
 }
+
+AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.twitter.TwitterBackend',
+    'social_auth.backends.facebook.FacebookBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
