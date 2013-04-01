@@ -10,3 +10,4 @@ def index(request):
 #    context = Context({})
  #   return HttpResponse(template.render(context))
     return render_to_response('timeline/timeline.html')
+    return render_to_response('timeline/fancytimeline.html')
