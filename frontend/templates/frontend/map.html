@@ -27,11 +27,14 @@
         };
         map = new google.maps.Map(document.getElementById("map-canvas"),
             mapOptions);
+        
+        var image = '{% static "frontend/paw_print.png" %}';
 
         var marker = new google.maps.Marker({
   		    position: center,
       		map: map,
-      		title:"Hello World!"
+      		title:"Hello World!",
+          icon: image
   		});
 
   		google.maps.event.addListener(marker, 'click', function()
@@ -89,6 +92,13 @@
 
 			<input id="search" type="textbox" placeholder="Search" onkeydown="if (event.keyCode == 13) document.getElementById('search_button').click()">
 			<input id='search_button' type="button" value="Go" onclick="alert('clicked'); codeAddress()">
+      <br/>
+
+      <form action="{% url 'frontend:search' %}" method="post">
+        {% csrf_token %}
+        <input type="text" id="search_query" name="search_query" required>
+        <input type="submit" value="submit">
+      </form>
       <br/>
       {{user}}
 
