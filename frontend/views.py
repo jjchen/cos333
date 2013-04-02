@@ -9,7 +9,7 @@ import datetime
 # Create your views here.
 def index(request):
 	events_list = NewEvent.objects.all()
-	context = {'events_list': events_list, 'user': request.user}
+	context = {'events_list': events_list, 'user': request.user, 'map_event_name': "Some Event", 'map_event_location': "Frist Campus Center"}
 	return render(request, 'frontend/map.html', context)
 
 def add(request):
