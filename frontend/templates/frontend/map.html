@@ -59,12 +59,12 @@
 
    function showContent(id) {
    	//alert(id);
-   	var children = document.getElementById('content_wrapper').getElementsByTagName('*');;
-   	for (i = 0; i < children.length; i++) {
-   		if (children[i].id != id) {
-   			children[i].style.zIndex = -1;
+   	var elem = document.getElementById('content_wrapper');
+   	for (i = 0; i < elem.children.length; i++) {
+   		if (elem.children[i].id != id) {
+   			elem.children[i].className = 'hidden';
    		} else {
-   			children[i].style.zIndex = 2;
+        elem.children[i].className = (elem.children[i].className=='hidden') ? 'visible' : 'hidden';
    		}
    	}
    }
@@ -89,7 +89,7 @@
 
 			<input id="search" type="textbox" placeholder="Search" onkeydown="if (event.keyCode == 13) document.getElementById('search_button').click()">
 			<input id='search_button' type="button" value="Go" onclick="alert('clicked'); codeAddress()">
-
+      <br/>
       {{user}}
 
       <div id="time_slider">
@@ -99,7 +99,7 @@
 		</div>
 
 		<div id="content_wrapper">
-		<div id="list_content">
+		<div id="list_content" class="hidden">
 			<h3> List </h3>
 			<div id="list_inner_wrapper">
       {% if events_list %}
@@ -114,7 +114,7 @@
 			</div>
 		</div>
 
-		<div id="make_content">
+		<div id="make_content" class="hidden">
 			<h3> Make Event </h3>
       <form action="{% url 'frontend:add' %}" method="post">
         {% csrf_token %}
@@ -126,29 +126,28 @@
         <input type="time" id="start_time" name="start_time">
         <label>Location:</label>
         <input type="text" id="location" name="location">
-
         <input type="submit" value="Submit">
       </form>
 		</div>
 
-		<div id="calendar_content">
+		<div id="calendar_content" class="hidden">
 			<h3> Calendar</h3>
     <li><a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a></li>
 
 		</div>
 		</div>
 
-		<div id="make_button" onclick="showContent('make_content');">
+		<div id="make_button" class="button" onclick="showContent('make_content');">
 			<h3>Make</h3>
 		</div>
-		<div id="calendar_button" onclick="showContent('calendar_content');">
+		<div id="calendar_button" class="button" onclick="showContent('calendar_content');">
 			<h3>Calendar</h3>
 		</div>
-		<div id="list_button" onclick="showContent('list_content');">
+		<div id="list_button" class="button" onclick="showContent('list_content');">
 			<h3>List</h3>
 		</div>
 
-		<div id="minus_button" onclick="showContent('none');">
+		<div id="minus_button" class="button" onclick="showContent('none');">
 			<h3>-</h3>
 		</div>
 
