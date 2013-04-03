@@ -1,4 +1,7 @@
 import requests
+from frontend.models import Events
+from frontend.models import BuildingAlias
+
 
 resp = requests.get("http://etcweb.princeton.edu/MobileFeed/map/json.php")
 json_obj = resp.json()
@@ -9,9 +12,12 @@ for building in buildings:
 	latitude = building['latitude']
 	longitude = building['longitude']
 
-	newBuilding = Building(name=building['name'], lat=latitude, long=longitude)
+	newBuilding = Building(name=building['name'], lat=latitude, lon=longitude)
 	newBuilding.save()
 
+	newBuildingAlias = BuildingAlias(alias = building['name'], building = newBuilding)
+	newBuildingAlias.save()
+
 	for alias in building['aliases']:
-		newBuilding = Building(name=alias, lat=latitude, long=longitude)
-		newBuilding.save()
+		newBuildingAlias = BuildingAlias(alias=alias, building=newBuilding)
+		newBuildingAlias.save()

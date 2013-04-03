@@ -1,209 +1,242 @@
 <html>
-  <head>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    {% load staticfiles %}
-        <link rel="stylesheet" type="text/css" 
-	      href="{% static "frontend/style.css" %}" />
+    
+    <head>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />{% load staticfiles %}
+        <link rel="stylesheet" type="text/css" href="{% static " frontend/style.css " %}" />
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
+            
+        </script>
+        <script type="text/javascript">
+            var map;
+            var geocoder;
 
-    <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
-    </script>
+            function initialize() {
+                var center = new google.maps.LatLng(40.344725, -74.655629);
+                geocoder = new google.maps.Geocoder();
 
-    <script type="text/javascript">
+                //makeList();
 
-   	  var map;
-   	  var geocoder;
+                var mapOptions = {
+                    center: center,
+                    zoom: 17,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+                map = new google.maps.Map(document.getElementById("map-canvas"),
+                    mapOptions);
 
-      function initialize() {
-      	var center =  new google.maps.LatLng(40.344725, -74.655629);
-      	geocoder = new google.maps.Geocoder();
+                var image = '{% static "frontend/paw_print.png" %}';
 
-    	//makeList();
+                var marker = new google.maps.Marker({
+                    position: center,
+                    map: map,
+                    title: "Hello World!",
+                    icon: image
+                });
 
-        var mapOptions = {
-          center: center,
-          zoom: 17,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        map = new google.maps.Map(document.getElementById("map-canvas"),
-            mapOptions);
-        
-        var image = '{% static "frontend/paw_print.png" %}';
+                var contentString = '<div id="content">' +
+                    '<div id="siteNotice">' +
+                    '</div>' +
+                    '<h2 id="firstHeading" class="firstHeading">{{map_event_name}}</h2>' +
+                    '<div id="bodyContent">' +
+                    '<p>Time: 10:00pm April 2, 2013</p>' +
+                    '<p>Location: {{map_event_location}}</p>' +
+                    '</div>' +
+                    '</div>';
 
-        var marker = new google.maps.Marker({
-  		    position: center,
-      		map: map,
-      		title:"Hello World!",
-          icon: image
-  		});
+                var infowindow = new google.maps.InfoWindow({
+                    content: contentString
+                });
 
-var contentString = '<div id="content">'+
-    '<div id="siteNotice">'+
-    '</div>'+
-    '<h2 id="firstHeading" class="firstHeading">{{map_event_name}}</h2>'+
-    '<div id="bodyContent">'+
-    '<p>Time: 10:00pm April 2, 2013</p>'+
-    '<p>Location: {{map_event_location}}</p>'+
-    '</div>'+
-    '</div>';
-
-var infowindow = new google.maps.InfoWindow({
-    content: contentString
-});
-
-/*  		google.maps.event.addListener(marker, 'click', function()
-    	{
-			alert('Hello World!');
-    	}); */
-
-      google.maps.event.addListener(marker, 'click', function()
+                /*      google.maps.event.addListener(marker, 'click', function()
       {
-        infowindow.open(map,marker);
-      });
-      }
-      google.maps.event.addDomListener(window, 'load', initialize);
+      alert('Hello World!');
+      }); */
+
+                google.maps.event.addListener(marker, 'click', function () {
+                    infowindow.open(map, marker);
+                });
+
+                {% if events_list %}
+                  showEventsOnMap()
+                {% endif %}
+            }
+            google.maps.event.addDomListener(window, 'load', initialize);
 
 
-    function codeAddress() {
-      var image = '{% static "frontend/paw_print.png" %}';
+            function codeAddress() {
+                var image = '{% static "frontend/paw_print.png" %}';
 
-      var buildingName = document.getElementById("search").value;
-      geocoder.geocode( { 'address': buildingName }, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-        // map.setCenter(results[0].geometry.location);
-        var marker = new google.maps.Marker({
-            map: map,
-            position: results[0].geometry.location,
-            icon: image
-        });
+                var buildingName = document.getElementById("search").value;
+                geocoder.geocode({
+                    'address': buildingName
+                }, function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        // map.setCenter(results[0].geometry.location);
+                        var marker = new google.maps.Marker({
+                            map: map,
+                            position: results[0].geometry.location,
+                            icon: image
+                        });
 
-var contentString = '<div id="content">'+
-    '<div id="siteNotice">'+
-    '</div>'+
-    '<h2 id="firstHeading" class="firstHeading">{{map_event_name}}</h2>'+
-    '<div id="bodyContent">'+
-    '<p>Time: 10:00pm April 2, 2013</p>'+
-    '<p>Location: {{map_event_location}}</p>'+
-    '</div>'+
-    '</div>';
+                        var contentString = '<div id="content">' +
+                            '<div id="siteNotice">' +
+                            '</div>' +
+                            '<h2 id="firstHeading" class="firstHeading">{{map_event_name}}</h2>' +
+                            '<div id="bodyContent">' +
+                            '<p>Time: 10:00pm April 2, 2013</p>' +
+                            '<p>Location: {{map_event_location}}</p>' +
+                            '</div>' +
+                            '</div>';
 
-var infowindow = new google.maps.InfoWindow({
-    content: contentString
-});
+                        var infowindow = new google.maps.InfoWindow({
+                            content: contentString
+                        });
 
-      google.maps.event.addListener(marker, 'click', function()
-      {
-        infowindow.open(map,marker);
-      });
+                        google.maps.event.addListener(marker, 'click', function () {
+                            infowindow.open(map, marker);
+                        });
 
-      } else {
-        alert("Geocode was not successful for the following reason: " + status);
-      }
-    }); 
-   }
+                    } else {
+                        alert("Geocode was not successful for the following reason: " + status);
+                    }
+                });
+            }
 
-   function showContent(id) {
-   	//alert(id);
-   	var elem = document.getElementById('content_wrapper');
-   	for (i = 0; i < elem.children.length; i++) {
-   		if (elem.children[i].id != id) {
-   			elem.children[i].className = 'hidden';
-   		} else {
-        elem.children[i].className = (elem.children[i].className=='hidden') ? 'visible' : 'hidden';
-   		}
-   	}
-   }
+            function showEventsOnMap() {
 
-   /*function makeList() {
-   	//alert("hi");
-   	var parent = document.getElementById('list_inner_wrapper');
-   	for (i = 0; i < 10; i++) {
-   		parent.appendChild(document.createTextNode('Hi'));
-   	} 
+
+
+                var image = '{% static "frontend/paw_print.png" %}';
+
+                var buildingName = document.getElementById("search").value;
+                geocoder.geocode({
+                    'address': buildingName
+                }, function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        // map.setCenter(results[0].geometry.location);
+                        var marker = new google.maps.Marker({
+                            map: map,
+                            position: results[0].geometry.location,
+                            icon: image
+                        });
+
+                        var contentString = '<div id="content">' +
+                            '<div id="siteNotice">' +
+                            '</div>' +
+                            '<h2 id="firstHeading" class="firstHeading">{{map_event_name}}</h2>' +
+                            '<div id="bodyContent">' +
+                            '<p>Time: 10:00pm April 2, 2013</p>' +
+                            '<p>Location: {{map_event_location}}</p>' +
+                            '</div>' +
+                            '</div>';
+
+                        var infowindow = new google.maps.InfoWindow({
+                            content: contentString
+                        });
+
+                        google.maps.event.addListener(marker, 'click', function () {
+                            infowindow.open(map, marker);
+                        });
+
+                    } else {
+                        alert("Geocode was not successful for the following reason: " + status);
+                    }
+                });
+            }
+
+
+            function showContent(id) {
+                //alert(id);
+                var elem = document.getElementById('content_wrapper');
+                for (i = 0; i < elem.children.length; i++) {
+                    if (elem.children[i].id != id) {
+                        elem.children[i].className = 'hidden';
+                    } else {
+                        elem.children[i].className = (elem.children[i].className == 'hidden') ? 'visible' : 'hidden';
+                    }
+                }
+            }
+
+            /*function makeList() {
+    //alert("hi");
+    var parent = document.getElementById('list_inner_wrapper');
+    for (i = 0; i < 10; i++) {
+      parent.appendChild(document.createTextNode('Hi'));
+    } 
    }*/
+        </script>
+    </head>
+    
+    <body>
+        <header>
+              <h1>Princeton University - OC</h1>
 
-    </script>
-  </head>
-  <body>
-		<header>
-			<h1>Princeton University - OC</h1>
-		</header>
+        </header>
+        <div id="side_panel">
+              <h3>Filter</h3>
 
-		<div id="side_panel">
-			<h3>Filter</h3>
+            <input id="search" type="textbox" placeholder="Search" onkeydown="if (event.keyCode == 13) document.getElementById('search_button').click()">
+            <input id='search_button' type="button" value="Go" onclick="codeAddress()">
+            <br/>
+            <form action="{% url 'frontend:search' %}" method="post">{% csrf_token %}
+                <input type="text" id="search_query" placeholder="Search" name="search_query" required>
+                <input type="submit" value="Go">
+            </form>
+            <br/>{{user}}
+            <div id="time_slider">
+                 <h3> Time </h3>
 
-			<input id="search" type="textbox" placeholder="Search" onkeydown="if (event.keyCode == 13) document.getElementById('search_button').click()">
-			<input id='search_button' type="button" value="Go" onclick="codeAddress()">
-      <br/>
+                <input type="range">
+            </div>
+        </div>
+        <div id="content_wrapper">
+            <div id="list_content" class="hidden">
+                  <h3> List </h3>
 
-      <form action="{% url 'frontend:search' %}" method="post">
-        {% csrf_token %}
-        <input type="text" id="search_query" placeholder="Search" name="search_query" required>
-        <input type="submit" value="Go">
-      </form>
-      <br/>
-      {{user}}
+                <div id="list_inner_wrapper">{% if events_list %}
+                    <ul>{% for event in events_list %}
+                        <li>{{event.name}} {{event.location}} {{event.time}} {{event.date}}</li>{% endfor %}</ul>{% else %}
+                    <p>No events :(</p>{% endif %}</div>
+            </div>
+            <div id="make_content" class="hidden">
+                  <h3> Make Event </h3>
 
-      <div id="time_slider">
-      <h3> Time </h3>
-      <input type="range">
-      </div>
-		</div>
+                <form action="{% url 'frontend:add' %}" method="post">{% csrf_token %}
+                    <label>Name:</label>
+                    <input type="text" id="event_name" name="event_name" required>
+                    <label>Date:</label>
+                    <input type="date" id="date" name="date" required>
+                    <label>Time:</label>
+                    <input type="time" id="start_time" name="start_time">
+                    <label>Location:</label>
+                    <input type="text" id="location" name="location">
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+            <div id="calendar_content" class="hidden">
+                  <h3> Calendar</h3>
 
-		<div id="content_wrapper">
-		<div id="list_content" class="hidden">
-			<h3> List </h3>
-			<div id="list_inner_wrapper">
-      {% if events_list %}
-        <ul>
-        {% for event in events_list %}
-          <li>{{event.name}} {{event.location}} {{event.time}} {{event.date}}</li>
-        {% endfor %}
-        </ul>
-      {% else %}
-        <p>No events :( </p>
-      {% endif %}
-			</div>
-		</div>
+                <li><a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a>
+                </li>
+            </div>
+        </div>
+        <div id="make_button" class="button" onclick="showContent('make_content');">
+              <h3>Make</h3>
 
-		<div id="make_content" class="hidden">
-			<h3> Make Event </h3>
-      <form action="{% url 'frontend:add' %}" method="post">
-        {% csrf_token %}
-        <label>Name:</label>
-        <input type="text" id="event_name" name="event_name" required>
-        <label>Date:</label>
-        <input type="date" id="date" name="date" required>
-        <label>Time:</label>
-        <input type="time" id="start_time" name="start_time">
-        <label>Location:</label>
-        <input type="text" id="location" name="location">
-        <input type="submit" value="Submit">
-      </form>
-		</div>
+        </div>
+        <div id="calendar_button" class="button" onclick="showContent('calendar_content');">
+              <h3>Calendar</h3>
 
-		<div id="calendar_content" class="hidden">
-			<h3> Calendar</h3>
-    <li><a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a></li>
+        </div>
+        <div id="list_button" class="button" onclick="showContent('list_content');">
+              <h3>List</h3>
 
-		</div>
-		</div>
+        </div>
+        <div id="minus_button" class="button" onclick="showContent('none');">
+              <h3>-</h3>
 
-		<div id="make_button" class="button" onclick="showContent('make_content');">
-			<h3>Make</h3>
-		</div>
-		<div id="calendar_button" class="button" onclick="showContent('calendar_content');">
-			<h3>Calendar</h3>
-		</div>
-		<div id="list_button" class="button" onclick="showContent('list_content');">
-			<h3>List</h3>
-		</div>
+        </div>
+        <div id="map-canvas" />
+    </body>
 
-		<div id="minus_button" class="button" onclick="showContent('none');">
-			<h3>-</h3>
-		</div>
-
-		<div id="map-canvas"/>
-</body>
 </html>
-

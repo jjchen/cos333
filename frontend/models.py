@@ -8,8 +8,19 @@ class NewEvent(models.Model):
     date = models.DateField()
     time = models.TimeField()
     location = models.CharField(max_length=200)
+    lat = models.DecimalField(max_digits=15, decimal_places=10)
+    lon = models.DecimalField(max_digits=15, decimal_places=10)
     def __unicode__(self):
         return self.name
+
+class Building(models.Model):
+    name = models.CharField(max_length=200)
+    lat = models.DecimalField(max_digits=15, decimal_places=10)
+    lon = models.DecimalField(max_digits=15, decimal_places=10)
+
+class BuildingAlias(models.Model):
+    alias = models.CharField(max_length=200)
+    building = models.ForeignKey(Building)
 
 # Create your models here.
 NAME_MAXLEN=50

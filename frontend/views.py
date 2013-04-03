@@ -18,9 +18,16 @@ def add(request):
 	new_date = request.POST['date']
 	new_time = request.POST['start_time']
 	new_location = request.POST['location']
+
+	# search for lat lon of location
+	buildingAlias = BuildingAlias.objects.filter(alias=new_location)
+	if (buildingAlias):
+		building = buildingAlias.building
+		latitude = building.lat
+		longitude = building.lon
 	
 	# add to database
-	new_event = NewEvent(name=new_name, date=datetime.date.today(), time=datetime.time(5,0,0,0), location=new_location)
+	new_event = NewEvent(name=new_name, date=datetime.date.today(), time=datetime.time(5,0,0,0), location=new_location, lat=latitude, lon=longitude)
 	new_event.save()
 
 	# return to index
