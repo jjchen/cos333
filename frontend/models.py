@@ -8,8 +8,8 @@ class NewEvent(models.Model):
     date = models.DateField()
     time = models.TimeField()
     location = models.CharField(max_length=200)
-    lat = models.DecimalField(max_digits=15, decimal_places=10)
-    lon = models.DecimalField(max_digits=15, decimal_places=10)
+    lat = models.DecimalField(max_digits=15, decimal_places=10, null=True)
+    lon = models.DecimalField(max_digits=15, decimal_places=10, null=True)
     def __unicode__(self):
         return self.name
 

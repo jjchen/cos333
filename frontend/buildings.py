@@ -1,5 +1,5 @@
 import requests
-from frontend.models import Events
+from frontend.models import Building
 from frontend.models import BuildingAlias
 
 

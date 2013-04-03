@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from frontend.models import NewEvent
+from frontend.models import BuildingAlias
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
@@ -20,9 +21,11 @@ def add(request):
 	new_location = request.POST['location']
 
 	# search for lat lon of location
+	latitude = None
+	longitude = None
 	buildingAlias = BuildingAlias.objects.filter(alias=new_location)
 	if (buildingAlias):
-		building = buildingAlias.building
+		building = buildingAlias[0].building
 		latitude = building.lat
 		longitude = building.lon
 	
