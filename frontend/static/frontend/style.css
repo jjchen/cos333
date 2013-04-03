@@ -117,8 +117,12 @@ div#minus_button{
 	z-index: 2;
 }
 
-div#list_content{
+.event_list_entry {
+	margin: 5px;
+}
 
+div#list_content{
+	overflow:scroll;
 }
 
 div#make_content{

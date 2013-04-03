@@ -6,77 +6,134 @@
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
             
         </script>
+        <script type="text/javascript" src="{% static "frontend/oms.min.js" %}">
+        </script>
         <script type="text/javascript">
-            var map;
-            var geocoder;
+var map;
+var idled = false;
+var oms;
+var image = '{% static "frontend/paw_print.png" %}';
+var flower = '{% static "frontend/small_flower.png" %}';
 
-            function initialize() {
-                var center = new google.maps.LatLng(40.344725, -74.655629);
-                geocoder = new google.maps.Geocoder();
+function initialize() {
+   var center = new google.maps.LatLng(40.344725, -74.655629);
 
-                //makeList();
+   var mapOptions = {
+      center: center,
+      zoom: 17,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+   };
+   map = new google.maps.Map(document.getElementById("map-canvas"),
+      mapOptions);
+   oms = new OverlappingMarkerSpiderfier(map, {
+      keepSpiderfied: true
+   });
 
-                var mapOptions = {
-                    center: center,
-                    zoom: 17,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
-                };
-                map = new google.maps.Map(document.getElementById("map-canvas"),
-                    mapOptions);
+   var iw = new google.maps.InfoWindow();
+   oms.addListener('click', function (marker) {
+      iw.setContent(marker.desc);
+      iw.open(map, marker);
+   });
 
-                {% if events_list %}
-                  showEventsOnMap();
-                {% endif %}
+   oms.addListener('spiderfy', function (markers) {
+      iw.close();
+      for (i = 0; i < markers.length; i++) {
+         markers[i].setIcon(image);
+      }
+   });
+
+   oms.addListener('unspiderfy', function (markers) {
+      iw.close();
+      for (i = 0; i < markers.length; i++) {
+         markers[i].setIcon(flower);
+      }
+   });
+
+   google.maps.event.addListener(map, 'idle', function () {
+      if (!idled) {
+         var overlapped = oms.markersNearAnyOtherMarker();
+         for (i = 0; i < overlapped.length; i++) {
+            overlapped[i].setIcon(flower);
+         }
+      }
+      idled = true;
+   });
+
+   google.maps.event.addListener(map, 'click', function() {
+      iw.close();
+   });
+
+   {% if events_list %}
+   showEventsOnMap(); 
+   {% endif %}
+
+   {% if show_list == True %}
+   showContent('list_content');
+   {% endif %}
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+
+function showEventsOnMap() {
+
+   var i = 0; 
+   {% for event in events_list %} 
+   {% if event.lat %}
+   var position = new google.maps.LatLng({{event.lat}}, {{event.lon}});
+
+   var marker = new google.maps.Marker({
+      map: map,
+      position: position,
+      icon: image
+   });
+
+   var contentString = '<div class="infoWindow_content">' +
+      '<h3 class="infoWindow_heading">{{event.name}}</h3>' +
+      '<div id="infoWindow_body">' +
+      '<p>Time: {{event.time}} {{event.date}}</p>' +
+      '<p>Location: {{event.location}}</p>' +
+      '</div>' +
+      '</div>';
+
+   marker.desc = contentString;
+
+   oms.addMarker(marker); 
+   {% endif %} 
+   {% endfor %}
+}
+
+
+function showContent(id) {
+   //alert(id);
+   var elem = document.getElementById('content_wrapper');
+   for (i = 0; i < elem.children.length; i++) {
+      if (elem.children[i].id != id) {
+         elem.children[i].className = 'hidden';
+      } else {
+         elem.children[i].className = (elem.children[i].className == 'hidden') ? 'visible' : 'hidden';
+         if (id == "list_content" && elem.children[i].className == 'visible') makeList();
+      }
+   }
+}
+
+function makeList(){
+    var parent = document.getElementById("list_inner_wrapper");
+    var html = "";
+    {% if events_list %}
+    var cur_date = "";
+        {% for event in events_list %}
+            if ('{{event.date}}' != cur_date) {
+                html += '<h3> {{event.date}} </h3>';
+                cur_date = '{{event.date}}';
             }
-            google.maps.event.addDomListener(window, 'load', initialize);
-
-            function showEventsOnMap() {
-
-                var image = '{% static "frontend/paw_print.png" %}';
-                var i = 0;
-                {% for event in events_list %}
-                {% if event.lat %}
-                  eval("var position"+i+" = new google.maps.LatLng( {{event.lat}}, {{event.lon}})");
-
-                  eval("var marker"+i+" = new google.maps.Marker({ \
-                      map: map, \
-                      position: position"+i+", \
-                      icon: image \
-                  })");
-
-                  eval("var contentString"+i+" = '<div class=\"infoWindow_content\">' + \
-                      '<h3 class=\"infoWindow_heading\">{{event.name}}</h3>' + \
-                      '<div id=\"infoWindow_body\">' + \
-                      '<p>Time: 10:00pm April 2, 2013</p>' + \
-                      '<p>Location: {{event.location}}</p>' + \
-                      '</div>' + \
-                      '</div>'");
-
-                  eval("var infowindow"+i+" = new google.maps.InfoWindow({ \
-                      content: contentString"+i+" \
-                  })");
-
-                  eval("google.maps.event.addListener(marker"+i+", 'click', function () { \
-                      infowindow"+i+".open(map, marker"+i+"); \
-                  })");
-                  i++;
-                {% endif %}
-                {% endfor %}
-            }
-
-
-            function showContent(id) {
-                //alert(id);
-                var elem = document.getElementById('content_wrapper');
-                for (i = 0; i < elem.children.length; i++) {
-                    if (elem.children[i].id != id) {
-                        elem.children[i].className = 'hidden';
-                    } else {
-                        elem.children[i].className = (elem.children[i].className == 'hidden') ? 'visible' : 'hidden';
-                    }
-                }
-            }
-
+            html += '<div class="event_list_entry">'
+                + '{{event.time}} &nbsp <b> {{event.name}}</b>  {{event.location}}'
+                + '</div>';
+        {% endfor %}
+    {% else %}
+       html += '<p>No events :(</p>';
+    {% endif %}
+    parent.innerHTML = html;
+}
         </script>
     </head>
     
@@ -89,10 +146,13 @@
               <h3>Filter</h3>
 
             <br/>
-            <form action="{% url 'frontend:search' %}" method="post">{% csrf_token %}
+            <form action="{% url 'frontend:index' %}" method="post">{% csrf_token %}
                 <input type="text" id="search_query" placeholder="Search" name="search_query" required>
                 <input type="submit" value="Go">
             </form>
+            <br/>
+            <a href="{% url 'frontend:index' %}"> All </a>
+            <br/>
             <br/>{{user}}
             <div id="time_slider">
                  <h3> Time </h3>
@@ -102,12 +162,9 @@
         </div>
         <div id="content_wrapper">
             <div id="list_content" class="hidden">
-                  <h3> List </h3>
 
-                <div id="list_inner_wrapper">{% if events_list %}
-                    <ul>{% for event in events_list %}
-                        <li>{{event.name}} {{event.location}} {{event.time}} {{event.date}}</li>{% endfor %}</ul>{% else %}
-                    <p>No events :(</p>{% endif %}</div>
+                <div id="list_inner_wrapper">
+                </div>
             </div>
             <div id="make_content" class="hidden">
                   <h3> Make Event </h3>
@@ -116,7 +173,7 @@
                     <label>Name:</label>
                     <input type="text" id="event_name" name="event_name" required>
                     <label>Date:</label>
-                    <input type="date" id="date" name="date" required>
+                    <input type="date" id="date" name="date">
                     <label>Time:</label>
                     <input type="time" id="start_time" name="start_time">
                     <label>Location:</label>
