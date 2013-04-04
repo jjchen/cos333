@@ -36,8 +36,15 @@ def add(request):
 		latitude = building.lat
 		longitude = building.lon
 	
+
+	# format date
+	date = datetime.datetime.strptime(new_date, "%Y-%m-%d").date()
+
+	# format time
+	time = datetime.datetime.strptime(new_time, "%H:%M").time()
+
 	# add to database
-	new_event = NewEvent(name=new_name, date=datetime.date.today(), time=datetime.time(5,0,0,0), location=new_location, lat=latitude, lon=longitude)
+	new_event = NewEvent(name=new_name, date=date, time=time, location=new_location, lat=latitude, lon=longitude)
 	new_event.save()
 
 	# return to index
