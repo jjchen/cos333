@@ -11,10 +11,10 @@ import datetime
 def index(request):
 	if request.method =='POST':
 		query = request.POST['search_query']
-		events_list = NewEvent.objects.filter(Q(name__icontains=query) | Q(location__icontains=query)).order_by("date")
+		events_list = NewEvent.objects.filter(Q(name__icontains=query) | Q(location__icontains=query)).order_by("date", "time")
 		show_list = True
 	else:
-		events_list = NewEvent.objects.all().order_by("date")
+		events_list = NewEvent.objects.all().order_by("date", "time")
 		show_list = False
 
 	context = {'events_list': events_list, 'user': request.user, 'show_list': show_list}

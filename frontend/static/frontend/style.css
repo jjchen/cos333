@@ -13,6 +13,23 @@
 	z-index: 0;
 }
 
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+table td {
+	padding: 2px 5px;
+}
+
+table td.list_time {
+	white-space: nowrap;
+}
+
+tr.rowColor {
+	background-color: rgba(0,102,51,0.1);
+}
+
 h1 {
 	/* font-weight: bold; */
 	font-size: 20px;
@@ -59,6 +76,7 @@ div#side_panel{
 	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 	box-sizing: border-box;
 	z-index: 1;
+	overflow:scroll;
 }
 
 div#make_button{
@@ -114,15 +132,12 @@ div#minus_button{
 	box-sizing: border-box;
 	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 	box-sizing: border-box;
-	z-index: 2;
-}
-
-.event_list_entry {
-	margin: 5px;
+	z-index: 1;
 }
 
 div#list_content{
 	overflow:scroll;
+	padding: 25px;
 }
 
 div#make_content{

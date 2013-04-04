@@ -119,16 +119,27 @@ function makeList(){
     var parent = document.getElementById("list_inner_wrapper");
     var html = "";
     {% if events_list %}
+    html += "<table class='list_table'>"
     var cur_date = "";
+    var i = 0;
         {% for event in events_list %}
+            if (i % 2 == 0) {
+                row_class = "rowColor";
+            } else {
+                row_class = "";
+            }
+            i++;
+
             if ('{{event.date}}' != cur_date) {
-                html += '<h3> {{event.date}} </h3>';
+                html += '<tr><td colspan="2"> <h3> {{event.date}} </h3></td></tr>';
                 cur_date = '{{event.date}}';
             }
-            html += '<div class="event_list_entry">'
-                + '{{event.time}} &nbsp <b> {{event.name}}</b>  {{event.location}}'
-                + '</div>';
+            html += '<tr class="'+ row_class
+                + '"><td class="list_time" rowspan="2"> {{event.time}} </td>' 
+                + '<td> <b> {{event.name}} </b></td>'  
+                + '<tr class="'+row_class+'"><td> {{event.location}}</td></tr>';
         {% endfor %}
+    html += "</table>"
     {% else %}
        html += '<p>No events :(</p>';
     {% endif %}
