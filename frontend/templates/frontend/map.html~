@@ -1,7 +1,9 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-        <link rel="stylesheet" type="text/css" href="style.css" />
+    {% load staticfiles %}
+        <link rel="stylesheet" type="text/css" 
+	      href="{% static "timeline/style.css" %}" />
 
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
@@ -84,7 +86,7 @@
 		<div id="side_panel">
 			<h3>Filter</h3>
 
-			<input id="search" type="textbox" placeholder="Search" onkeydown="if (event.keyCode == 13) document.getElementById('search_button').click()">
+			Search: <input id="search" type="textbox" value="" onkeydown="if (event.keyCode == 13) document.getElementById('search_button').click()">
 			<input id='search_button' type="button" value="Go" onclick="alert('clicked'); codeAddress()">
 
       <div id="time_slider">
@@ -102,18 +104,6 @@
 
 		<div id="make_content">
 			<h3> Make Event </h3>
-      <form>
-        <label>Name:</label>
-        <input type="text" id="event_name" name="event_name" required>
-        <label>Date:</label>
-        <input type="date" id="date" name="date" required>
-        <label>Time:</label>
-        <input type="time" id="start_time" name="start_time">
-        <label>Location:</label>
-        <input type="text" id="location" name="location">
-
-        <input type="submit" value="Submit">
-      </form>
 		</div>
 
 		<div id="calendar_content">
@@ -138,3 +128,4 @@
 		<div id="map-canvas"/>
 </body>
 </html>
+
