@@ -11,7 +11,9 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/login/$', 'django_cas.views.login'),
     url(r'^accounts/logout/$', 'django_cas.views.logout'),
-    url('', include('frontend.urls'), namespace='frontend'),
+    url(r'^frontend/$', include('frontend.urls')),
+    url('', include('frontend.urls', namespace='frontend')),
+    url('', include('social_auth.urls'))
 
 #                       (r'^time/$', current_datetime)
     # Examples

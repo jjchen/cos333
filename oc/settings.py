@@ -115,11 +115,6 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'django_cas.backends.CASBackend',
-)
-
 CAS_SERVER_URL = 'https://fed.princeton.edu/cas/'
 CAS_REDIRECT_URL = '/frontend'
 ROOT_URLCONF = 'oc.urls'
@@ -183,4 +178,5 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
     'social_auth.backends.facebook.FacebookBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'django_cas.backends.CASBackend'
 )
