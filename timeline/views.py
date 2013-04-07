@@ -5,12 +5,6 @@ from django.shortcuts import render_to_response
 import sys, os, cgi, urllib, re
 #from polls.models import Poll
 
-# Create your views here.
-#def index(request):
-#    template = loader.get_template('timeline/map.html')
-#    context = Context({})
- #   return HttpResponse(template.render(context))
-#    return render_to_response('timeline/timeline.html')
 
 form = cgi.FieldStorage()
 
@@ -76,3 +70,4 @@ def index(request):
     print login_url
 #    login_url="oc_app"
     return HttpResponseRedirect(login_url)
+    return render_to_response('timeline/fancytimeline.html')

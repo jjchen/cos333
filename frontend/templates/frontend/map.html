@@ -1,143 +1,221 @@
 <html>
-  <head>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    {% load staticfiles %}
-        <link rel="stylesheet" type="text/css" 
-	      href="{% static "frontend/style.css" %}" />
+    
+    <head>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
+        <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
+            
+        </script>
+        <script type="text/javascript" src="{% static "frontend/oms.min.js" %}">
+        </script>
+        <script type="text/javascript">
+var map;
+var idled = false;
+var oms;
+var image = '{% static "frontend/paw_print.png" %}';
+var flower = '{% static "frontend/small_flower.png" %}';
 
-    <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
-    </script>
+function initialize() {
+   var center = new google.maps.LatLng(40.344725, -74.655629);
 
-    <script type="text/javascript">
+   var mapOptions = {
+      center: center,
+      zoom: 17,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+   };
+   map = new google.maps.Map(document.getElementById("map-canvas"),
+      mapOptions);
+   oms = new OverlappingMarkerSpiderfier(map, {
+      keepSpiderfied: true
+   });
 
-   	  var map;
-   	  var geocoder;
+   var iw = new google.maps.InfoWindow();
+   oms.addListener('click', function (marker) {
+      iw.setContent(marker.desc);
+      iw.open(map, marker);
+   });
 
-      function initialize() {
-      	var center =  new google.maps.LatLng(40.344725, -74.655629);
-      	geocoder = new google.maps.Geocoder();
-
-    	makeList();
-
-        var mapOptions = {
-          center: center,
-          zoom: 17,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        map = new google.maps.Map(document.getElementById("map-canvas"),
-            mapOptions);
-
-        var marker = new google.maps.Marker({
-  		    position: center,
-      		map: map,
-      		title:"Hello World!"
-  		});
-
-  		google.maps.event.addListener(marker, 'click', function()
-    	{
-			alert('Hello World!');
-    	});
+   oms.addListener('spiderfy', function (markers) {
+      iw.close();
+      for (i = 0; i < markers.length; i++) {
+         markers[i].setIcon(image);
       }
-      google.maps.event.addDomListener(window, 'load', initialize);
+   });
+
+   oms.addListener('unspiderfy', function (markers) {
+      iw.close();
+      for (i = 0; i < markers.length; i++) {
+         markers[i].setIcon(flower);
+      }
+   });
+
+   google.maps.event.addListener(map, 'idle', function () {
+      if (!idled) {
+         var overlapped = oms.markersNearAnyOtherMarker();
+         for (i = 0; i < overlapped.length; i++) {
+            overlapped[i].setIcon(flower);
+         }
+      }
+      idled = true;
+   });
+
+   google.maps.event.addListener(map, 'click', function() {
+      iw.close();
+   });
+
+   {% if events_list %}
+   showEventsOnMap(); 
+   {% endif %}
+
+   {% if show_list == True %}
+   showContent('list_content');
+   {% endif %}
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+
+function showEventsOnMap() {
+
+   var i = 0; 
+   {% for event in events_list %} 
+   {% if event.lat %}
+   var position = new google.maps.LatLng({{event.lat}}, {{event.lon}});
+
+   var marker = new google.maps.Marker({
+      map: map,
+      position: position,
+      icon: image
+   });
+
+   var contentString = '<div class="infoWindow_content">' +
+      '<h3 class="infoWindow_heading">{{event.name}}</h3>' +
+      '<div id="infoWindow_body">' +
+      '<p>Time: {{event.time}} {{event.date}}</p>' +
+      '<p>Location: {{event.location}}</p>' +
+      '</div>' +
+      '</div>';
+
+   marker.desc = contentString;
+
+   oms.addMarker(marker); 
+   {% endif %} 
+   {% endfor %}
+}
 
 
-    function codeAddress() {
-      var buildingName = document.getElementById("search").value;
-      geocoder.geocode( { 'address': buildingName }, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-        // map.setCenter(results[0].geometry.location);
-        var marker = new google.maps.Marker({
-            map: map,
-            position: results[0].geometry.location
-        });
+function showContent(id) {
+   //alert(id);
+   var elem = document.getElementById('content_wrapper');
+   for (i = 0; i < elem.children.length; i++) {
+      if (elem.children[i].id != id) {
+         elem.children[i].className = 'hidden';
       } else {
-        alert("Geocode was not successful for the following reason: " + status);
+         elem.children[i].className = (elem.children[i].className == 'hidden') ? 'visible' : 'hidden';
+         if (id == "list_content" && elem.children[i].className == 'visible') makeList();
       }
-    }); 
    }
+}
 
-   function showContent(id) {
-   	//alert(id);
-   	var children = document.getElementById('content_wrapper').getElementsByTagName('*');;
-   	for (i = 0; i < children.length; i++) {
-   		if (children[i].id != id) {
-   			children[i].style.zIndex = -1;
-   		} else {
-   			children[i].style.zIndex = 2;
-   		}
-   	}
-   }
+function makeList(){
+    var parent = document.getElementById("list_inner_wrapper");
+    var html = "";
+    {% if events_list %}
+    html += "<table class='list_table'>"
+    var cur_date = "";
+    var i = 0;
+        {% for event in events_list %}
+            if (i % 2 == 0) {
+                row_class = "rowColor";
+            } else {
+                row_class = "";
+            }
+            i++;
 
-   function makeList() {
-   	//alert("hi");
-   	var parent = document.getElementById('list_inner_wrapper');
-   	for (i = 0; i < 10; i++) {
-   		parent.appendChild(document.createTextNode('Hi'));
-   	} 
-   }
+            if ('{{event.date}}' != cur_date) {
+                html += '<tr><td colspan="2"> <h3> {{event.date}} </h3></td></tr>';
+                cur_date = '{{event.date}}';
+            }
+            html += '<tr class="'+ row_class
+                + '"><td class="list_time" rowspan="2"> {{event.time}} </td>' 
+                + '<td> <b> {{event.name}} </b></td>'  
+                + '<tr class="'+row_class+'"><td> {{event.location}}</td></tr>';
+        {% endfor %}
+    html += "</table>"
+    {% else %}
+       html += '<p>No events :(</p>';
+    {% endif %}
+    parent.innerHTML = html;
+}
+        </script>
+    </head>
+    
+    <body>
+        <header>
+              <h1>Princeton University - OC</h1>
 
-    </script>
-  </head>
-  <body>
-		<header>
-			<h1>Princeton University - OC</h1>
-		</header>
-		<div id="side_panel">
-			<h3>Filter</h3>
+        </header>
+        <div id="side_panel">
+              <h3>Filter</h3>
 
-			<input id="search" type="textbox" placeholder="Search" onkeydown="if (event.keyCode == 13) document.getElementById('search_button').click()">
-			<input id='search_button' type="button" value="Go" onclick="alert('clicked'); codeAddress()">
+            <br/>
+            <form action="{% url 'frontend:index' %}" method="post">{% csrf_token %}
+                <input type="text" id="search_query" placeholder="Search" name="search_query" required>
+                <input type="submit" value="Go">
+            </form>
+            <br/>
+            <a href="{% url 'frontend:index' %}"> All </a>
+            <br/>
+            <br/>{{user}}
+            <div id="time_slider">
+                 <h3> Time </h3>
 
-      <div id="time_slider">
-      <h3> Time </h3>
-      <input type="range">
-      </div>
-		</div>
+                <input type="range">
+            </div>
+        </div>
+        <div id="content_wrapper">
+            <div id="list_content" class="hidden">
 
-		<div id="content_wrapper">
-		<div id="list_content">
-			<h3> List </h3>
-			<div id="list_inner_wrapper">
-			</div>
-		</div>
+                <div id="list_inner_wrapper">
+                </div>
+            </div>
+            <div id="make_content" class="hidden">
+                  <h3> Make Event </h3>
 
-		<div id="make_content">
-			<h3> Make Event </h3>
-      <form>
-        <label>Name:</label>
-        <input type="text" id="event_name" name="event_name" required>
-        <label>Date:</label>
-        <input type="date" id="date" name="date" required>
-        <label>Time:</label>
-        <input type="time" id="start_time" name="start_time">
-        <label>Location:</label>
-        <input type="text" id="location" name="location">
+                <form action="{% url 'frontend:add' %}" method="post">{% csrf_token %}
+                    <label>Name:</label>
+                    <input type="text" id="event_name" name="event_name" required>
+                    <label>Date:</label>
+                    <input type="date" id="date" name="date">
+                    <label>Time:</label>
+                    <input type="time" id="start_time" name="start_time">
+                    <label>Location:</label>
+                    <input type="text" id="location" name="location">
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+            <div id="calendar_content" class="hidden">
+                  <h3> Calendar</h3>
 
-        <input type="submit" value="Submit">
-      </form>
-		</div>
+                <li><a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a>
+                </li>
+            </div>
+        </div>
+        <div id="make_button" class="button" onclick="showContent('make_content');">
+              <h3>Make</h3>
 
-		<div id="calendar_content">
-			<h3> Calendar</h3>
-		</div>
-		</div>
+        </div>
+        <div id="calendar_button" class="button" onclick="showContent('calendar_content');">
+              <h3>Calendar</h3>
 
-		<div id="make_button" onclick="showContent('make_content');">
-			<h3>Make</h3>
-		</div>
-		<div id="calendar_button" onclick="showContent('calendar_content');">
-			<h3>Calendar</h3>
-		</div>
-		<div id="list_button" onclick="showContent('list_content');">
-			<h3>List</h3>
-		</div>
+        </div>
+        <div id="list_button" class="button" onclick="showContent('list_content');">
+              <h3>List</h3>
 
-		<div id="minus_button" onclick="showContent('none');">
-			<h3>-</h3>
-		</div>
+        </div>
+        <div id="minus_button" class="button" onclick="showContent('none');">
+              <h3>-</h3>
 
-		<div id="map-canvas"/>
-</body>
+        </div>
+        <div id="map-canvas" />
+    </body>
+
 </html>
-

@@ -4,6 +4,7 @@
 </head>
 <body>
 <h1>COS 333: OC Timeline</h1>
+<h6><a href="fancytimeline.html">Click here</a> for a fancier version.</h6>
 <hr/>
 <h3>3/11/2013</h3>
 Met to start design doc and discuss technologies, functionality, design. We decided to focus on a web application, using Django, MySQL, and Javascript.
@@ -16,6 +17,12 @@ Decided to use Heroku (instead of AppEngine or myCpanel) because it supports Dja
 <hr/>
 <h3>3/30/2013</h3>
 HackPrinceton! Learned Django, and figured out how Heroku works. Decided to postgres instead of mysql because that was the default for Heroku (MySQL would require an addon). Set up some test database tables. Made a simple test interface based on mockups in design doc. Looked into Google Maps API: shouldn't be hard to do what we need (basically just set clickable markers). However, we're not exactly sure what the best way of going from building names to latlong coordinates is (looked into geocode). But, given the many Princeton apps that use campus maps, this should be doable. Made a form for adding events (communicate with backend).
+<hr/>
+<h3>3/31/2013</h3>
+Basic form->database->display (as list) connection working. Database tables are defined as classes in models.py. Forms post to a url (need to include in urls.py). Define what that url does in views.py.
+<hr/>
+<h3>4/1/2013</h3>
+Facebook and CAS logins setup. Facebook login uses django-social-auth (github.com/omab/django-social-auth/).
 <hr/>
 </body>
 </html>

@@ -9,10 +9,10 @@ urlpatterns = patterns(
     url(r'^polls/', include('polls.urls', namespace='polls')),
     url(r'^timeline/', include('timeline.urls')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^frontend/', include('frontend.urls')),
     url(r'^accounts/login/$', 'django_cas.views.login'),
     url(r'^accounts/logout/$', 'django_cas.views.logout'),
-    ('', include('frontend.urls')),
+    url('', include('frontend.urls'), namespace='frontend'),
+
 #                       (r'^time/$', current_datetime)
     # Examples
     # url(r'^$', 'hellodjango.views.home', name='home'),
