@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.forms import ModelForm
 
 import datetime
 # Create your models here.
@@ -8,10 +9,16 @@ class NewEvent(models.Model):
     date = models.DateField()
     time = models.TimeField()
     location = models.CharField(max_length=200)
-    lat = models.DecimalField(max_digits=15, decimal_places=10, null=True)
-    lon = models.DecimalField(max_digits=15, decimal_places=10, null=True)
+    lat = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
+    lon = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
+    tags = models.CharField(max_length=200)
     def __unicode__(self):
         return self.name
+
+# makes a Form class from the NewEvent model
+class NewEventForm(ModelForm):
+    class Meta:
+        model = NewEvent
 
 class Building(models.Model):
     name = models.CharField(max_length=200)
