@@ -109,10 +109,14 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django_cas.middleware.CASMiddleware',
+    'django.middleware.doc.XViewMiddleware'
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+CAS_SERVER_URL = 'https://fed.princeton.edu/cas/'
+CAS_REDIRECT_URL = '/frontend'
 ROOT_URLCONF = 'oc.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
@@ -174,4 +178,5 @@ AUTHENTICATION_BACKENDS = (
     'social_auth.backends.twitter.TwitterBackend',
     'social_auth.backends.facebook.FacebookBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'django_cas.backends.CASBackend'
 )

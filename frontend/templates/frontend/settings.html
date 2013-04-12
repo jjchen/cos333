@@ -1,0 +1,31 @@
+<form action="/settings/" method="post">{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="fieldWrapper">
+        {{ form.first_name.errors }}
+        <label for="id_first_name">First name:</label>
+        {{ form.first_name }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.last_name.errors }}
+        <label for="id_last_name">Last name:</label>
+        {{ form.last_name }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.latitude.errors }}
+        <label for="id_latitude">Default latitude:</label>
+        {{ form.latitude }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.longitude.errors }}
+        <label for="id_longitude">Default longitude:</label>
+        {{ form.longitude }}
+    </div>
+    <p><input type="submit" value="Save" /></p>
+</form>
+<a href="{%url 'frontend:addgroup' %}">Add group</a>
+<p><b>Your existing groups:</b></p>
+{% for g in group_info %}
+<p> {{ g.1 }} <a href="{% url 'frontend:rmgroup' g.0 %}">Remove</a></p>
+{% endfor %}
+
+<a href="{%url 'frontend:index' %}">Back</a>

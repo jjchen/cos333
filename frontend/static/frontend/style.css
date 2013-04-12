@@ -91,8 +91,11 @@ div#list_button{
 	left: 265px;
 }
 
-div#minus_button{
+div#settings_button{
 	left: 350px;
+}
+div#minus_button{
+	left: 500px;
 }
 
 .button {
@@ -147,6 +150,8 @@ div#make_content{
 div#calendar_content{
 
 }
+
+
 
 div#time_slider {
 	position: absolute;
