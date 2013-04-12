@@ -162,8 +162,8 @@ function makeList(){
             }
             html += '<tr class="'+ row_class
                 + '"><td class="list_time" rowspan="2"> {{event.time}} </td>' 
-                + '<td> <b> {{event.name}} </b></td>'  
-                + '<tr class="'+row_class+'"><td> {{event.location}}</td></tr>';
+                + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT> </td>'  
+                + '<tr class="'+row_class+'"><td> <small>{{event.tags}}</small></td></tr>'
         {% endfor %}
     html += "</table>"
     {% else %}
@@ -207,14 +207,17 @@ function makeList(){
                   <h3> Make Event </h3>
 
                 <form action="{% url 'frontend:add' %}" method="post">{% csrf_token %}
-                    <label>Name:</label>
-                    <input type="text" id="event_name" name="event_name" required>
+                  {{forms.errors}}
+                    <label>Name:</label> 
+                    <input type="text" id="name" name="name" required> <br />
                     <label>Date:</label>
-                    <input type="date" id="date" name="date">
+                    <input type="date" id="date" name="date"> <br />
                     <label>Time:</label>
-                    <input type="time" id="start_time" name="start_time">
+                    <input type="time" id="time" name="time"> <br />
                     <label>Location:</label>
-                    <input type="text" id="location" name="location">
+                    <input type="text" id="location" name="location"> <br />
+                    <label>Tags:</label>
+                    <input type="text" id="tags" name="tags"> <br />
                     <input type="submit" value="Submit">
                 </form>
             </div>
