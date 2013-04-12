@@ -143,6 +143,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
     'social_auth'
+    'south'
 )
 
 # A sample logging configuration. The only tangible logging
