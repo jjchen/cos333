@@ -184,19 +184,14 @@ def add(request):
 		longitude = building.lon
 	
 	# add to database
-<<<<<<< HEAD
 	# new_event.date = datetime.date.today()
 	#new_event.start_time = datetime.time(5,0,0,0)
 	new_event.lat = latitude
 	new_event.lon = longitude
-=======
-	new_event = NewEvent(name=new_name, date=date, time=time, 
-			     location=new_location, lat=latitude, lon=longitude)
 	# new_event.date = datetime.date.today()
 	#new_event.start_time = datetime.time(5,0,0,0)
 	#new_event.lat = latitude
 	#new_event.lon = longitude
->>>>>>> 1fc799a1b06d0bc899da50fa291e440ada259e29
 	#new_event = NewEvent(name=new_name, date=datetime.date.today(), time=datetime.time(5,0,0,0), location=new_location, lat=latitude, lon=longitude)
 	new_event.save()
 	f.save_m2m()
