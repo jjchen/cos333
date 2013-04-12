@@ -1,12 +1,78 @@
 <html>
     <head>
         <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
+
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+
         <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
-            
         </script>
+        <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+        <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
         <script type="text/javascript" src="{% static "frontend/oms.min.js" %}">
         </script>
+
+<script>
+        <!-- autocomplete widget using jQuery -->
+        $(function() {
+          var availableTags = [
+            "cos",
+            "333",
+            "oc",
+            "music",
+            "sports",
+            "tv",
+            "free",
+            "money",
+            "food",
+            "arts",
+            "dance",
+            "acapella",
+            "meeting",
+            "group"
+        ];
+        function split( val ) {
+          return val.split( /,\s*/ );
+        }
+        function extractLast( term ) {
+          return split( term ).pop();
+        }
+ 
+        $( "#tags" )
+          // don't navigate away from the field on tab when selecting an item
+          .bind( "keydown", function( event ) {
+            if ( event.keyCode === $.ui.keyCode.TAB &&
+                $( this ).data( "ui-autocomplete" ).menu.active ) {
+              event.preventDefault();
+            }
+          })
+          .autocomplete({
+            minLength: 0,
+            source: function( request, response ) {
+              // delegate back to autocomplete, but extract the last term
+              response( $.ui.autocomplete.filter(
+                availableTags, extractLast( request.term ) ) );
+            },
+            focus: function() {
+              // prevent value inserted on focus
+              return false;
+            },
+            select: function( event, ui ) {
+              var terms = split( this.value );
+              // remove the current input
+              terms.pop();
+              // add the selected item
+              terms.push( ui.item.value );
+              // add placeholder to get the comma-and-space at the end
+              terms.push( "" );
+              this.value = terms.join( ", " );
+              return false;
+            }
+          });
+      });
+      </script>
+
+
         <script type="text/javascript">
 var map;
 var idled = false;
@@ -179,15 +245,19 @@ function makeList(){
             <div id="make_content" class="hidden">
                   <h3> Make Event </h3>
 
-                <form action="{% url 'frontend:add' %}" method="post">{% csrf_token %}
-                    <label>Name:</label>
-                    <input type="text" id="event_name" name="event_name" required>
-                    <label>Date:</label>
-                    <input type="date" id="date" name="date">
-                    <label>Time:</label>
-                    <input type="time" id="start_time" name="start_time">
-                    <label>Location:</label>
-                    <input type="text" id="location" name="location">
+                <form action="/add/" method="post">{% csrf_token %}
+                    <label for = "id_name">Name:</label> 
+                    <input type="text" id="id_name" name="name" required>
+                    <label for = "id_date">Date:</label>
+                    <input type="date" id="id_date" name="date">
+                    <label for = "id_time">Time:</label>
+                    <input type="time" id="id_time" name="time">
+                    <label for = "id_location">Location:</label>
+                    <input type="text" id="id_location" name="location">
+                  <!--<div class="ui-widget">-->
+                    <label for="tags">Tags:</label>
+                    <input type="text" id="tags" name="tags" size="50" />
+                  <!--</div>-->
                     <input type="submit" value="Submit">
                 </form>
             </div>
