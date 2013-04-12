@@ -9,6 +9,7 @@ class NewEvent(models.Model):
     location = models.CharField(max_length=200)
     lat = models.DecimalField(max_digits=15, decimal_places=10, null=True)
     lon = models.DecimalField(max_digits=15, decimal_places=10, null=True)
+    tags = models.CharField(max_length=200, null=True)
     def __unicode__(self):
         return self.name
 
