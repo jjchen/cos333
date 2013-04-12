@@ -24,13 +24,12 @@ class Command(BaseCommand):
 				latitude = building['latitude']
 				longitude = building['longitude']
 
-				if (!)
-					newBuilding = Building(name=building['name'], lat=latitude, lon=longitude)
-					newBuilding.save()
+				newBuilding = Building(name=building['name'], lat=latitude, lon=longitude)
+				newBuilding.save()
 
-					newBuildingAlias = BuildingAlias(alias = building['name'], building = newBuilding)
+				newBuildingAlias = BuildingAlias(alias = building['name'], building = newBuilding)
+				newBuildingAlias.save()
+
+				for alias in building['aliases']:
+					newBuildingAlias = BuildingAlias(alias=alias, building=newBuilding)
 					newBuildingAlias.save()
-
-					for alias in building['aliases']:
-						newBuildingAlias = BuildingAlias(alias=alias, building=newBuilding)
-						newBuildingAlias.save()

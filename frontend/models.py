@@ -11,7 +11,8 @@ class NewEvent(models.Model):
     location = models.CharField(max_length=200)
     lat = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
     lon = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
-    tags = models.CharField(max_length=200, blank = True, null=True)
+    tags = models.CharField(max_length=200, blank = True, null=True, default="all")
+
     def __unicode__(self):
         return self.name
 
@@ -45,6 +46,8 @@ class MyGroup(models.Model):
 
     
 class Event(models.Model):
+    testField = models.CharField(max_length=40, default="ihavenoideawhatiamdoing")
+    testField2 = models.CharField(max_length=40, default="ihavenoideawhatamdoing")
     name = models.CharField(max_length=NAME_MAXLEN)
     creator = models.ForeignKey(MyUser)
     startTime = models.DateTimeField()

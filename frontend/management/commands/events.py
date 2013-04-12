@@ -21,15 +21,16 @@ class Command(BaseCommand):
 				try:
 					NewEvent.objects.get(name = event['title'])
 				except NewEvent.DoesNotExist:
+					print event
 					name = event['title']
 					building = event['locationName']
 					latitude = event['latitude']
 					longitude = event['longitude']
 					startDate = event['startDate']
 					startTime = event['startTime']
-					endDate = event['endDate']
-					endTime = event['endTime']
-					description = event['description']
+					#endDate = event['endDate']
+					#endTime = event['endTime']
+					#description = event['description']
 					#audience = event['audience']
 					#tags = event['categories']['categoryName']
 
@@ -42,7 +43,7 @@ class Command(BaseCommand):
 					time = datetime.datetime.strptime(parts[0], "%H:%M:%S").time()
 
 					# make into tags
-					categories = event['categories']
+					#categories = event['categories']
 
-					new_event = NewEvent(name=name, date=date, time=time, location=building, lat=latitude, lon=longitude, tags="hi")
+					new_event = NewEvent(name=name, date=date, time=time, location=building, lat=latitude, lon=longitude, tags="")
 					new_event.save()
