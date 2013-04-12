@@ -1,5 +1,4 @@
 <html>
-    
     <head>
         <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
         <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
@@ -200,6 +199,11 @@ function makeList(){
                 <li><a rel="nofollow" href="{% url 'django_cas.views.login' %}">CAS</a>
                 </li>
             </div>
+            <div id="settings_content" class="hidden">
+                  <h3>Settings</h3>
+                   <li><a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a>
+                </li>
+            </div>
         </div>
         <div id="make_button" class="button" onclick="showContent('make_content');">
               <h3>Make</h3>
@@ -211,6 +215,10 @@ function makeList(){
         </div>
         <div id="list_button" class="button" onclick="showContent('list_content');">
               <h3>List</h3>
+        </div>
+        <div id="settings_button" class="button" 
+        	onclick="window.location.href='/frontend/settings'">
+              <h3>Settings</h3>
 
         </div>
         <div id="minus_button" class="button" onclick="showContent('none');">

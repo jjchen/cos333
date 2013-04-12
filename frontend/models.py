@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils import timezone
-
 import datetime
 # Create your models here.
 class NewEvent(models.Model):
@@ -24,18 +23,22 @@ class BuildingAlias(models.Model):
 
 # Create your models here.
 NAME_MAXLEN=50
-class User(models.Model):
-    name = models.CharField(max_length=NAME_MAXLEN)
-    netid = models.CharField(max_length=20)
-    friends = models.ForeignKey('self') #recursive relation
+class MyUser(models.Model):
+    first_name = models.CharField(max_length=NAME_MAXLEN)
+    last_name = models.CharField(max_length=NAME_MAXLEN)
+    user_id = models.CharField(max_length=20)
+	# friends = models.ForeignKey('self', null=True) #recursive relation
 
-class Group(models.Model):
-    users = models.ManyToManyField(User)
-    name = models.CharField(max_length=NAME_MAXLEN)
+class MyGroup(models.Model):
+	users = models.ManyToManyField(MyUser, related_name="users")
+	#creator = models.ForeignKey(MyUser, related_name="creator")
+	creator = models.CharField(max_length=NAME_MAXLEN)
+	name = models.CharField(max_length=NAME_MAXLEN)
+
     
 class Event(models.Model):
     name = models.CharField(max_length=NAME_MAXLEN)
-    creator = models.ForeignKey(User)
+    creator = models.ForeignKey(MyUser)
     startTime = models.DateTimeField()
     endTime = models.DateTimeField()
     locName = models.CharField(max_length=NAME_MAXLEN)
