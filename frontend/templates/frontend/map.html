@@ -13,10 +13,11 @@ var idled = false;
 var oms;
 var image = '{% static "frontend/paw_print.png" %}';
 var flower = '{% static "frontend/small_flower.png" %}';
+var geocoder;
 
 function initialize() {
    var center = new google.maps.LatLng(40.344725, -74.655629);
-
+   geocoder = new google.maps.Geocoder();
    var mapOptions = {
       center: center,
       zoom: 17,
@@ -96,10 +97,36 @@ function showEventsOnMap() {
    marker.desc = contentString;
 
    oms.addMarker(marker); 
+   {% else %}
+   codeAddress("{{event.location}}");
    {% endif %} 
    {% endfor %}
 }
 
+  function codeAddress(buildingName) {
+    geocoder.geocode( { 'address': buildingName }, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      // map.setCenter(results[0].geometry.location);
+      var marker = new google.maps.Marker({
+          map: map,
+          position: results[0].geometry.location
+      });
+      var contentString = '<div class="infoWindow_content">' +
+      '<h3 class="infoWindow_heading">{{event.name}}</h3>' +
+      '<div id="infoWindow_body">' +
+      '<p>Time: {{event.time}} {{event.date}}</p>' +
+      '<p>Location: {{event.location}}</p>' +
+      '</div>' +
+      '</div>';
+
+      marker.desc = contentString;
+
+      oms.addMarker(marker);
+    } else {
+    //  alert("Geocode was not successful for the following reason: " + status);
+    }
+  }); 
+ }
 
 function showContent(id) {
    //alert(id);
