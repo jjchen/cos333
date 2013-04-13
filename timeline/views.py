@@ -64,10 +64,10 @@ if __name__ == '__main__':
   main()
 
 def index(request):
-    client = CASClient(request)
-    login_url = client.Authenticate()
+#    client = CASClient(request)
+#    login_url = client.Authenticate()
 #    return render_to_response(login_url)
-    print login_url
+#    print login_url
 #    login_url="oc_app"
-    return HttpResponseRedirect(login_url)
+#    return HttpResponseRedirect(login_url)
     return render_to_response('timeline/fancytimeline.html')
