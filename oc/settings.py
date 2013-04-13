@@ -5,6 +5,7 @@ TEMPLATE_DEBUG = DEBUG
 
 FACEBOOK_APP_ID = '431733443585073'
 FACEBOOK_API_SECRET = 'bee41bd237e61feb159d64f99e7db996'
+FACEBOOK_EXTENDED_PERMISSIONS = ['create_event', 'rsvp_event']
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
@@ -30,7 +31,6 @@ DATABASES = {
         'PORT': '5432',                    
     }
 }
-
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -176,8 +176,8 @@ LOGGING = {
 }
 
 AUTHENTICATION_BACKENDS = (
-    'social_auth.backends.twitter.TwitterBackend',
     'social_auth.backends.facebook.FacebookBackend',
+    'social_auth.backends.twitter.TwitterBackend',
     'django.contrib.auth.backends.ModelBackend',
     'django_cas.backends.CASBackend'
 )

@@ -6,6 +6,8 @@ TEMPLATE_DEBUG = DEBUG
 FACEBOOK_APP_ID = '431733443585073'
 FACEBOOK_API_SECRET = 'bee41bd237e61feb159d64f99e7db996'
 
+
+
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_ERROR_URL = '/login/'
@@ -142,7 +144,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
-    'social_auth'
+    'social_auth',
     'south'
 )
 
@@ -176,8 +178,8 @@ LOGGING = {
 }
 
 AUTHENTICATION_BACKENDS = (
-    'social_auth.backends.twitter.TwitterBackend',
     'social_auth.backends.facebook.FacebookBackend',
+    'social_auth.backends.twitter.TwitterBackend',
     'django.contrib.auth.backends.ModelBackend',
     'django_cas.backends.CASBackend'
 )
