@@ -49,7 +49,7 @@ class MyGroup(models.Model):
     
 class Event(models.Model):
    # testField = models.CharField(max_length=40, default="ihavenoideawhatiamdoing")
-    testField2 = models.CharField(max_length=40, default="ihavenoideawhatamdoing")
+#    testField2 = models.CharField(max_length=40, default="ihavenoideawhatamdoing")
     name = models.CharField(max_length=NAME_MAXLEN)
     creator = models.ForeignKey(MyUser)
     startTime = models.DateTimeField()
