@@ -68,7 +68,6 @@ class Migration(SchemaMigration):
         # Adding model 'Event'
         db.create_table(u'frontend_event', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('testField2', self.gf('django.db.models.fields.CharField')(default='ihavenoideawhatamdoing', max_length=40)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
             ('creator', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['frontend.MyUser'])),
             ('startTime', self.gf('django.db.models.fields.DateTimeField')()),
@@ -126,8 +125,7 @@ class Migration(SchemaMigration):
             'locLong': ('django.db.models.fields.FloatField', [], {}),
             'locName': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'startTime': ('django.db.models.fields.DateTimeField', [], {}),
-            'testField2': ('django.db.models.fields.CharField', [], {'default': "'ihavenoideawhatamdoing'", 'max_length': '40'})
+            'startTime': ('django.db.models.fields.DateTimeField', [], {})
         },
         u'frontend.mygroup': {
             'Meta': {'object_name': 'MyGroup'},
