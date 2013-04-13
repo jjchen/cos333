@@ -1,0 +1,9 @@
+<p><b>Your existing groups:</b></p>
+{% for g in group_info %}
+<p> {{ g.1 }} <a href="{% url 'frontend:rmgroup' g.0 %}">Remove</a></p>
+{% endfor %}
+
+<form action="/addgroup/" method="post">{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Submit" />
+</form>

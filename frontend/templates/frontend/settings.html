@@ -22,10 +22,3 @@
     </div>
     <p><input type="submit" value="Save" /></p>
 </form>
-<a href="{%url 'frontend:addgroup' %}">Add group</a>
-<p><b>Your existing groups:</b></p>
-{% for g in group_info %}
-<p> {{ g.1 }} <a href="{% url 'frontend:rmgroup' g.0 %}">Remove</a></p>
-{% endfor %}
-
-<a href="{%url 'frontend:index' %}">Back</a>

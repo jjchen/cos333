@@ -96,6 +96,9 @@ class AddgroupForm(forms.Form):
 	group_name = forms.CharField(validators=[check_group_name])
 	member_names = MultiNameField()
 
+class SearchForm(forms.Form):
+	search_query = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Search'}))
+
 def addgroup(request):
 	#print request.user.username
 	#print MyUser.objects.get(user_id="foo")
@@ -136,22 +139,54 @@ def rmgroup(request, group):
 	group_obj.delete()
 	return HttpResponseRedirect('/frontend/settings')
 
+def logout(request):
+	return HttpResponseRedirect(reverse('frontend:index'))
+
+def personal(request):
+	print "Request is " + request.user.username
+	if request.user.username == "":
+		return HttpResponse('Unauthorized access', status=401)
+	if request.method == 'POST':
+		form = AddgroupForm(request.POST) # A form bound to the POST data
+		if form.is_valid():
+			this_user = MyUser.objects.get(user_id = request.user.username)
+			new_group = MyGroup()
+			new_group.creator = this_user.user_id
+			new_group.name = form.cleaned_data['group_name']
+			new_group.save()
+			print form.cleaned_data
+			for name in form.cleaned_data['member_names']:
+				print name
+				user = MyUser.objects.get(user_id = name)
+				new_group.users.add(user)
+			new_group.save()
+			print form.cleaned_data
+			return HttpResponseRedirect('/frontend/personal')
+	else:
+		form = AddgroupForm() # An unbound form
+	return render(request, 'frontend/personal.html', {
+        'form': form,
+    })	
+	return HttpResponseRedirect('/signup')
+
 # Create your views here.
 def index(request):
-	print "fwef"
 	if request.method =='POST':
-		query = request.POST['search_query']
-		events_list = NewEvent.objects.filter(
-			Q(name__icontains=query) | 
-			Q(location__icontains=query)).order_by("date", "time")
-		show_list = True
+		form = SearchForm(request.POST)
+		if form.is_valid():
+			query = form.cleaned_data['search_query']
+			events_list = NewEvent.objects.filter(
+				Q(name__icontains=query) | 
+				Q(location__icontains=query)).order_by("date", "time")
+			show_list = True
 	else:
+		form = SearchForm()
 		events_list = NewEvent.objects.all().order_by("date", "time")
 		show_list = False
 	context = {'events_list': events_list, 'user': request.user, 
-		   'show_list': show_list}
+		   'show_list': show_list, 'form': form, }
 	username = request.user.username
-	print "a"+username+"b"
+
 	if username != "" and\
 	 len(MyUser.objects.filter(user_id = username)) == 0:
 		return HttpResponseRedirect('/signup')

@@ -7,6 +7,8 @@ urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
     url(r'^add/$', views.add, name='add'),
     url(r'^addgroup/', views.addgroup, name='addgroup'),
+    url(r'^personal/$', views.personal, name='personal'),
+    url(r'^logout/$', views.logout, name='logout'),
     url(r'^(?P<group>\w+)/$', views.rmgroup, name='rmgroup'),
-    url(r'^search/$', views.search, name='search')
+    url(r'^search/$', views.search, name='search'),
 )
