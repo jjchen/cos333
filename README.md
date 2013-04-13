@@ -2,21 +2,19 @@ COS 333
 
 Gabriel Ambruso, Junjun Chen, Sebastian Gold, Michael Zhang, Alexander Zhao
 
-======
-                                        
-     OOOOOOOOO             CCCCCCCCCCCCC
-   OO:::::::::OO        CCC::::::::::::C
- OO:::::::::::::OO    CC:::::::::::::::C
-O:::::::OOO:::::::O  C:::::CCCCCCCC::::C
-O::::::O   O::::::O C:::::C       CCCCCC
-O:::::O     O:::::OC:::::C              
-O:::::O     O:::::OC:::::C              
-O:::::O     O:::::OC:::::C              
-O:::::O     O:::::OC:::::C              
-O:::::O     O:::::OC:::::C              
-O:::::O     O:::::OC:::::C              
-O::::::O   O::::::O C:::::C       CCCCCC
-O:::::::OOO:::::::O  C:::::CCCCCCCC::::C
- OO:::::::::::::OO    CC:::::::::::::::C
-   OO:::::::::OO        CCC::::::::::::C
-     OOOOOOOOO             CCCCCCCCCCCCC
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OOOOOOOOO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CCCCCCCCCCCCC
+&nbsp;&nbsp;&nbsp;OO:::::::::OO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CCC::::::::::::C
+&nbsp;OO:::::::::::::OO&nbsp;&nbsp;&nbsp;&nbsp;CC:::::::::::::::C
+O:::::::OOO:::::::O&nbsp;&nbsp;C:::::CCCCCCCC::::C
+O::::::O&nbsp;&nbsp;&nbsp;O::::::O&nbsp;C:::::C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CCCCCC
+O:::::O&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O:::::OC:::::C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+O:::::O&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O:::::OC:::::C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+O:::::O&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O:::::OC:::::C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+O:::::O&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O:::::OC:::::C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+O:::::O&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O:::::OC:::::C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+O:::::O&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;O:::::OC:::::C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+O::::::O&nbsp;&nbsp;&nbsp;O::::::O&nbsp;C:::::C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CCCCCC
+O:::::::OOO:::::::O&nbsp;&nbsp;C:::::CCCCCCCC::::C
+&nbsp;OO:::::::::::::OO&nbsp;&nbsp;&nbsp;&nbsp;CC:::::::::::::::C
+&nbsp;&nbsp;&nbsp;OO:::::::::OO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CCC::::::::::::C
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OOOOOOOOO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CCCCCCCCCCCCC
