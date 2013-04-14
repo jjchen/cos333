@@ -291,7 +291,7 @@ function makeList(){
                 </form>
             </div>
             <div id="calendar_content" class="hidden">
-                  <h3> Calendar</h3>
+                  <h3>Calendar</h3>
 
                 <li><a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a>
                 </li>
@@ -304,17 +304,39 @@ function makeList(){
         </div>
         <div id="make_button" class="button" onclick="showContent('make_content');">
               <h3>Make</h3>
+	      <div id="fb-root"></div>
+	      <script>
+		window.fbAsyncInit = function() {
+		// init the FB JS SDK
+		FB.init({
+		appId      : '431733443585073',                        // App ID from the app dashboard
+		channelUrl : '//www.cos333-oc.herokuapp.channel.html', // Channel file for x-domain comms
+		status     : true,                                 // Check Facebook Login status
+		xfbml      : true                                  // Look for social plugins on the page
+		});
 
+		// Additional initialization code such as adding Event Listeners goes here
+		};
+
+		// Load the SDK asynchronously
+		(function(d, s, id){
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) {return;}
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/en_US/all.js";
+		fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+	      </script>
         </div>
         <div id="calendar_button" class="button" onclick="showContent('calendar_content');">
-              <h3>Calendar</h3>
+          <h3>Calendar</h3>
 
         </div>
         <div id="list_button" class="button" onclick="showContent('list_content');">
-              <h3>List</h3>
+          <h3>List</h3>
         </div>
         <div id="minus_button" class="button" onclick="showContent('none');">
-              <h3>-</h3>
+          <h3>-</h3>
 
         </div>
         <div id="map-canvas" />

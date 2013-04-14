@@ -17,6 +17,7 @@ class Migration(SchemaMigration):
             ('location', self.gf('django.db.models.fields.CharField')(max_length=200)),
             ('lat', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=15, decimal_places=10, blank=True)),
             ('lon', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=15, decimal_places=10, blank=True)),
+            ('tags', self.gf('django.db.models.fields.CharField')(default='all', max_length=200, null=True, blank=True)),
         ))
         db.send_create_signal(u'frontend', ['NewEvent'])
 
@@ -37,35 +38,38 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'frontend', ['BuildingAlias'])
 
-        # Adding model 'User'
-        db.create_table(u'frontend_user', (
+        # Adding model 'MyUser'
+        db.create_table(u'frontend_myuser', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('netid', self.gf('django.db.models.fields.CharField')(max_length=20)),
-            ('friends', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['frontend.User'])),
+            ('first_name', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('last_name', self.gf('django.db.models.fields.CharField')(max_length=50)),
+            ('user_id', self.gf('django.db.models.fields.CharField')(max_length=20)),
+            ('latitude', self.gf('django.db.models.fields.FloatField')(default=40.344725)),
+            ('longitude', self.gf('django.db.models.fields.FloatField')(default=-74.6556)),
         ))
-        db.send_create_signal(u'frontend', ['User'])
+        db.send_create_signal(u'frontend', ['MyUser'])
 
-        # Adding model 'Group'
-        db.create_table(u'frontend_group', (
+        # Adding model 'MyGroup'
+        db.create_table(u'frontend_mygroup', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('creator', self.gf('django.db.models.fields.CharField')(max_length=50)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
         ))
-        db.send_create_signal(u'frontend', ['Group'])
+        db.send_create_signal(u'frontend', ['MyGroup'])
 
-        # Adding M2M table for field users on 'Group'
-        db.create_table(u'frontend_group_users', (
+        # Adding M2M table for field users on 'MyGroup'
+        db.create_table(u'frontend_mygroup_users', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('group', models.ForeignKey(orm[u'frontend.group'], null=False)),
-            ('user', models.ForeignKey(orm[u'frontend.user'], null=False))
+            ('mygroup', models.ForeignKey(orm[u'frontend.mygroup'], null=False)),
+            ('myuser', models.ForeignKey(orm[u'frontend.myuser'], null=False))
         ))
-        db.create_unique(u'frontend_group_users', ['group_id', 'user_id'])
+        db.create_unique(u'frontend_mygroup_users', ['mygroup_id', 'myuser_id'])
 
         # Adding model 'Event'
         db.create_table(u'frontend_event', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('creator', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['frontend.User'])),
+            ('creator', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['frontend.MyUser'])),
             ('startTime', self.gf('django.db.models.fields.DateTimeField')()),
             ('endTime', self.gf('django.db.models.fields.DateTimeField')()),
             ('locName', self.gf('django.db.models.fields.CharField')(max_length=50)),
@@ -85,14 +89,14 @@ class Migration(SchemaMigration):
         # Deleting model 'BuildingAlias'
         db.delete_table(u'frontend_buildingalias')
 
-        # Deleting model 'User'
-        db.delete_table(u'frontend_user')
+        # Deleting model 'MyUser'
+        db.delete_table(u'frontend_myuser')
 
-        # Deleting model 'Group'
-        db.delete_table(u'frontend_group')
+        # Deleting model 'MyGroup'
+        db.delete_table(u'frontend_mygroup')
 
-        # Removing M2M table for field users on 'Group'
-        db.delete_table('frontend_group_users')
+        # Removing M2M table for field users on 'MyGroup'
+        db.delete_table('frontend_mygroup_users')
 
         # Deleting model 'Event'
         db.delete_table(u'frontend_event')
@@ -114,7 +118,7 @@ class Migration(SchemaMigration):
         },
         u'frontend.event': {
             'Meta': {'object_name': 'Event'},
-            'creator': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['frontend.User']"}),
+            'creator': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['frontend.MyUser']"}),
             'endTime': ('django.db.models.fields.DateTimeField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'locLat': ('django.db.models.fields.FloatField', [], {}),
@@ -123,11 +127,21 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'startTime': ('django.db.models.fields.DateTimeField', [], {})
         },
-        u'frontend.group': {
-            'Meta': {'object_name': 'Group'},
+        u'frontend.mygroup': {
+            'Meta': {'object_name': 'MyGroup'},
+            'creator': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'users': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['frontend.User']", 'symmetrical': 'False'})
+            'users': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'users'", 'symmetrical': 'False', 'to': u"orm['frontend.MyUser']"})
+        },
+        u'frontend.myuser': {
+            'Meta': {'object_name': 'MyUser'},
+            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'latitude': ('django.db.models.fields.FloatField', [], {'default': '40.344725'}),
+            'longitude': ('django.db.models.fields.FloatField', [], {'default': '-74.6556'}),
+            'user_id': ('django.db.models.fields.CharField', [], {'max_length': '20'})
         },
         u'frontend.newevent': {
             'Meta': {'object_name': 'NewEvent'},
@@ -137,14 +151,8 @@ class Migration(SchemaMigration):
             'location': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'lon': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '15', 'decimal_places': '10', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'tags': ('django.db.models.fields.CharField', [], {'default': "'all'", 'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'time': ('django.db.models.fields.TimeField', [], {})
-        },
-        u'frontend.user': {
-            'Meta': {'object_name': 'User'},
-            'friends': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['frontend.User']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'netid': ('django.db.models.fields.CharField', [], {'max_length': '20'})
         }
     }
 

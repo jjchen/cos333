@@ -36,6 +36,8 @@ class MyUser(models.Model):
     first_name = models.CharField(max_length=NAME_MAXLEN)
     last_name = models.CharField(max_length=NAME_MAXLEN)
     user_id = models.CharField(max_length=20)
+    latitude = models.FloatField(default=40.344725)
+    longitude = models.FloatField(default=-74.6556)
 	# friends = models.ForeignKey('self', null=True) #recursive relation
 
 class MyGroup(models.Model):
@@ -43,10 +45,9 @@ class MyGroup(models.Model):
 	#creator = models.ForeignKey(MyUser, related_name="creator")
 	creator = models.CharField(max_length=NAME_MAXLEN)
 	name = models.CharField(max_length=NAME_MAXLEN)
-
+                                 
     
 class Event(models.Model):
-    testField2 = models.CharField(max_length=40, default="ihavenoideawhatiamdoing")
     name = models.CharField(max_length=NAME_MAXLEN)
     creator = models.ForeignKey(MyUser)
     startTime = models.DateTimeField()
