@@ -103,11 +103,15 @@
 
       oms.addListener('spiderfy', function (markers) {
       iw.close();
+
+      for (i=0; i<markers.length; i++) {
+
+
       for (i = 0; i < markers.length; i++) {
 		      markers[i].setIcon(image);
 		      }
 		      });
-
+		      
 		      oms.addListener('unspiderfy', function (markers) {
 		      iw.close();
 		      for (i = 0; i < markers.length; i++) {
@@ -246,23 +250,13 @@
     <script>
       // Additional JS functions here
       window.fbAsyncInit = function() {
-        FB.init({
-          appId      : '125667410957888', // App ID
-          channelUrl : '//http://127.0.0.1:8000//channel.html', // Channel File
-          status     : true, // check login status
-          cookie     : true, // enable cookies to allow the server to access the session
-          xfbml      : true  // parse XFBML
-        });
-        
-        FB.getLoginStatus(function(response) {
-          if (response.status === 'connected') {
-            // connected
-          } else if (response.status === 'not_authorized') {
-            // not_authorized
-          } else {
-            // not_logged_in
-          }
-        });
+      FB.init({
+      appId      : 'YOUR_APP_ID', // App ID
+      channelUrl : '//WWW.YOUR_DOMAIN.COM/channel.html', // Channel File
+      status     : true, // check login status
+      cookie     : true, // enable cookies to allow the server to access the session
+      xfbml      : true  // parse XFBML
+      });
 
       // Additional init code here
       };
