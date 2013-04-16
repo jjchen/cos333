@@ -1,8 +1,9 @@
+import datetime
+
 from django.db import models
 from django.utils import timezone
 from django.forms import ModelForm
 
-import datetime
 # Create your models here.
 class NewEvent(models.Model):
     name = models.CharField(max_length=200)
@@ -15,7 +16,7 @@ class NewEvent(models.Model):
 
     def __unicode__(self):
         return self.name
-
+    
 # makes a Form class from the NewEvent model
 class NewEventForm(ModelForm):
     class Meta:
