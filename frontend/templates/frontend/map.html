@@ -1,114 +1,107 @@
 <html>
-    <head>
-        <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
 
-        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
 
-        <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
-        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
-        </script>
-        <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-        <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
-        <script type="text/javascript" src="{% static "frontend/oms.min.js" %}">
-        </script>
+    <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
+    </script>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+    <script type="text/javascript" src="{% static "frontend/oms.min.js" %}">
+    </script>
 
-<script>
-        <!-- autocomplete widget using jQuery -->
-        $(function() {
-          var availableTags = [
-            "cos",
-            "333",
-            "oc",
-            "music",
-            "sports",
-            "tv",
-            "free",
-            "money",
-            "food",
-            "arts",
-            "dance",
-            "acapella",
-            "meeting",
-            "group"
-        ];
-        function split( val ) {
-          return val.split( /,\s*/ );
-        }
-        function extractLast( term ) {
-          return split( term ).pop();
-        }
- 
-        $( "#tags" )
-          // don't navigate away from the field on tab when selecting an item
-          .bind( "keydown", function( event ) {
-            if ( event.keyCode === $.ui.keyCode.TAB &&
-                $( this ).data( "ui-autocomplete" ).menu.active ) {
-              event.preventDefault();
-            }
-          })
-          .autocomplete({
-            minLength: 0,
-            source: function( request, response ) {
-              // delegate back to autocomplete, but extract the last term
-              response( $.ui.autocomplete.filter(
-                availableTags, extractLast( request.term ) ) );
-            },
-            focus: function() {
-              // prevent value inserted on focus
-              return false;
-            },
-            select: function( event, ui ) {
-              var terms = split( this.value );
-              // remove the current input
-              terms.pop();
-              // add the selected item
-              terms.push( ui.item.value );
-              // add placeholder to get the comma-and-space at the end
-              terms.push( "" );
-              this.value = terms.join( ", " );
-              return false;
-            }
-          });
+    <script>
+      <!-- autocomplete widget using jQuery -->
+      $(function() {
+      var availableTags = [
+      "cos",
+      "333",
+      "oc",
+      "music",
+      "sports",
+      "tv",
+      "free",
+      "money",
+      "food",
+      "arts",
+      "dance",
+      "acapella",
+      "meeting",
+      "group"
+      ];
+      function split( val ) {
+      return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+      return split( term ).pop();
+      }
+      
+      $( "#tags" )
+      // don't navigate away from the field on tab when selecting an item
+      .bind( "keydown", function( event ) {
+      if ( event.keyCode === $.ui.keyCode.TAB &&
+      $( this ).data( "ui-autocomplete" ).menu.active ) {
+      event.preventDefault();
+      }
+      })
+      .autocomplete({
+      minLength: 0,
+      source: function( request, response ) {
+      // delegate back to autocomplete, but extract the last term
+      response( $.ui.autocomplete.filter(
+      availableTags, extractLast( request.term ) ) );
+      },
+      focus: function() {
+      // prevent value inserted on focus
+      return false;
+      },
+      select: function( event, ui ) {
+      var terms = split( this.value );
+      // remove the current input
+      terms.pop();
+      // add the selected item
+      terms.push( ui.item.value );
+      // add placeholder to get the comma-and-space at the end
+      terms.push( "" );
+      this.value = terms.join( ", " );
+      return false;
+      }
       });
-      </script>
+      });
+    </script>
 
 
-        <script type="text/javascript">
-var map;
-var idled = false;
-var oms;
-var image = '{% static "frontend/paw_print.png" %}';
-var flower = '{% static "frontend/small_flower.png" %}';
-var geocoder;
+    <script type="text/javascript">
+      var map;
+      var idled = false;
+      var oms;
+      var image = '{% static "frontend/paw_print.png" %}';
+      var flower = '{% static "frontend/small_flower.png" %}';
+      var geocoder;
 
-function initialize() {
-   var center = new google.maps.LatLng(40.344725, -74.655629);
-   geocoder = new google.maps.Geocoder();
-   var mapOptions = {
+      function initialize() {
+      var center = new google.maps.LatLng(40.344725, -74.655629);
+      geocoder = new google.maps.Geocoder();
+      var mapOptions = {
       center: center,
       zoom: 17,
       mapTypeId: google.maps.MapTypeId.ROADMAP
-   };
-   map = new google.maps.Map(document.getElementById("map-canvas"),
+      };
+      map = new google.maps.Map(document.getElementById("map-canvas"),
       mapOptions);
-   oms = new OverlappingMarkerSpiderfier(map, {
+      oms = new OverlappingMarkerSpiderfier(map, {
       keepSpiderfied: true
-   });
+      });
 
-   var iw = new google.maps.InfoWindow();
-   oms.addListener('click', function (marker) {
+      var iw = new google.maps.InfoWindow();
+      oms.addListener('click', function (marker) {
       iw.setContent(marker.desc);
       iw.open(map, marker);
-   });
+      });
 
-   oms.addListener('spiderfy', function (markers) {
-      iw.close();
-      for (i = 0; i < markers.length; i++) {
-         markers[i].setIcon(image);
-      }
-   });
-
-   oms.addListener('unspiderfy', function (markers) {
+      oms.addListener('spiderfy', function (markers) {
       iw.close();
       for (i = 0; i < markers.length; i++) {
          markers[i].setIcon(flower);
@@ -341,5 +334,6 @@ function makeList(){
         </div>
         <div id="map-canvas" />
     </body>
+
 
 </html>

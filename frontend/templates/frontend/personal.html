@@ -1,9 +1,24 @@
+
+<p> your events </p>
+<p> edit </p>
+
+<p> rsvped events </p>
+<p> upcoming events </p>
+
+<p> recommended events (friends/groups) </p>
+
+<p> likes </p>
+
+<p> friends </p>
+<p> add friend </p>
+
 <p><b>Your existing groups:</b></p>
 {% for g in group_info %}
 <p> {{ g.1 }} <a href="{% url 'frontend:rmgroup' g.0 %}">Remove</a></p>
 {% endfor %}
 
 <form action="/addgroup/" method="post">{% csrf_token %}
+<p> add group </p>
 {{ form.as_p }}
 <input type="submit" value="Submit" />
 </form>

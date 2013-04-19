@@ -3,9 +3,14 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-FACEBOOK_APP_ID = '431733443585073'
-FACEBOOK_API_SECRET = 'bee41bd237e61feb159d64f99e7db996'
-FACEBOOK_EXTENDED_PERMISSIONS = ['create_event', 'rsvp_event']
+#FACEBOOK_APP_ID = '431733443585073'
+#FACEBOOK_API_SECRET = 'bee41bd237e61feb159d64f99e7db996'
+
+FACEBOOK_APP_ID =  '125667410957888'
+FACEBOOK_API_SECRET = 'db68bafe52ea7a11b7081e539f2a4191'
+
+FACEBOOK_EXTENDED_PERMISSIONS = ['user_groups', 'user_events', 'friends_events',
+                                 'create_event', 'rsvp_event', 'read_friendlists']
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
@@ -135,13 +140,13 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'polls',
-    'timeline',
-    'frontend',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
+    'polls',
+    'timeline',
+    'frontend',
     'social_auth',
     'south'
 )
@@ -177,7 +182,6 @@ LOGGING = {
 
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.facebook.FacebookBackend',
-    'social_auth.backends.twitter.TwitterBackend',
-    'django.contrib.auth.backends.ModelBackend',
-    'django_cas.backends.CASBackend'
+    'django_cas.backends.CASBackend',
+    'django.contrib.auth.backends.ModelBackend'
 )

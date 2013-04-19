@@ -6,6 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns(
     '',
+    url('', include('social_auth.urls')),
     url(r'^polls/', include('polls.urls', namespace='polls')),
     url(r'^timeline/', include('timeline.urls')),
     url(r'^admin/', include(admin.site.urls)),
@@ -13,10 +14,10 @@ urlpatterns = patterns(
     url(r'^accounts/logout/$', 'django_cas.views.logout'),
     url(r'^frontend/', include('frontend.urls')),
     url('', include('frontend.urls', namespace='frontend')),
-    url('', include('social_auth.urls'))
+)
 
-#                       (r'^time/$', current_datetime)
     # Examples
+    # (r'^time/$', current_datetime)
     # url(r'^$', 'hellodjango.views.home', name='home'),
     # url(r'^hellodjango/', include('hellodjango.foo.urls')),
 
@@ -25,4 +26,3 @@ urlpatterns = patterns(
 
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
-)
