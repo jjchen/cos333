@@ -16,11 +16,6 @@ class NewEvent(models.Model):
 
     def __unicode__(self):
         return self.name
-    
-# makes a Form class from the NewEvent model
-class NewEventForm(ModelForm):
-    class Meta:
-        model = NewEvent
 
 class Building(models.Model):
     name = models.CharField(max_length=200)

@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from frontend.models import NewEvent
-from frontend.models import NewEventForm
+#from frontend.models import NewEventForm
 from frontend.models import BuildingAlias
 from frontend.models import MyUser
 from frontend.models import MyGroup
@@ -12,6 +12,7 @@ import datetime
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
+from django.forms import ModelForm
 
 MAX_LEN = 50
 class SignupForm(forms.Form):
@@ -23,6 +24,11 @@ class SettingsForm(forms.Form):
 	last_name = forms.CharField()
 	latitude = forms.DecimalField()
 	longitude = forms.DecimalField()
+
+# makes a Form class from the NewEvent model
+class NewEventForm(ModelForm):
+	class Meta:
+		model = NewEvent
 
 def settings(request):
 	if request.user.username == "":
@@ -138,7 +144,7 @@ def rmgroup(request, group):
 
 # Create your views here.
 def index(request):
-	print "fwef"
+	# print "fwef" what is this?
 	if request.method =='POST':
 		query = request.POST['search_query']
 		events_list = NewEvent.objects.filter(
@@ -159,46 +165,34 @@ def index(request):
 		return render(request, 'frontend/map.html', context)
 
 def add(request):
-	# django'd the forms
-	f = NewEventForm(request.POST)
-	# prints errors for now - form will currently not validate if you send it as empty
-	# will soon print error messages
-	# print f.errors
-	if f.is_valid():
-		new_event = f.save(commit=False)
+	if request.method == 'POST':
+		form = NewEventForm(request.POST) # A form bound to the POST data
+		if form.is_valid():
+			data = form.cleaned_data
+			buildingAlias = BuildingAlias.objects.filter(alias=data['location'])
+			latitude = None
+			longitude = None
+			if (buildingAlias):
+				building = buildingAlias[0].building
+				latitude = building.lat
+				longitude = building.lon
+			event = NewEvent(name = data['name'],
+								date = data['date'],
+								time = data['time'],
+								location = data['location'],
+								lat = latitude,
+								lon = longitude,
+								tags = data['tags'])
+			event.save()
+			if request.is_ajax():
+				return render(request, 'frontend/success.html')
+			else:
+				return redirect('success')
+			# msg = "success!"
+			# return HttpResponseRedirect('/') # Redirect after POST
 	else:
-		return HttpResponseRedirect(reverse('frontend:index'))
-
-	#new_name = request.POST['event_name']
-	#new_date = request.POST['date']
-	#new_time = request.POST['start_time']
-	#new_location = request.POST['location']
-
-	# search for lat lon of location
-	latitude = None
-	longitude = None
-	buildingAlias = BuildingAlias.objects.filter(alias=new_event.location)
-	if (buildingAlias):
-		building = buildingAlias[0].building
-		latitude = building.lat
-		longitude = building.lon
-	
-	# add to database
-	# new_event.date = datetime.date.today()
-	#new_event.start_time = datetime.time(5,0,0,0)
-	new_event.lat = latitude
-	new_event.lon = longitude
-	# new_event.date = datetime.date.today()
-	#new_event.start_time = datetime.time(5,0,0,0)
-	#new_event.lat = latitude
-	#new_event.lon = longitude
-	#new_event = NewEvent(name=new_name, date=datetime.date.today(), time=datetime.time(5,0,0,0), location=new_location, lat=latitude, lon=longitude)
-	new_event.save()
-	f.save_m2m()
-
-	# return to index
-	return HttpResponseRedirect(reverse('frontend:index'))
-	#return HttpResponse("HI")
+		form = NewEventForm() # An unbound form
+	return render(request, 'frontend/map.html', {'form': form})
 
 def search(request):
 	query = request.POST['search_query']

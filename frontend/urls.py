@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from django.views.generic import TemplateView
 from frontend import views
 
 urlpatterns = patterns('',
@@ -8,8 +9,9 @@ urlpatterns = patterns('',
     url(r'^settings/', views.settings, name='settings'),
     url(r'', include('social_auth.urls')),
 
-    url(r'^add/$', views.add, name='add'),
+    url(r'^add/', views.add, name='add'),
     url(r'^addgroup/', views.addgroup, name='addgroup'),
     url(r'^(?P<group>\w+)/$', views.rmgroup, name='rmgroup'),
-    url(r'^search/$', views.search, name='search')
+    url(r'^search/$', views.search, name='search'),
+    url(r'^success/$', TemplateView.as_view(template_name="frontend/success.html"), name="event_success")
 )
