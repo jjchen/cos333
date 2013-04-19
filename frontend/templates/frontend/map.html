@@ -1,3 +1,5 @@
+{% load dajaxice_templatetags %}
+
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
@@ -36,6 +38,9 @@
       }
       function extractLast( term ) {
       return split( term ).pop();
+      }
+      function list_refresh(data){
+      	 alert(data.message);
       }
       
       $( "#tags" )
@@ -238,6 +243,7 @@
 								      parent.innerHTML = html;
 								      }
 								      </script>
+	{% dajaxice_js_import %}
   </head>
   
   <body>
@@ -315,7 +321,7 @@
       <h3>Calendar</h3>
 
     </div>
-    <div id="list_button" class="button" onclick="showContent('list_content');">
+    <div id="list_button" class="button" onclick="showContent('list_content'); Dajaxice.frontend.sayhello(list_refresh);">
       <h3>List</h3>
     </div>
     <div id="settings_button" class="button" 
