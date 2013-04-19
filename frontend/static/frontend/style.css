@@ -42,6 +42,17 @@ header h1 {
 	text-shadow: 0px 0px 5px rgba(0,0,0,.9);
 }
 
+<<<<<<< HEAD
+=======
+h2 {
+	font-weight: normal;
+	color: #006633;
+	padding: 0;
+	margin: 0;
+	text-align: left;
+	text-transform: uppercase;
+}
+>>>>>>> 30fe95cfd4904b535b340874c76c6cba0bbd0e34
 
 h3 {
 	font-weight: normal;
@@ -140,6 +151,15 @@ div#minus_button{
 	display: none;
 }
 
+.errorlist {
+	list-style-type: none;
+	color:red;
+}
+
+.valerror {
+	background-color: rgba(255,235,255,0.9);
+}
+
 .visible {
 	position: absolute;
 	top: 100px;
@@ -170,8 +190,6 @@ div#make_content{
 div#calendar_content{
 
 }
-
-
 
 div#time_slider {
 	position: absolute;
