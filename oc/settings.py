@@ -157,13 +157,13 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'polls',
-    'timeline',
-    'frontend',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
+    'polls',
+    'timeline',
+    'frontend',
     'social_auth',
     'south'
 )
@@ -199,6 +199,6 @@ LOGGING = {
 
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.facebook.FacebookBackend',
-    'django_cas.backends.CASBackend'
-    'django.contrib.auth.backends.ModelBackend',
+    'django_cas.backends.CASBackend',
+    'django.contrib.auth.backends.ModelBackend'
 )
