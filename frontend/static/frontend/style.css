@@ -13,6 +13,13 @@
 	z-index: 0;
 }
 
+#container { 
+	position: absolute; 
+	top: 45; 
+	padding: 10px;
+	z-index: 0;
+}
+
 table {
 	border-collapse: collapse;
 	width: 100%;
@@ -42,8 +49,6 @@ header h1 {
 	text-shadow: 0px 0px 5px rgba(0,0,0,.9);
 }
 
-<<<<<<< HEAD
-=======
 h2 {
 	font-weight: normal;
 	color: #006633;
@@ -52,7 +57,6 @@ h2 {
 	text-align: left;
 	text-transform: uppercase;
 }
->>>>>>> 30fe95cfd4904b535b340874c76c6cba0bbd0e34
 
 h3 {
 	font-weight: normal;
@@ -74,8 +78,12 @@ h3 {
 	background-color: rgba(255,255,255,0.1);
 }
 
-#logo a:hover{
-	background-color: rgba(255,255,255,1);
+.logo {
+	float: left;
+}
+
+.logo:hover{
+	background-color: rgba(255,255,255,0.1);
 }
 
 header {
