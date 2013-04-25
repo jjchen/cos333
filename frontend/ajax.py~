@@ -11,7 +11,7 @@ def sayhello(request):
     #return simplejson.dumps({'message':'Hello World'})
     resp = requests.get("http://etcweb.princeton.edu/MobileFeed/events/?fmt=json")
     json_obj = resp.json()
-	events = json_obj['events']
+    events = json_obj['events']
 
 	for event in events:
 	   name = event['title']

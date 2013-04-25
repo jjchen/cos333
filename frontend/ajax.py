@@ -12,7 +12,7 @@ def sayhello(request):
     resp = requests.get("http://etcweb.princeton.edu/MobileFeed/events/?fmt=json")
     json_obj = resp.json()
     events = json_obj['events']
-
+    
 	for event in events:
 	   name = event['title']
 	   building = event['locationName']
