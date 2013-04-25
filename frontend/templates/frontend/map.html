@@ -3,7 +3,7 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
 
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
-
+    <link rel="stylesheet" href = "{% static "frontend/bootstrap.min.css" %}" media="screen">
     <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
     </script>
@@ -28,6 +28,7 @@
               form.serializeArray(),
               function(responseText, responseStatus) {
                   jQuery("#sendbutton").attr('disabled', false)
+                  jQuery("#eventform").trigger("aCustomEvent")
               }
           );
           e.preventDefault(); 
@@ -58,7 +59,7 @@
     <script src="https://raw.github.com/aehlke/tag-it/master/js/tag-it.js" type="text/javascript" charset="utf-8"></script>
 
     <script>
-        $(function(){
+        $("#eventform").live("aCustomEvent",function(){
             var sampleTags = ['cos', '333', 'music', 'needs', 'database', 'integration'];
 
             //-------------------------------
@@ -156,8 +157,11 @@
                 availableTags: sampleTags,
                 removeConfirmation: true
             });
+
+            alwaysOn();
             
         });
+        
     </script>
 
     <script type="text/javascript">
@@ -332,6 +336,11 @@
       <h1>Princeton University - OC</h1>
     </header>
 
+    <!-- moar jquery + bootstrap-->
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="{% static "frontend/bootstrap.min.js" %}"></script>
+
+
     <div id="side_panel">
       <h3>Filter</h3>
 
@@ -359,14 +368,6 @@
 
       <div id="make_content" class="hidden">
         <h3>Make Event</h3>
-
-        <!-- ABANDON HOPE -->
-
-     
-            
-        <!-- NO REALLY, YOU MADE IT -->
-
-
         <form action="/add/" method="post" id="eventform">{% csrf_token %}
           {{ form.non_field_errors }}
           <div id="ajaxwrapper">
@@ -390,16 +391,18 @@
               <label for = "id_form">Location:</label>
               <input type="text" name="location" id="id_form" {% if form.location.errors %} class="valerror"{% endif %}/>
           </div>
-            <!--<div class="ui-widget">-->
+            <div class="fieldWrapper">
             {{ form.tags.errors }}
              <label for="tags">Tags:</label>
              <input type="text" id="id_tags" name="tags"/> 
-            <ul id="singleFieldTags"></ul>
-          <!--</div>-->
+             <ul id="singleFieldTags">
+             <script> jQuery("#eventform").trigger("aCustomEvent") </script>
+             </ul>
+          </div>
           <p id="sendwrapper"><input type="submit" value="Submit event" id="sendbutton" /></p>
         </div>
-
         </form>
+
     
     <li>Login with <a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a>
     </li>
