@@ -214,7 +214,7 @@ def personal(request):
         'form': form, 'group_info': group_info, 'my_events': my_events, 'rsvped': rsvped, 'recommended':recommended, 'my_tags':my_tags, "friends":friends 
     })	
 
-# Create your views here.  index is called on page load.
+# Create your views here.
 def index(request):
 	# print "fwef" what is this?
 	if request.method =='POST':
@@ -239,7 +239,6 @@ def index(request):
 	else: 
 		return render(request, 'frontend/map.html', context)
 
-# add a new event.  add is called when a new event is properly submitted.
 def add(request):
 	if request.method == 'POST':
 		username = request.user.username
@@ -273,7 +272,6 @@ def add(request):
 		form = NewEventForm() # An unbound form
 	return render(request, 'frontend/map.html', {'form': form})
 
-# this is the search for a new event.
 def search(request):
 	query = request.POST['search_query']
 
@@ -286,10 +284,6 @@ def search(request):
 	html += "</body></html>"
 
 	return HttpResponse(html)
-
-# call this to refresh events list.
-def refreshEvents(request):
-   events_list = NewEvent.objects.all().order_by("date", "time")
 
 
 def eventsXML(request):
