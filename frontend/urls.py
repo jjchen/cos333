@@ -19,5 +19,6 @@ urlpatterns = patterns('',
     url(r'^eventsXML$', views.eventsXML),
     url(r'dataprocessor$', views.dataprocessor),
     url(r'^(?P<group>\w+)/$', views.rmgroup, name='rmgroup'),
+    url(r'^refresh/', views.refreshEvents, name='refresh_events'),
 
 )
