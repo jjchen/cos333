@@ -6,10 +6,17 @@
 
 #map-canvas { 
 	position: absolute; 
-	top: 65; 
+	top: 45; 
 	bottom: 0; 
 	left: 0; 
 	right: 0; 
+	z-index: 0;
+}
+
+#container { 
+	position: absolute; 
+	top: 45; 
+	padding: 10px;
 	z-index: 0;
 }
 
@@ -30,13 +37,13 @@ tr.rowColor {
 	background-color: rgba(0,102,51,0.1);
 }
 
-/* h1 {
-	font-weight: bold;
+/* header h1 {
+	/* font-weight: bold;
+	float:left;
 	font-size: 20px;
-	line-height: 32px;
 	color: #fff;
 	padding: 0;
-	margin: 3px 30px 10px;
+	margin: 10px 10px;
 	text-align: right;
 	border-bottom: 1px solid #fff;
 	text-shadow: 0px 0px 5px rgba(0,0,0,.9);
@@ -78,13 +85,36 @@ p, div {
   margin-left: 50px;  /* changed from 180px to 140px */
 }
 
+.settings_buttons {
+	float: left;
+	padding: 5px;
+    border-left: 1px solid white;
+}
+
+.settings_buttons:hover{
+	background-color: rgba(255,255,255,0.1);
+}
+
+.logo {
+	float: left;
+}
+
+.logo:hover{
+	background-color: rgba(255,255,255,0.1);
+}
+
 header {
-	padding: 10px 10px 10px 10px;
 	position: absolute; top: 0; left:0;
 	width: 100%;
-	background: -webkit-linear-gradient(#009900 0%, #006633 100%);
 	z-index: 100;
-	box-shadow: 0px 0px 20px rgba(0,0,0,0.5);	
+	box-shadow: 0px 0px 20px rgba(0,0,0,0.5);
+	background-color: #006633;
+}
+
+div#floatright {
+	float: right;
+	margin: 10px 10px;
+	color: #fff;
 }
 
 div#side_panel{
@@ -121,7 +151,7 @@ div#settings_button{
 	left: 390px;
 }
 div#minus_button{
-	left: 540px;
+	left: 540px;	
 }
 
 .button {

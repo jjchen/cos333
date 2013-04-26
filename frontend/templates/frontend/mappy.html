@@ -1,51 +1,23 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
+{% load dajaxice_templatetags %}
+
+<html>
+  <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
 
-    <!--<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />-->
-    <link rel="stylesheet" href="{% static "frontend/bootstrap.min.css" %}" media="screen">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+
     <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
     </script>
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-    <script src="{% static "frontend/bootstrap.min.js" %}"></script>
-
-    <script src="{% static "frontend/bootstrap-datepicker.js" %}"></script>
-    <script type="text/javascript">
-      $('.datepicker').datepicker()({
-      format: 'yyyy-mm-dd'
-      });
-
-    $('.test .typeahead').typeahead({                                   
-  name: 'testTypeahead',                                                             
-  local: [                                                                    
-    "cos",                                                             
-    "333",                                                                    
-    "music",                                                                     
-    "live",                                                                  
-    "tv",                                                             
-    "soccer",                                                                   
-    "tennis",                                                             
-    "football",                                                       
-    "meeting",                                                                
-    "frisbee"                                                                
-  ]                                                                           
-});
-    </script>
-
-
-    <!--<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>-->
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
     <script type="text/javascript" src="{% static "frontend/oms.min.js" %}">
     </script>
 
-    <!-- web fonts for great justice -->
-    <link href="http://fonts.googleapis.com/css?family=Arvo" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet" type="text/css">
-
+<<<<<<< HEAD
     <!-- trying out some ajax, YOLO --> 
-    <!--<script type="text/javascript" 
-    src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>-->
+    <script type="text/javascript" 
+    src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
     <script type="text/javascript">
 
   jQuery(function() {
@@ -59,17 +31,78 @@
               form.serializeArray(),
               function(responseText, responseStatus) {
                   jQuery("#sendbutton").attr('disabled', false)
-                  jQuery("#eventform").trigger("aCustomEvent")
               }
           );
           e.preventDefault(); 
+=======
+    <script>
+      <!-- autocomplete widget using jQuery -->
+      $(function() {
+      var availableTags = [
+      "cos",
+      "333",
+      "oc",
+      "music",
+      "sports",
+      "tv",
+      "free",
+      "money",
+      "food",
+      "arts",
+      "dance",
+      "acapella",
+      "meeting",
+      "group"
+      ];
+      function split( val ) {
+      return val.split( /,\s*/ );
+      }
+      function extractLast( term ) {
+      return split( term ).pop();
+      }
+      function list_refresh(data){
+      	 alert(data.message);
+      }
+      
+      $( "#tags" )
+      // don't navigate away from the field on tab when selecting an item
+      .bind( "keydown", function( event ) {
+      if ( event.keyCode === $.ui.keyCode.TAB &&
+      $( this ).data( "ui-autocomplete" ).menu.active ) {
+      event.preventDefault();
+      }
+      })
+      .autocomplete({
+      minLength: 0,
+      source: function( request, response ) {
+      // delegate back to autocomplete, but extract the last term
+      response( $.ui.autocomplete.filter(
+      availableTags, extractLast( request.term ) ) );
+      },
+      focus: function() {
+      // prevent value inserted on focus
+      return false;
+      },
+      select: function( event, ui ) {
+      var terms = split( this.value );
+      // remove the current input
+      terms.pop();
+      // add the selected item
+      terms.push( ui.item.value );
+      // add placeholder to get the comma-and-space at the end
+      terms.push( "" );
+      this.value = terms.join( ", " );
+      return false;
+      }
+      });
+>>>>>>> This is dajaxice
       });
   });
+
   </script>
 
+  <!-- NEW AUTOCOMPLETE!!!11!!! -->
 
-
-  <!--the older autocomplete-->
   <!-- INSTRUCTIONS -->
 
     <!-- 2 CSS files are required: -->
@@ -83,14 +116,14 @@
 
     <!-- jQuery and jQuery UI are required dependencies. -->
     <!-- Although we use jQuery 1.4 here, it's tested with the latest too (1.8.3 as of writing this.) -->
-    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
 
     <!-- The real deal -->
-    <!--<script src="https://raw.github.com/aehlke/tag-it/master/js/tag-it.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="https://raw.github.com/aehlke/tag-it/master/js/tag-it.js" type="text/javascript" charset="utf-8"></script>
 
     <script>
-        $("#eventform").live("aCustomEvent",function(){
+        $(function(){
             var sampleTags = ['cos', '333', 'music', 'needs', 'database', 'integration'];
 
             //-------------------------------
@@ -188,44 +221,42 @@
                 availableTags: sampleTags,
                 removeConfirmation: true
             });
-
-            alwaysOn();
             
         });
-        
     </script>
 
-      <script type="text/javascript">
-         var map;
-         var idled = false;
-         var oms;
-         var image = '{% static "frontend/paw_print.png" %}';
-         var flower = '{% static "frontend/small_flower.png" %}';
-         var geocoder;
+    <script type="text/javascript">
+      var map;
+      var idled = false;
+      var oms;
+      var image = '{% static "frontend/paw_print.png" %}';
+      var flower = '{% static "frontend/small_flower.png" %}';
+      var geocoder;
 
-         function initialize() {
-            var center = new google.maps.LatLng(40.344725, -74.655629);
-            geocoder = new google.maps.Geocoder();
-            var mapOptions = {
-               center: center,
-               zoom: 17,
-               mapTypeId: google.maps.MapTypeId.ROADMAP
-            };
-            map = new google.maps.Map(document.getElementById("map-canvas"),
-               mapOptions);
-            oms = new OverlappingMarkerSpiderfier(map, {
-               keepSpiderfied: true
-            });
+      function initialize() {
+      var center = new google.maps.LatLng(40.344725, -74.655629);
+      geocoder = new google.maps.Geocoder();
+      var mapOptions = {
+      center: center,
+      zoom: 17,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      map = new google.maps.Map(document.getElementById("map-canvas"),
+      mapOptions);
+      oms = new OverlappingMarkerSpiderfier(map, {
+      keepSpiderfied: true
+      });
 
-            var iw = new google.maps.InfoWindow();
-            oms.addListener('click', function (marker) {
-               iw.setContent(marker.desc);
-               iw.open(map, marker);
-            });
+      var iw = new google.maps.InfoWindow();
+      oms.addListener('click', function (marker) {
+      iw.setContent(marker.desc);
+      iw.open(map, marker);
+      });
 
       oms.addListener('spiderfy', function (markers) {
       iw.close();
       for (i = 0; i < markers.length; i++) {
+<<<<<<< HEAD
               markers[i].setIcon(image);
               }
               });
@@ -360,73 +391,157 @@
                                       parent.innerHTML = html;
                                       }
                                       </script>
-      
-      <script type="text/javascript" charset="utf-8">
-         function init() {
+=======
+		      markers[i].setIcon(image);
+		      }
+		      });
 
-            scheduler.config.CSRF_Token = "{{ csrf_token }}";
+		      oms.addListener('unspiderfy', function (markers) {
+		      iw.close();
+		      for (i = 0; i < markers.length; i++) {
+				      markers[i].setIcon(flower);
+				      }
+				      });
 
-            scheduler.config.xml_date = "%Y-%m-%d %H:%i";
-            scheduler.init('scheduler_here', new Date(2011, 0, 25), "month");
+				      google.maps.event.addListener(map, 'idle', function () {
+				      if (!idled) {
+				      var overlapped = oms.markersNearAnyOtherMarker();
+				      for (i = 0; i < overlapped.length; i++) {
+						      overlapped[i].setIcon(flower);
+						      }
+						      }
+						      idled = true;
+						      });
 
-            //define how text inside event bar looks
-            scheduler.templates.event_text = function (start, end, event) {
-               return "Text:<b> " + event.text + "</b><br>" + "Descr." + event.details;
-            }
+						      google.maps.event.addListener(map, 'click', function() {
+						      iw.close();
+						      });
 
-            scheduler.templates.event_class = function (start, end, event) {
-               if (start < (new Date())) //if date in past
-                  return "past_event"; //then set special css class for it
-            }
+						      {% if events_list %}
+						      showEventsOnMap(); 
+						      {% endif %}
 
-            scheduler.load("/eventsXML");
+						      {% if show_list == True %}
+						      showContent('list_content');
+						      {% endif %}
+						      }
+						      google.maps.event.addDomListener(window, 'load', initialize);
 
-            var dp = new dataProcessor("frontend/dataprocessor");
-            dp.setTransactionMode("POST", false)
-            dp.init(scheduler);
+						      function showEventsOnMap() {
 
-         }
-      </script>
+						      var i = 0; 
+						      {% for event in events_list %} 
+						      {% if event.lat %}
+						      var position = new google.maps.LatLng({{event.lat}}, {{event.lon}});
 
-      <style type="text/css" media="screen">
-         /*event in day or week view*/
-         .dhx_cal_event.past_event div {
-            background-color:purple !important;
-            color:white !important;
-         }
-         /*multi-day event in month view*/
-         .dhx_cal_event_line.past_event {
-            background-color:purple !important;
-            color:white !important;
-         }
-         /*event with fixed time, in month view*/
-         .dhx_cal_event_clear.past_event {
-            color:purple !important;
-         }
-      </style>
+						      var marker = new google.maps.Marker({
+						      map: map,
+						      position: position,
+						      icon: image
+						      });
 
-   </head>
-   
-   <body onload="init();">
-      <header>
-         <div class="logo" onclick="window.location.href='/#'">
-            <h1>Princeton University - OC</h1>
-         </div>
-         <div id="floatright">
-            <div class="settings_buttons" onclick="window.location.href='/frontend/personal'">{{user}}</div>
-            <div class="settings_buttons" onclick="window.location.href='/frontend/settings'">settings</div>
-            <div class="settings_buttons" onclick="window.location.href='#'">logout</div>
-         </div>
-      </header>
-      
+						      var contentString = '<div class="infoWindow_content">' +
+						      '<h3 class="infoWindow_heading">{{event.name}}</h3>' +
+						      '<div id="infoWindow_body">' +
+						      '<p>Time: {{event.time}} {{event.date}}</p>' +
+						      '<p>Location: {{event.location}}</p>' +
+						      '</div>' +
+						      '</div>';
+
+						      marker.desc = contentString;
+
+						      oms.addMarker(marker); 
+						      {% else %}
+						      codeAddress("{{event.location}}");
+						      {% endif %} 
+						      {% endfor %}
+						      }
+
+						      function codeAddress(buildingName) {
+						      geocoder.geocode( { 'address': buildingName }, function(results, status) {
+						      if (status == google.maps.GeocoderStatus.OK) {
+						      // map.setCenter(results[0].geometry.location);
+						      var marker = new google.maps.Marker({
+						      map: map,
+						      position: results[0].geometry.location
+						      });
+						      var contentString = '<div class="infoWindow_content">' +
+						      '<h3 class="infoWindow_heading">{{event.name}}</h3>' +
+						      '<div id="infoWindow_body">' +
+						      '<p>Time: {{event.time}} {{event.date}}</p>' +
+						      '<p>Location: {{event.location}}</p>' +
+						      '</div>' +
+						      '</div>';
+
+						      marker.desc = contentString;
+
+						      oms.addMarker(marker);
+						      } else {
+						      //  alert("Geocode was not successful for the following reason: " + status);
+						      }
+						      }); 
+						      }
+
+						      function showContent(id) {
+						      //alert(id);
+						      var elem = document.getElementById('content_wrapper');
+						      for (i = 0; i < elem.children.length; i++) {
+								      if (elem.children[i].id != id) {
+								      elem.children[i].className = 'hidden';
+								      } else {
+								      elem.children[i].className = (elem.children[i].className == 'hidden') ? 'visible' : 'hidden';
+								      if (id == "list_content" && elem.children[i].className == 'visible') makeList();
+								      }
+								      }
+								      }
+
+								      function makeList(){
+								      var parent = document.getElementById("list_inner_wrapper");
+								      var html = "";
+								      {% if events_list %}
+								      html += "<table class='list_table'>"
+								      var cur_date = "";
+								      var i = 0;
+								      {% for event in events_list %}
+								      if (i % 2 == 0) {
+								      row_class = "rowColor";
+								      } else {
+								      row_class = "";
+								      }
+								      i++;
+
+								      if ('{{event.date}}' != cur_date) {
+								      html += '<tr><td colspan="2"> <h3> {{event.date}} </h3></td></tr>';
+								      cur_date = '{{event.date}}';
+								      }
+								      html += '<tr class="'+ row_class
+											  + '"><td class="list_time" rowspan="2"> {{event.time}} </td>' 
+								      + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT> </td>'  
+								      + '<tr class="'+row_class+'"><td> <small>{{event.tags}}</small></td></tr>'
+								      {% endfor %}
+								      html += "</table>"
+								      {% else %}
+								      html += '<p>No events :(</p>';
+								      {% endif %}
+								      parent.innerHTML = html;
+								      }
+								      </script>
+	{% dajaxice_js_import %}
+>>>>>>> This is dajaxice
+  </head>
+  
+  <body>
+    <header>
+      <h1>Princeton University - OC</h1>
+    </header>
+
     <div id="side_panel">
       <h3>Filter</h3>
+
       <br/>
-      <form action="{% url 'frontend:index' %}" method="post" class="form-search">{% csrf_token %}
-        <input type="text" id="search_query" placeholder="Search..." name="search_query" class="input-medium search-query">
-        <!--above field formerly required-->
-        <div class="clearfix"> <br />  </div>
-        <button type="submit" class="btn">Search</button>
+      <form action="{% url 'frontend:index' %}" method="post">{% csrf_token %}
+        <input type="text" id="search_query" placeholder="Search" name="search_query" required>
+        <input type="submit" value="Go">
       </form>
       <br/>
       <a href="{% url 'frontend:index' %}"> All </a>
@@ -435,115 +550,99 @@
       <div id="time_slider">
         <h3>Time</h3>
 
-        <input type="range" style="width:170px;">
+        <input type="range">
       </div>
     </div>
-
     <div id="content_wrapper">
-
       <div id="list_content" class="hidden">
-       <div id="list_inner_wrapper">
-                </div>
-            </div>
+
+        <div id="list_inner_wrapper">
+        </div>
+      </div>
 
       <div id="make_content" class="hidden">
         <h3>Make Event</h3>
-        <form action="/add/" method="post" id="eventform" class="form-horizontal">{% csrf_token %}
+
+        <!-- ABANDON HOPE -->
+
+     
+            
+        <!-- NO REALLY, YOU MADE IT -->
+
+
+        <form action="/add/" method="post" id="eventform">{% csrf_token %}
           {{ form.non_field_errors }}
           <div id="ajaxwrapper">
-          <div class="control-group {% if form.name.errors %}error{% endif %}">
-              <label class="control-label" for = "id_name">Name:</label>
-              <div class="controls">
-              <input type="text" name="name" id="id_name" placeholder="Enter a name..."/>
-              <span class="help-block">{{ form.name.errors }}</span>
-              </div>
+          <div class="fieldWrapper">
+              {{ form.name.errors }}
+              <label for = "id_name">Name:</label>
+              <input type="text" name="name" id="id_name" {% if form.name.errors %} class="valerror"{% endif %}/>
           </div>
-          <div class="control-group {% if form.date.errors %}error{% endif %}">
-              <label class="control-label" for = "id_date">Date:</label>
-              <div class="controls">
-              <input type="text" name="date" id="id_date" placeholder="YYYY-MM-DD, please..." class="datepicker"/>
-              <span class="help-block">{{ form.date.errors }}</span>
-              </div>
+          <div class="fieldWrapper">
+              {{ form.date.errors }}
+              <label for = "id_date">Date:</label>
+              <input type="text" name="date" id="id_date" {% if form.date.errors %} class="valerror"{% endif %}/>
           </div>
-          <div class="control-group {% if form.time.errors %}error{% endif %}">
-              <label class="control-label" for = "id_time">Time:</label>
-              <div class="controls">
-              <input type="text" name="time" id="id_time" placeholder="HH:MM..."{% if form.date.errors %} class="valerror"{% endif %}/>
-              <span class="help-block">{{ form.time.errors }}</span>
-              </div>
+          <div class="fieldWrapper">
+              {{ form.time.errors }}
+              <label for = "id_time">Time:</label>
+              <input type="text" name="time" id="id_time" {% if form.time.errors %} class="valerror"{% endif %}/>
           </div>
-          <div class="control-group {% if form.location.errors %}error{% endif %}">
-              <label class="control-label" for = "id_location">Location:</label>
-              <div class="controls">
-              <input type="text" name="location" id="id_location" placeholder="e.g. Lenz Tennis Center..." {% if form.date.errors %} class="valerror"{% endif %}/>
-              <span class="help-block">{{ form.location.errors }}</span>
-              </div>
-          </div>          
-          <div class="control-group {% if form.tags.errors %}error{% endif %}">
-            <label class="control-label" for = "id_tags">Tags:</label>
-             <div class="controls">
-             <input type="text" name="tags" id="id_tags" placeholder="Enter tags..." data-provide="typeahead" data-source="["Amsterdam", "Maastricht"]"/>
-             <!--<ul id="singleFieldTags">
-             <script> jQuery("#eventform").trigger("aCustomEvent") </script>
-             </ul>-->
-             <span class="help-block">{{ form.tags.errors }}</span>
-             </div>
+          <div class="fieldWrapper">
+              {{ form.location.errors }}
+              <label for = "id_form">Location:</label>
+              <input type="text" name="location" id="id_form" {% if form.location.errors %} class="valerror"{% endif %}/>
           </div>
-          <p id="sendwrapper"><button class="btn" type="submit" id="sendbutton">Submit Event</button></p>
+            <!--<div class="ui-widget">-->
+            {{ form.tags.errors }}
+             <label for="tags">Tags:</label>
+             <input type="text" id="id_tags" name="tags"/> 
+            <ul id="singleFieldTags"></ul>
+          <!--</div>-->
+          <p id="sendwrapper"><input type="submit" value="Submit event" id="sendbutton" /></p>
         </div>
+
         </form>
-
-            <li>Login with <a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a>
-
-            </li>
-            <li>Import from Facebook</li>
-            <li><a rel="nofollow" href="{% url 'django_cas.views.login' %}">CAS</a>
-
-            </li>
-         </div>
-         <div id="calendar_content" class="hidden">
-             <h3>Calendar</h3>
-             Calendar goes here.
-            <div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:80%;'>
-               <div class="dhx_cal_navline">
-                  <div class="dhx_cal_prev_button">&nbsp;</div>
-                  <div class="dhx_cal_next_button">&nbsp;</div>
-                  <div class="dhx_cal_today_button"></div>
-                  <div class="dhx_cal_date"></div>
-                  <div class="dhx_cal_tab" name="day_tab" style="right:204px;"></div>
-                  <div class="dhx_cal_tab" name="week_tab" style="right:140px;"></div>
-                  <div class="dhx_cal_tab" name="month_tab" style="right:76px;"></div>
-               </div>
-               <div class="dhx_cal_header"></div>
-               <div class="dhx_cal_data"></div>
-            </div>
-         </div>
-         <div id="settings_content" class="hidden">
-             <h3>Settings</h3>
-
-         </div>
+    
+    <li>Login with <a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a>
+    </li>
+    <li>Import from Facebook
+    </li>
       </div>
-      <div id="make_button" class="button" onclick="showContent('make_content');">
-          <h3>Make</h3>
+
+      <div id="calendar_content" class="hidden">
+        <h3>Calendar</h3>
+        <li><a rel="nofollow" href="{% url 'django_cas.views.login' %}">CAS</a>
+        </li>
       </div>
+
+      <div id="settings_content" class="hidden">
+        <h3>Settings</h3>
+      </div>
+    </div>
+
+    <div id="make_button" class="button" onclick="showContent('make_content');">
+      <h3>Make</h3>
+
+    </div>
 
     <div id="calendar_button" class="button" onclick="showContent('calendar_content');">
       <h3>Calendar</h3>
+
     </div>
-    
-    <div id="list_button" class="button" onclick="showContent('list_content');">
+    <div id="list_button" class="button" onclick="showContent('list_content'); Dajaxice.frontend.sayhello(list_refresh);">
       <h3>List</h3>
     </div>
-    
     <div id="settings_button" class="button" 
          onclick="window.location.href='/frontend/settings'">
       <h3>Settings</h3>
-    </div>
 
+    </div>
     <div id="minus_button" class="button" onclick="showContent('none');">
       <h3>-</h3>
-    </div>
 
-    <div id="map-canvas" style="width:100%;height:100%;"></div>
+    </div>
+    <div id="map-canvas" />
   </body>
+
 </html>

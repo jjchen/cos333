@@ -11,7 +11,13 @@ urlpatterns = patterns('',
 
     url(r'^add/', views.add, name='add'),
     url(r'^addgroup/', views.addgroup, name='addgroup'),
-    url(r'^(?P<group>\w+)/$', views.rmgroup, name='rmgroup'),
+    url(r'^personal/$', views.personal, name='personal'),
+    url(r'^logout/$', views.logout, name='logout'),
     url(r'^search/$', views.search, name='search'),
-    url(r'^success/$', TemplateView.as_view(template_name="frontend/success.html"), name="event_success")
+    url(r'^success/$', TemplateView.as_view(template_name="frontend/success.html"), name="event_success"),
+    url(r'^cal/$', views.calendar, name="calendar"),
+    url(r'^eventsXML$', views.eventsXML),
+    url(r'dataprocessor$', views.dataprocessor),
+    url(r'^(?P<group>\w+)/$', views.rmgroup, name='rmgroup'),
+
 )
