@@ -1,20 +1,53 @@
-<html>
-  <head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
 
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
-    <link rel="stylesheet" href = "{% static "frontend/bootstrap.min.css" %}" media="screen">
+    <!--<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />-->
+    <link rel="stylesheet" href="{% static "frontend/bootstrap.min.css" %}" media="screen">
     <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
     </script>
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+    <script src="{% static "frontend/bootstrap.min.js" %}"></script>
+
+    <script src="{% static "frontend/bootstrap-datepicker.js" %}"></script>
+    <script type="text/javascript">
+      $('.datepicker').datepicker()({
+      format: 'yyyy-mm-dd'
+      });
+
+    $('.test .typeahead').typeahead({                                   
+  name: 'testTypeahead',                                                             
+  local: [                                                                    
+    "cos",                                                             
+    "333",                                                                    
+    "music",                                                                     
+    "live",                                                                  
+    "tv",                                                             
+    "soccer",                                                                   
+    "tennis",                                                             
+    "football",                                                       
+    "meeting",                                                                
+    "frisbee"                                                                
+  ]                                                                           
+});
+    </script>
+
+
+
+
+    <!--<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>-->
     <script type="text/javascript" src="{% static "frontend/oms.min.js" %}">
     </script>
 
+    <!-- web fonts for great justice -->
+    <link href="http://fonts.googleapis.com/css?family=Arvo" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet" type="text/css">
+
     <!-- trying out some ajax, YOLO --> 
-    <script type="text/javascript" 
-    src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+    <!--<script type="text/javascript" 
+    src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>-->
     <script type="text/javascript">
 
   jQuery(function() {
@@ -34,11 +67,11 @@
           e.preventDefault(); 
       });
   });
-
   </script>
 
-  <!-- NEW AUTOCOMPLETE!!!11!!! -->
 
+
+  <!--the older autocomplete-->
   <!-- INSTRUCTIONS -->
 
     <!-- 2 CSS files are required: -->
@@ -52,11 +85,11 @@
 
     <!-- jQuery and jQuery UI are required dependencies. -->
     <!-- Although we use jQuery 1.4 here, it's tested with the latest too (1.8.3 as of writing this.) -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>-->
 
     <!-- The real deal -->
-    <script src="https://raw.github.com/aehlke/tag-it/master/js/tag-it.js" type="text/javascript" charset="utf-8"></script>
+    <!--<script src="https://raw.github.com/aehlke/tag-it/master/js/tag-it.js" type="text/javascript" charset="utf-8"></script>-->
 
     <script>
         $("#eventform").live("aCustomEvent",function(){
@@ -329,25 +362,24 @@
                                       parent.innerHTML = html;
                                       }
                                       </script>
+
   </head>
   
   <body>
+
     <header>
       <h1>Princeton University - OC</h1>
     </header>
-
-    <!-- moar jquery + bootstrap-->
-    <script src="http://code.jquery.com/jquery.js"></script>
-    <script src="{% static "frontend/bootstrap.min.js" %}"></script>
-
 
     <div id="side_panel">
       <h3>Filter</h3>
 
       <br/>
-      <form action="{% url 'frontend:index' %}" method="post">{% csrf_token %}
-        <input type="text" id="search_query" placeholder="Search" name="search_query" required>
-        <input type="submit" value="Go">
+      <form action="{% url 'frontend:index' %}" method="post" class="form-search">{% csrf_token %}
+        <input type="text" id="search_query" placeholder="Search..." name="search_query" class="input-medium search-query">
+        <!--above field formerly required-->
+        <div class="clearfix"> <br />  </div>
+        <button type="submit" class="btn">Search</button>
       </form>
       <br/>
       <a href="{% url 'frontend:index' %}"> All </a>
@@ -356,7 +388,7 @@
       <div id="time_slider">
         <h3>Time</h3>
 
-        <input type="range">
+        <input type="range" style="width:170px;">
       </div>
     </div>
     <div id="content_wrapper">
@@ -368,38 +400,48 @@
 
       <div id="make_content" class="hidden">
         <h3>Make Event</h3>
-        <form action="/add/" method="post" id="eventform">{% csrf_token %}
+        <form action="/add/" method="post" id="eventform" class="form-horizontal">{% csrf_token %}
           {{ form.non_field_errors }}
           <div id="ajaxwrapper">
-          <div class="fieldWrapper">
-              {{ form.name.errors }}
-              <label for = "id_name">Name:</label>
-              <input type="text" name="name" id="id_name" {% if form.name.errors %} class="valerror"{% endif %}/>
+          <div class="control-group {% if form.name.errors %}error{% endif %}">
+              <label class="control-label" for = "id_name">Name:</label>
+              <div class="controls">
+              <input type="text" name="name" id="id_name" placeholder="Enter a name..."/>
+              <span class="help-block">{{ form.name.errors }}</span>
+              </div>
           </div>
-          <div class="fieldWrapper">
-              {{ form.date.errors }}
-              <label for = "id_date">Date:</label>
-              <input type="text" name="date" id="id_date" {% if form.date.errors %} class="valerror"{% endif %}/>
+          <div class="control-group {% if form.date.errors %}error{% endif %}">
+              <label class="control-label" for = "id_date">Date:</label>
+              <div class="controls">
+              <input type="text" name="date" id="id_date" placeholder="YYYY-MM-DD, please..." class="datepicker"/>
+              <span class="help-block">{{ form.date.errors }}</span>
+              </div>
           </div>
-          <div class="fieldWrapper">
-              {{ form.time.errors }}
-              <label for = "id_time">Time:</label>
-              <input type="text" name="time" id="id_time" {% if form.time.errors %} class="valerror"{% endif %}/>
+          <div class="control-group {% if form.time.errors %}error{% endif %}">
+              <label class="control-label" for = "id_time">Time:</label>
+              <div class="controls">
+              <input type="text" name="time" id="id_time" placeholder="HH:MM..."{% if form.date.errors %} class="valerror"{% endif %}/>
+              <span class="help-block">{{ form.time.errors }}</span>
+              </div>
           </div>
-          <div class="fieldWrapper">
-              {{ form.location.errors }}
-              <label for = "id_form">Location:</label>
-              <input type="text" name="location" id="id_form" {% if form.location.errors %} class="valerror"{% endif %}/>
-          </div>
-            <div class="fieldWrapper">
-            {{ form.tags.errors }}
-             <label for="tags">Tags:</label>
-             <input type="text" id="id_tags" name="tags"/> 
-             <ul id="singleFieldTags">
+          <div class="control-group {% if form.location.errors %}error{% endif %}">
+              <label class="control-label" for = "id_location">Location:</label>
+              <div class="controls">
+              <input type="text" name="location" id="id_location" placeholder="e.g. Lenz Tennis Center..." {% if form.date.errors %} class="valerror"{% endif %}/>
+              <span class="help-block">{{ form.location.errors }}</span>
+              </div>
+          </div>          
+          <div class="control-group {% if form.tags.errors %}error{% endif %}">
+            <label class="control-label" for = "id_tags">Tags:</label>
+             <div class="controls">
+             <input type="text" name="tags" id="id_tags" placeholder="Enter tags..." data-provide="typeahead" data-source="["Amsterdam", "Maastricht"]"/>
+             <!--<ul id="singleFieldTags">
              <script> jQuery("#eventform").trigger("aCustomEvent") </script>
-             </ul>
+             </ul>-->
+             <span class="help-block">{{ form.tags.errors }}</span>
+             </div>
           </div>
-          <p id="sendwrapper"><input type="submit" value="Submit event" id="sendbutton" /></p>
+          <p id="sendwrapper"><button class="btn" type="submit" id="sendbutton">Submit Event</button></p>
         </div>
         </form>
 
@@ -414,6 +456,8 @@
         <h3>Calendar</h3>
         <li><a rel="nofollow" href="{% url 'django_cas.views.login' %}">CAS</a>
         </li>
+        <br />        
+        Calendar goes here.
       </div>
 
       <div id="settings_content" class="hidden">
@@ -440,9 +484,9 @@
     </div>
     <div id="minus_button" class="button" onclick="showContent('none');">
       <h3>-</h3>
-
     </div>
-    <div id="map-canvas" />
+
+    <div id="map-canvas" style="width:100%;height:100%;"></div>
   </body>
 
 </html>
