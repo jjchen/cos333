@@ -39,8 +39,10 @@ class NewEventForm(forms.Form):
 	startTime = forms.DateTimeField()
 	endTime = forms.DateTimeField()
 	location = forms.CharField(max_length=200)
-	private = forms.BooleanField()
-	groups = forms.ModelMultipleChoiceField(queryset=MyGroup.objects.all())
+	private = forms.BooleanField(required=False)
+	groups = forms.ModelMultipleChoiceField(queryset=MyGroup.objects.all(),
+						required=False)
+	tags = forms.CharField(max_length=200, required=False)
 
 def settings(request):
 	if request.user.username == "":
@@ -347,7 +349,10 @@ def add(request):
 			if request.is_ajax():
 				return render(request, 'frontend/success.html')
 			else:
+				return render(request, 'frontend/success.html')
 				return redirect('success')
+	else:
+		form = NewEvent()
 			# msg = "success!"
 	print "I am here in add"
 	return index(request, form)
