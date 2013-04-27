@@ -23,9 +23,10 @@ class MyGroup(models.Model):
 # Create your models here.
 class NewEvent(models.Model):
     name = models.CharField(max_length=200)
-    date = models.DateField()
-    time = models.TimeField()
+    startTime = models.DateTimeField(null=True, blank=True)
+    endTime = models.DateTimeField(null=True, blank=True)
     location = models.CharField(max_length=200)
+    private = models.BooleanField(default=False)
     lat = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
     lon = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
     tags = models.CharField(max_length=200, blank = True, null=True, default="all")
@@ -54,13 +55,3 @@ class CalEvent(models.Model):
     end_date = models.DateTimeField()
     text = models.CharField(max_length=30)
     details = models.CharField(max_length=250)
-
-class Event(models.Model):
-    testField2 = models.CharField(max_length=NAME_MAXLEN)
-    name = models.CharField(max_length=NAME_MAXLEN)
-    creator = models.ForeignKey(MyUser)
-    startTime = models.DateTimeField()
-    endTime = models.DateTimeField()
-    locName = models.CharField(max_length=NAME_MAXLEN)
-    locLat = models.FloatField()
-    locLong = models.FloatField()
