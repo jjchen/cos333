@@ -63,7 +63,7 @@
     <script>
         $(function(){
             var sampleTags = ['cos', '333', 'music', 'needs', 'database', 'integration'];
-
+            // var sampleTags = {{tags}};
             //-------------------------------
             // Minimal
             //-------------------------------
@@ -319,7 +319,9 @@
                html += '<tr><td colspan="2"> <h3> {{event.date}} </h3></td></tr>';
                cur_date = '{{event.date}}';
             }
-            html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"> {{event.time}} </td>' + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT> </td>' + '<tr class="' + row_class + '"><td> <small>{{event.tags}}</small></td></tr>' 
+            html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"> {{event.time}} </td>' + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
+              + '<div style="float:right"><a href="rsvp.html?event={{event.id}}">RSVP</a></div>'
+              + ' </td>' + '<tr class="' + row_class + '"><td> <small>{{event.tags}}</small></td></tr>' 
             {% endfor %}
             html += "</table>"; 
             {% else %}
@@ -391,6 +393,13 @@
             <input type="text" id="search_query" placeholder="Search" name="search_query" required>
             <input type="submit" value="Go">
          </form>
+         
+         <form action="{% url 'frontend:index' %}" method="post">{% csrf_token %}
+            {% for tag in tags %}
+            <input type="checkbox" name="tags" value="{{tag}}">{{tag}}</br> 
+            {% endfor %}
+         </form>
+
          <br/> <a href="{% url 'frontend:index' %}"> All </a>
 
          <div id="time_slider">

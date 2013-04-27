@@ -229,8 +229,9 @@ def index(request):
 		form = SearchForm()
 		events_list = NewEvent.objects.all().order_by("date", "time")
 		show_list = False
+		tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	context = {'events_list': events_list, 'user': request.user, 
-		   'show_list': show_list, 'form': form, }
+		   'show_list': show_list, 'form': form, 'tags': tags}
 	username = request.user.username
 
 	if username != "" and\
@@ -244,7 +245,7 @@ def add(request):
 		username = request.user.username
 		this_user = MyUser.objects.filter(user_id = username)
 		form = NewEventForm(request.POST) # A form bound to the POST data
-		if form.is_valid():
+		if not form.is_valid():
 			data = form.cleaned_data
 			buildingAlias = BuildingAlias.objects.filter(alias=data['location'])
 			latitude = None
@@ -260,7 +261,7 @@ def add(request):
 								lat = latitude,
 								lon = longitude,
 								tags = data['tags'],
-								creator = this_user)
+								creator = this_user[0])
 			event.save()
 			if request.is_ajax():
 				return render(request, 'frontend/success.html')
