@@ -222,6 +222,7 @@ def index(request):
 	# print "fwef" what is this?
 	if request.method =='POST':
 		form = SearchForm(request.POST)
+		formEvent = NewEventForm()
 		if form.is_valid():
 			query = form.cleaned_data['search_query']
 			events_list = NewEvent.objects.filter(
@@ -232,8 +233,9 @@ def index(request):
 		form = SearchForm()
 		events_list = NewEvent.objects.all().order_by("startTime")
 		show_list = False
+		tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	context = {'events_list': events_list, 'user': request.user, 
-		   'show_list': show_list, 'search_form': form, 'form': NewEventForm()}
+		   'show_list': show_list, 'search_form': form, 'form': NewEventForm(), 'tags': tags}
 	username = request.user.username
 
 	if username != "" and\
@@ -241,7 +243,6 @@ def index(request):
 		return HttpResponseRedirect('/signup')
 	else: 
 		return render(request, 'frontend/map.html', context)
-
 # add a new event.  add is called when a new event is properly submitted.
 def add(request):
 	if request.method == 'POST':
