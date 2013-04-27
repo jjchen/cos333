@@ -237,7 +237,7 @@ div#list_content{
 }
 
 div#make_content{
-
+	overflow:scroll;
 }
 
 div#calendar_content{

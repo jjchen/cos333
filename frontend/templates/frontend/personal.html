@@ -36,7 +36,7 @@
 <div id="rsvped">
 <p><b> Rsvped Events: </b></p>
 {% for e in rsvped %}
-<p> {{ e.name }} <a href="">Remove</a></p>
+<p> {{ e.name }} <a href="{% url 'frontend:rmrsvp' e.id %}">Remove</a></p>
 {% endfor %}
 </div>
 <div id="recommended">
@@ -55,10 +55,14 @@
 
 <div id="friends">
 <p> <b>Friends:</b> </p>
-{% for f in friend_info %}
-<p> {{ f.name }} <a href="">Remove</a></p>
+{% for f in friends %}
+<p> {{ f.first_name }} <a href="">Remove</a></p>
 {% endfor %}
-<p> <b>Add friend: </b></p>
+<form action="/addfriend/" method="post">{% csrf_token %}
+<p><b> Add friend: </b> </p>
+{{ form2.as_p }}
+<input type="submit" value="Submit" />
+</form>
 </div>
 
 <div id="groups">
