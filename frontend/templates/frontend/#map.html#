@@ -24,7 +24,7 @@
   local: [                                                                    
     "cos",                                                             
     "333",                                                                    
-    "music",                                                                     
+    "music",                                                                    
     "live",                                                                  
     "tv",                                                             
     "soccer",                                                                   
@@ -72,7 +72,7 @@
   
   function reloadEvents ()
   {
-  // call refresh function in views.py
+  	 	// call refresh function in views.py
   }
   
   </script>
@@ -209,12 +209,12 @@
          var map;
          var idled = false;
          var oms;
-         var single_pin = '{% static "frontend/img/single_pin.svg" %}';
-         var multi_in = '{% static "frontend/img/multi_pin.svg" %}';
+         var single_pin = '{% static "frontend/paw_print.png" %}';
+         var multi_pin = '{% static "frontend/small_flower.png" %}';
          var geocoder;
 
          function initialize() {
-            var center = new google.maps.LatLng(40.344725, -74.655629);
+            var center = new google.maps.LatLng({{center_lat}}, {{center_lon}});
             geocoder = new google.maps.Geocoder();
             var mapOptions = {
                center: center,
@@ -236,14 +236,14 @@
             oms.addListener('spiderfy', function (markers) {
                iw.close();
                for (i = 0; i < markers.length; i++) {
-                  markers[i].setIcon(image);
+                  markers[i].setIcon(single_pin);
                }
             });
 
             oms.addListener('unspiderfy', function (markers) {
                iw.close();
                for (i = 0; i < markers.length; i++) {
-                  markers[i].setIcon(flower);
+                  markers[i].setIcon(multi_pin);
                }
             });
 
@@ -251,7 +251,7 @@
                if (!idled) {
                   var overlapped = oms.markersNearAnyOtherMarker();
                   for (i = 0; i < overlapped.length; i++) {
-                     overlapped[i].setIcon(flower);
+                     overlapped[i].setIcon(multi_pin);
                   }
                }
                idled = true;
@@ -282,7 +282,7 @@
             var marker = new google.maps.Marker({
                map: map,
                position: position,
-               icon: image
+               icon: single_pin
             });
 
             var contentString = '<div class="infoWindow_content">' +
@@ -356,13 +356,15 @@
                row_class = "";
             }
             i++;
+		alert('{{event.startTime}}');
+            if ('{{event.startTime|date:"D d M Y"}}' != cur_date) {
 
-            if ('{{event.date}}' != cur_date) {
-               html += '<tr><td colspan="2"> <h3> {{event.date}} </h3></td></tr>';
-               cur_date = '{{event.date}}';
+               html += '<tr><td colspan="2"> <h3> {{event.startTime|date:"D d M Y"}} </h3></td></tr>';
+               cur_date = '{{event.startTime|date:"D d M Y"}}';
             }
             html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"> {{event.time}} </td>' + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
-              + '<div style="float:right"><a href="rsvp.html?event={{event.id}}">RSVP</a></div>'
+              + '<div style="float:right">'
+            html += '<a href="{% url "frontend:addrsvp" event.id %}">RSVP</a></div>'
               + ' </td>' + '<tr class="' + row_class + '"><td> <small>{{event.tags}}</small></td></tr>' 
             {% endfor %}
             html += "</table>"; 
@@ -421,13 +423,13 @@
    
    <body onload="init();">
       <header>
-         <div class="logo" onclick="window.location.href='/#'">
+         <div class="logo" onclick="window.location.href='/'">
             <h1>Princeton University - OC</h1>
          </div>
          <div id="floatright">
             <div class="settings_buttons" onclick="window.location.href='/frontend/personal'">{{user}}</div>
             <div class="settings_buttons" onclick="window.location.href='/frontend/settings'">settings</div>
-            <div class="settings_buttons" onclick="window.location.href='#'">logout</div>
+            <div class="settings_buttons" onclick="window.location.href='/'">logout</div>
          </div>
       </header>
       <div id="side_panel">
@@ -464,49 +466,38 @@
 
       <div id="make_content" class="hidden">
         <h3>Make Event</h3>
+<form action="/add/" method="post">{% csrf_token %}
+    {{ form.non_field_errors }}
+  <div class="column-1">
+        {{ form.subject.errors }}
+        <label for="id_subject">Email subject:</label>
+        {{ form.subject }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.message.errors }}
+        <label for="id_message">Your message:</label>
+        {{ form.message }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.sender.errors }}
+        <label for="id_sender">Your email address:</label>
+        {{ form.sender }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.cc_myself.errors }}
+        <label for="id_cc_myself">CC yourself?</label>
+        {{ form.cc_myself }}
+    </div>
+    <p><input type="submit" value="Send message" /></p>
+</form>
+
+
+
+
         <form action="/add/" method="post" id="eventform" class="form-horizontal">{% csrf_token %}
-          {{ form.non_field_errors }}
-          <div id="ajaxwrapper">
-          <div class="control-group {% if form.name.errors %}error{% endif %}">
-              <label class="control-label" for = "id_name">Name:</label>
-              <div class="controls">
-              <input type="text" name="name" id="id_name" placeholder="Enter a name..."/>
-              <span class="help-block">{{ form.name.errors }}</span>
-              </div>
-          </div>
-          <div class="control-group {% if form.date.errors %}error{% endif %}">
-              <label class="control-label" for = "id_date">Date:</label>
-              <div class="controls">
-              <input type="text" name="date" id="id_date" placeholder="YYYY-MM-DD, please..." class="datepicker"/>
-              <span class="help-block">{{ form.date.errors }}</span>
-              </div>
-          </div>
-          <div class="control-group {% if form.time.errors %}error{% endif %}">
-              <label class="control-label" for = "id_time">Time:</label>
-              <div class="controls">
-              <input type="text" name="time" id="id_time" placeholder="HH:MM..."{% if form.date.errors %} class="valerror"{% endif %}/>
-              <span class="help-block">{{ form.time.errors }}</span>
-              </div>
-          </div>
-          <div class="control-group {% if form.location.errors %}error{% endif %}">
-              <label class="control-label" for = "id_location">Location:</label>
-              <div class="controls">
-              <input type="text" name="location" id="id_location" placeholder="e.g. Lenz Tennis Center..." {% if form.date.errors %} class="valerror"{% endif %}/>
-              <span class="help-block">{{ form.location.errors }}</span>
-              </div>
-          </div>          
-          <div class="control-group {% if form.tags.errors %}error{% endif %}">
-            <label class="control-label" for = "id_tags">Tags:</label>
-             <div class="controls">
-             <input type="text" name="tags" id="id_tags" placeholder="Enter tags..." data-provide="typeahead" data-source="["Amsterdam", "Maastricht"]"/>
-             <!--<ul id="singleFieldTags">
-             <script> jQuery("#eventform").trigger("aCustomEvent") </script>
-             </ul>-->
-             <span class="help-block">{{ form.tags.errors }}</span>
-             </div>
-          </div>
-          <p id="sendwrapper"><button class="btn" type="submit" id="sendbutton">Submit Event</button></p>
-        </div>
+	  <table>
+	  {{ form.as_table}}
+	  </table>
         </form>
 
             <li>Login with <a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a>
