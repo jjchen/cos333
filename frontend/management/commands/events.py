@@ -10,7 +10,6 @@ from frontend.models import NewEvent
 from social_auth.models import UserSocialAuth
 from facepy import GraphAPI
 
-
 class Command(BaseCommand):
     
     def handle(self, *args, **options): 
@@ -55,7 +54,8 @@ class Command(BaseCommand):
                     
                     new_event = NewEvent(name=name, date=date, time=time, location=building, lat=latitude, lon=longitude, tags="")
                     new_event.save()
-                    
+
+'''                    
         # TO BE MOVED:    
         request_user = '290031427770649'
         instance = UserSocialAuth.objects.get(user=request_user, provider='facebook')
@@ -70,10 +70,11 @@ class Command(BaseCommand):
             'privacy_type' : "SECRET"
             }
         
-        result = graph.post(path=event_path, event_data)
+        result = graph.post(path=event_path, options=event_data)
         print result
         
         if result.get('id', False):
             "Successfully Created Event"
         else:
             "Failure"
+'''
