@@ -1,4 +1,3 @@
-import requests
 import datetime
 import time
 import json
@@ -7,15 +6,12 @@ import urllib2
 from django.core.management.base import BaseCommand, CommandError
 from frontend.models import NewEvent
 
-from social_auth.models import UserSocialAuth
-from facepy import GraphAPI
-
 class Command(BaseCommand):
     
-    def handle(self, *args, **options): 
-        feeds = ["http://etcweb.princeton.edu/webfeeds/events/?fmt=json"]
-#                 "http://etcweb.princeton.edu/webfeeds/events/roxen/?fmt=json",
-#                 "http://etcweb.princeton.edu/webfeeds/events/usg/?fmt=json"]
+    def handle(self, *args, **options):
+        feeds = ["http://etcweb.princeton.edu/webfeeds/events/?fmt=json",
+                 "http://etcweb.princeton.edu/webfeeds/events/roxen/?fmt=json",
+                 "http://etcweb.princeton.edu/webfeeds/events/usg/?fmt=json"]
 
         for url in feeds:
             resp = urllib2.urlopen(url)
@@ -29,52 +25,37 @@ class Command(BaseCommand):
 
                 except NewEvent.DoesNotExist:
                     print event
-                    name = event['title']
-                    building = event['locationName']
-                    latitude = event['latitude']
-                    longitude = event['longitude']
-                    startDate = event['startDate']
-                    startTime = event['startTime']
-                    #endDate = event['endDate']
-                    #endTime = event['endTime']
-                    #description = event['description']
-                    #audience = event['audience']
-                    #tags = event['categories']['categoryName']
-                    
-                    # format date
-                    date = datetime.datetime.strptime(startDate['0'], "%Y-%m-%d").date()
-                    
-                    parts = startTime.split()
-                    
-                    # format time
-                    time = datetime.datetime.strptime(parts[0], "%H:%M:%S").time()
-                    
+                    f_name = event['title']
+                    f_building = event['locationName']
+                    f_latitude = event['latitude']
+                    f_longitude = event['longitude']
+                    f_startDate = event['startDate']
+                    f_startTime = event['startTime']
+                    f_endDate = event['endDate']
+                    f_endTime = event['endTime']
+                    #f_description = event['description']
+                    #f_audience = event['audience']
+                    #f_tags = event['categories']['categoryName']
+                    print 1
+                    # start date, time
+                    sDate = datetime.datetime.strptime(f_startDate['0'], "%Y-%m-%d").date()
+                    print 2
+                    f_sTime = f_startTime.split()
+                    sTime = datetime.datetime.strptime(f_sTime[0], "%H:%M:%S").time()
+                    print 3
+                    startDateTime = datetime.datetime.combine(sDate, sTime)
+                    print 4
+                    # end date, time
+                    eDate  = datetime.datetime.strptime(f_endDate['0'], "%Y-%m-%d").date()
+                    print 5
+                    f_eTime = f_endTime.split()
+                    eTime = datetime.datetime.strptime(f_eTime[0], "%H:%M:%S").time()
+                    print 6
+                    endDateTime = datetime.datetime.combine(eDate, eTime)
+                    print 7
                     # make into tags
                     #categories = event['categories']
                     
-                    new_event = NewEvent(name=name, date=date, time=time, location=building, lat=latitude, lon=longitude, tags="")
+                    new_event = NewEvent(name=f_name, startTime=startDateTime, endTime=endDateTime,
+                                         location=f_building, lat=f_latitude, lon=f_longitude, tags="")
                     new_event.save()
-
-'''                    
-        # TO BE MOVED:    
-        request_user = '290031427770649'
-        instance = UserSocialAuth.objects.get(user=request_user, provider='facebook')
-        token = instance.tokens
-        graph = GraphAPI(token)
-        
-        event_path = "https://graph.facebook.com/290031427770649/events"
-        event_data = {
-            'name' : "Test Event",
-            'start_time' : "2013-07-04",
-            'location' : "someplace",
-            'privacy_type' : "SECRET"
-            }
-        
-        result = graph.post(path=event_path, options=event_data)
-        print result
-        
-        if result.get('id', False):
-            "Successfully Created Event"
-        else:
-            "Failure"
-'''
