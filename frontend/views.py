@@ -360,7 +360,8 @@ def export_fb(request):
 
         request_user = '290031427770649'
         user = 'alexlzhao'
-        instance = UserSocialAuth.objects.filter(provider='facebook')[0]
+        instance = UserSocialAuth.objects.filter(user=request.user, provider='facebook')
+        
         print instance.uid
         pprint(instance.tokens)
 
@@ -380,10 +381,9 @@ def export_fb(request):
         print result
         
         if result.get('id', False):
-            "Successfully Created Event"
+            print "Successfully Created Event"
         else:
-            "Failure"
-
+            print "Failure"
 
 # this is the search for a new event.
 def search(request):
@@ -475,7 +475,6 @@ def dataprocessor(request):
                             'sid': e.id,
                             'tid' : e.id}
 
-                
             elif command == 'deleted':
                  e = CalEvent(pk=request.POST[id + '_id'])
                  e.delete()
