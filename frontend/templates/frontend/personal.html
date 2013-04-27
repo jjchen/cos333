@@ -28,37 +28,37 @@
     </header>	
 <div id="container">
 <div id="my_events">
-<p> your events </p>
+<p><b> Your Events: </b></p>
 {% for e in my_events %}
 <p> {{ e.name }} <a href="">Remove</a>  <a href="">Edit</a></p>
 {% endfor %}
 </div>
 <div id="rsvped">
-<p> rsvped events </p>
+<p><b> Rsvped Events: </b></p>
 {% for e in rsvped %}
 <p> {{ e.name }} <a href="">Remove</a></p>
 {% endfor %}
 </div>
 <div id="recommended">
-<p> recommended events (friends/groups) </p>
+<p><b> Recommended Events (Friends/Groups): </b></p>
 {% for e in recommended %}
 <p> {{ e.name }} <a href="">Remove</a></p>
 {% endfor %}
 </div>
 
 <div id="my_tags">
-<p> subscribed tags (likes) </p>
+<p> <b>Subscribed Tags (likes): </b></p>
 {% for t in my_tags %}
 <p> {{ t.1 }} <a href="">Remove</a></p>
 {% endfor %}
 </div>
 
 <div id="friends">
-<p> friends </p>
+<p> <b>Friends:</b> </p>
 {% for f in friend_info %}
 <p> {{ f.name }} <a href="">Remove</a></p>
 {% endfor %}
-<p> add friend </p>
+<p> <b>Add friend: </b></p>
 </div>
 
 <div id="groups">
@@ -68,7 +68,7 @@
 {% endfor %}
 
 <form action="/addgroup/" method="post">{% csrf_token %}
-<p> add group </p>
+<p><b> Add group: </b> </p>
 {{ form.as_p }}
 <input type="submit" value="Submit" />
 </form>

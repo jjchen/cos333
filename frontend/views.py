@@ -217,6 +217,7 @@ def index(request):
 	# print "fwef" what is this?
 	if request.method =='POST':
 		form = SearchForm(request.POST)
+		formEvent = NewEventForm()
 		if form.is_valid():
 			query = form.cleaned_data['search_query']
 			events_list = NewEvent.objects.filter(
@@ -225,10 +226,12 @@ def index(request):
 			show_list = True
 	else:
 		form = SearchForm()
+		formEvent = NewEventForm()
 		events_list = NewEvent.objects.all().order_by("date", "time")
 		show_list = False
+		tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	context = {'events_list': events_list, 'user': request.user, 
-		   'show_list': show_list, 'form': form, }
+		   'show_list': show_list, 'form': form, 'tags': tags}
 	username = request.user.username
 
 	if username != "" and\
