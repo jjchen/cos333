@@ -9,7 +9,7 @@ from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-import datetime
+from datetime import datetime, timedelta
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
@@ -144,14 +144,12 @@ def addgroup(request):
 				print name
 				user = MyUser.objects.get(user_id = name)
 				new_group.users.add(user)
+			new_group.users.add(this_user)
 			new_group.save()
 			print form.cleaned_data
-			return HttpResponseRedirect('/frontend/settings')
-	else:
-		form = AddgroupForm() # An unbound form
-	return render(request, '/frontend/personal', {
-        'form': form,
-    })	
+			return HttpResponseRedirect('/frontend/personal')
+	return HttpResponseRedirect('/frontend/personal')
+
 	return HttpResponseRedirect('/signup')
 
 def addfriend(request):
@@ -262,6 +260,7 @@ def personal(request):
 	for friend in friends:
 		# get friends rsvp
 		recommended += NewEvent.objects.filter(rsvp = friend)
+		recommended += NewEvent.objects.filter(creator = friend)
 	for group in groups:
 		# group events
 		recommended += NewEvent.objects.filter(groups = group)
@@ -287,7 +286,8 @@ def index(request):
 			show_list = True
 	else:
 		form = SearchForm()
-		events_list = NewEvent.objects.all().order_by("startTime")
+		time_threshold = datetime.now() - timedelta(days = 1)
+		events_list = NewEvent.objects.filter(startTime__gt=time_threshold).order_by("startTime")
 		show_list = False
 		tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	context = {'events_list': events_list, 'user': request.user, 
