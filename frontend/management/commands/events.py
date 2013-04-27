@@ -9,7 +9,7 @@ import urllib2
 class Command(BaseCommand):
     
     def handle(self, *args, **options): 
-        feeds = ["http://etcweb.princeton.edu/webfeedsx/events/?fmt=json",
+        feeds = ["http://etcweb.princeton.edu/webfeeds/events/?fmt=json",
                  "http://etcweb.princeton.edu/webfeeds/events/roxen/?fmt=json",
                  "http://etcweb.princeton.edu/webfeeds/events/usg/?fmt=json"]
 
