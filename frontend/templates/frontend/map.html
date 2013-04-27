@@ -468,6 +468,8 @@
         <h3>Make Event</h3>
         <form action="/add/" method="post" id="eventform" class="form-horizontal">{% csrf_token %}
 	  {{ form.as_p}}
+    
+<input type="submit" value="Submit" />
         </form>
 
             <li>Login with <a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a>
