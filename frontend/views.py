@@ -144,10 +144,41 @@ def rmgroup(request, group):
 		group_obj = MyGroup.objects.get(name = group)
 	except ObjectDoesNotExist:
 		return HttpResponse('Tried removing non-existent group!', status=401)
-	if group_obj.creator != request.user.username:
+	#if group_obj.creator != request.user.username:
+	#	return HttpResponse('Unauthorized access', status=401)
+	#group_obj.delete()
+	this_user = MyUser.objects.get(user_id = request.user.username)
+	group_obj.users.remove(this_user)
+	group_obj.save()
+	return HttpResponseRedirect('/frontend/personal')
+
+def rmevent(request, event):
+	try:
+		event_obj = NewEvent.objects.get(name = event)
+	except ObjectDoesNotExist:
+		return HttpResponse('Tried removing non-existent event!', status=401)
+	if event_obj.creator != request.user.username:
 		return HttpResponse('Unauthorized access', status=401)
-	group_obj.delete()
-	return HttpResponseRedirect('/frontend/settings')
+	event_obj.delete()
+	return HttpResponseRedirect('/frontend/personal')	
+
+def addrsvp(request, event):
+	try:
+		event_obj = NewEvent.objects.get(name = event)
+	except ObjectDoesNotExist:
+		return HttpResponse('Tried rspving non-existent group!', status=401)
+	event_obj.rsvp.add(this_user)
+	event_obj.save()
+	return HttpResponseRedirect(reverse('frontend:index'))
+
+def rmrsvp(request, event):
+	try:
+		event_obj = NewEvent.objects.get(name = event)
+	except ObjectDoesNotExist:
+		return HttpResponse('Tried rspving non-existent group!', status=401)
+	event_obj.rsvp.remove(this_user)
+	event_obj.save()
+	return HttpResponseRedirect(reverse('frontend:index'))
 
 def logout(request):
 	return HttpResponseRedirect(reverse('frontend:index'))
