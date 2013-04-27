@@ -185,7 +185,7 @@ def addfriend(request):
 def rmgroup(request, group):
 	print group
 	try:
-		group_obj = MyGroup.objects.get(name = group)
+		group_obj = MyGroup.objects.get(id = group)
 	except ObjectDoesNotExist:
 		return HttpResponse('Tried removing non-existent group!', status=401)
 	#if group_obj.creator != request.user.username:
@@ -245,7 +245,7 @@ def personal(request):
 		info = group.name + ": "
 		for user in all_users:
 			info += user.user_id + " "
-		group_info.append((group.name, info))
+		group_info.append((group.id, info))
 #	my_events = []
 	my_events = NewEvent.objects.filter(creator = this_user)
 #	rsvped = []
