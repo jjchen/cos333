@@ -363,10 +363,7 @@
             }
             html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"> {{event.time}} </td>' + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
               + '<div style="float:right">'
-            {% if event.creator == this_user %}
-            html += '<a href="{% url \'frontend:edit\' {{event.id}} %}">Edit  </a></div>'
-            {% endif %}
-            html += '<a href="{% url \'frontend:addrsvp\' {{event.id}} %}">RSVP</a></div>'
+            html += '<a href="{% url "frontend:addrsvp" event.id %}">RSVP</a></div>'
               + ' </td>' + '<tr class="' + row_class + '"><td> <small>{{event.tags}}</small></td></tr>' 
             {% endfor %}
             html += "</table>"; 

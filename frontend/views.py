@@ -167,13 +167,14 @@ def rmevent(request, event):
 	return HttpResponseRedirect('/frontend/personal')	
 
 def addrsvp(request, event):
+	this_user = MyUser.objects.get(user_id = request.user.username)
 	try:
-		event_obj = NewEvent.objects.get(name = event)
+		event_obj = NewEvent.objects.get(id = event)
 	except ObjectDoesNotExist:
 		return HttpResponse('Tried rspving non-existent group!', status=401)
 	event_obj.rsvp.add(this_user)
 	event_obj.save()
-	return HttpResponseRedirect(reverse('frontend:index'))
+	return HttpResponseRedirect('/')
 
 def rmrsvp(request, event):
 	try:
