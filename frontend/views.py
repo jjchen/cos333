@@ -110,6 +110,11 @@ class AddgroupForm(forms.Form):
 	group_name = forms.CharField(validators=[check_group_name])
 	member_names = MultiNameField()
 
+class AddfriendsForm(forms.Form):
+	#member_names = forms.CharField(widget=forms.Textarea(),
+	#							validators=[validate_names])
+	friends_names = MultiNameField()
+
 class SearchForm(forms.Form):
 	search_query = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Search'}))
 
@@ -137,10 +142,40 @@ def addgroup(request):
 			return HttpResponseRedirect('/frontend/settings')
 	else:
 		form = AddgroupForm() # An unbound form
-	return render(request, 'frontend/addgroup.html', {
+	return render(request, '/frontend/personal', {
         'form': form,
     })	
 	return HttpResponseRedirect('/signup')
+
+def addfriend(request):
+	#print request.user.username
+	#print MyUser.objects.get(user_id="foo")
+	print "Request is " + request.user.username
+	if request.user.username == "":
+		return HttpResponse('Unauthorized access', status=401)
+	if request.method == 'POST':
+		form = AddfriendsForm(request.POST) # A form bound to the POST data
+		if form.is_valid():
+			this_user = MyUser.objects.get(user_id = request.user.username)
+			try: 
+				friends_obj = Friends.objects.get(name = this_user)
+			except ObjectDoesNotExist:
+				friends_obj = Friends()
+				friends_obj.name = this_user
+				friends_obj.save()
+			for name in form.cleaned_data['friends_names']:
+				print name
+				user = MyUser.objects.get(user_id = name)
+				friends_obj.friends.add(user)
+			friends_obj.save()
+			return HttpResponseRedirect('/frontend/personal')
+	return HttpResponseRedirect('/frontend/personal')
+#	else:
+#		form = AddfriendForm() # An unbound form
+#	return render(request, 'frontend/personal.html', {
+ #       'form': form,
+  #  })	
+	return HttpResponseRedirect('/signup')	
 
 def rmgroup(request, group):
 	print group
@@ -171,22 +206,24 @@ def addrsvp(request, event):
 	try:
 		event_obj = NewEvent.objects.get(id = event)
 	except ObjectDoesNotExist:
-		return HttpResponse('Tried rspving non-existent group!', status=401)
+		return HttpResponse('Tried rspving to non-existent group!', status=401)
 	event_obj.rsvp.add(this_user)
 	event_obj.save()
 	return HttpResponseRedirect('/')
 
 def rmrsvp(request, event):
+	this_user = MyUser.objects.get(user_id = request.user.username)
+
 	try:
-		event_obj = NewEvent.objects.get(name = event)
+		event_obj = NewEvent.objects.get(id = event)
 	except ObjectDoesNotExist:
-		return HttpResponse('Tried rspving non-existent group!', status=401)
+		return HttpResponse('Tried rspving to non-existent group!', status=401)
 	event_obj.rsvp.remove(this_user)
 	event_obj.save()
 	return HttpResponseRedirect(reverse('frontend:index'))
 
 def logout(request):
-	return HttpResponseRedirect(reverse('frontend:index'))
+	return HttpResponseRedirect(reverse('frontend:personal'))
 
 def personal(request):
 	print "Request is " + request.user.username
@@ -210,10 +247,9 @@ def personal(request):
 	rsvped = NewEvent.objects.filter(rsvp = this_user)
 	#this_user.rsvp_set.all()
 #	friends = []
-	people = Friends.objects.filter(name = this_user)
-	friends = []
-	for person in people:
-		friends = person.friends.all()
+	friends_obj = Friends.objects.get(name = this_user)
+	friends = friends_obj.friends.all()
+
 	recommended = []
 #	friends rsvp, groups 
 	for friend in friends:
@@ -224,29 +260,10 @@ def personal(request):
 		recommended += NewEvent.objects.filter(groups = group)
 	my_tags = []
 #   
-
-
-	if request.method == 'POST':
-		form = AddgroupForm(request.POST) # A form bound to the POST data
-		if form.is_valid():
-			this_user = MyUser.objects.get(user_id = request.user.username)
-			new_group = MyGroup()
-			new_group.creator = this_user.user_id
-			new_group.name = form.cleaned_data['group_name']
-			new_group.save()
-			print form.cleaned_data
-			for name in form.cleaned_data['member_names']:
-				print name
-				user = MyUser.objects.get(user_id = name)
-				new_group.users.add(user)
-			new_group.save()
-			print "got here to POST"
-			return HttpResponseRedirect('/frontend/personal')
-	else:
-		print "returning form"
-		form = AddgroupForm() # An unbound form
+	form = AddgroupForm() # An unbound form
+	form2 = AddfriendsForm()
 	return render(request, 'frontend/personal.html', {
-        'form': form, 'group_info': group_info, 'my_events': my_events, 'rsvped': rsvped, 'recommended':recommended, 'my_tags':my_tags, "friends":friends 
+        'form': form, 'form2':form2, 'group_info': group_info, 'my_events': my_events, 'rsvped': rsvped, 'recommended':recommended, 'my_tags':my_tags, "friends":friends 
     })	
 
 # Create your views here.  index is called on page load.
