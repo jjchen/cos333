@@ -236,7 +236,6 @@ def index(request):
 		return HttpResponseRedirect('/signup')
 	else: 
 		return render(request, 'frontend/map.html', context)
-
 # add a new event.  add is called when a new event is properly submitted.
 def add(request):
 	if request.method == 'POST':
