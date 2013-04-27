@@ -53,24 +53,31 @@ def settings(request):
 		for user in all_users:
 			info += user.user_id + " "
 		group_info.append((group.name, info))
-		 #<a href="{% url 'frontend:rmgroup' g.0 %}">Remove</a>
-		#for user in group.users:
-		#	print user
-		#print group.name
-	#print inspect.getmembers(this_user)
-#	print this_user.group_set.all()
+
 	if request.method == 'POST':
-		form = SettingsForm(request.POST) # A form bound to the POST data
+		form = SettingsForm(request.POST)
 		if form.is_valid():
 			print "form is valid"
+			data = form.cleaned_data
+			this_user.first_name = data['first_name']
+			this_user.last_name = data['last_name']
+			this_user.latitude = data['latitude']
+			this_user.longitude = data['longitude']
+			this_user.save()
+			this_user = MyUser.objects.get(
+				user_id = request.user.username)
+			print this_user.latitude
 			return HttpResponseRedirect('/') # Redirect after POST
 	else:
 		
-		form = SettingsForm(initial={'first_name': this_user.first_name,
-									'last_name': this_user.last_name}) # An unbound form
+		form = SettingsForm(
+			initial={'first_name': this_user.first_name,
+				 'last_name': this_user.last_name,
+				 'latitude': this_user.latitude,
+				 'longitude': this_user.longitude})
 	return render(request, 'frontend/settings.html', {
         'form': form, 'group_info': group_info
-    })
+	})
 
 def signup(request):
 	if request.method == 'POST':
@@ -273,8 +280,17 @@ def index(request):
 	if username != "" and\
 	 len(MyUser.objects.filter(user_id = username)) == 0:
 		return HttpResponseRedirect('/signup')
-	else: 
-		return render(request, 'frontend/map.html', context)
+	else:
+		try:
+			user = MyUser.objects.get(user_id=username)
+			lat = user.latitude
+			lon = user.longitude
+		except MyUser.DoesNotExist:
+			lat = MyUser.latitude.default
+			lon = MyUser.longitude.default
+		context['center_lat'] = lat
+		context['center_lon'] = lon
+	return render(request, 'frontend/map.html', context)
 # add a new event.  add is called when a new event is properly submitted.
 def add(request):
 	if request.method == 'POST':
