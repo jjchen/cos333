@@ -18,8 +18,6 @@ from django.shortcuts import render_to_response
 from frontend.models import CalEvent
 from django.template import RequestContext
 
-
-
 MAX_LEN = 50
 class SignupForm(forms.Form):
 	first_name = forms.CharField(max_length = MAX_LEN)
