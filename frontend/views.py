@@ -248,7 +248,7 @@ def add(request):
 		username = request.user.username
 		this_user = MyUser.objects.filter(user_id = username)
 		form = NewEventForm(request.POST) # A form bound to the POST data
-		if not form.is_valid():
+		if form.is_valid():
 			data = form.cleaned_data
 			buildingAlias = BuildingAlias.objects.filter(alias=data['location'])
 			latitude = None
@@ -258,13 +258,13 @@ def add(request):
 				latitude = building.lat
 				longitude = building.lon
 			event = NewEvent(name = data['name'],
-								date = data['date'],
-								time = data['time'],
-								location = data['location'],
-								lat = latitude,
-								lon = longitude,
-								tags = data['tags'],
-								creator = this_user[0])
+							date = data['date'],
+							time = data['time'],
+							location = data['location'],
+							lat = latitude,
+							lon = longitude,
+							tags = data['tags'])
+							#creator = this_user)
 			event.save()
 			if request.is_ajax():
 				return render(request, 'frontend/success.html')
