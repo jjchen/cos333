@@ -24,7 +24,7 @@
   local: [                                                                    
     "cos",                                                             
     "333",                                                                    
-    "music",                                                                     
+    "music",                                                                    
     "live",                                                                  
     "tv",                                                             
     "soccer",                                                                   
@@ -356,10 +356,11 @@
                row_class = "";
             }
             i++;
+		alert('{{event.startTime}}');
+            if ('{{event.startTime|date:"D d M Y"}}' != cur_date) {
 
-            if ('{{event.date}}' != cur_date) {
-               html += '<tr><td colspan="2"> <h3> {{event.date}} </h3></td></tr>';
-               cur_date = '{{event.date}}';
+               html += '<tr><td colspan="2"> <h3> {{event.startTime|date:"D d M Y"}} </h3></td></tr>';
+               cur_date = '{{event.startTime|date:"D d M Y"}}';
             }
             html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"> {{event.time}} </td>' + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
               + '<div style="float:right">'

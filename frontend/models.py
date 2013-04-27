@@ -23,8 +23,8 @@ class MyGroup(models.Model):
 # Create your models here.
 class NewEvent(models.Model):
     name = models.CharField(max_length=200)
-    startTime = models.DateTimeField(null=True, blank=True)
-    endTime = models.DateTimeField(null=True, blank=True)
+    startTime = models.DateTimeField()
+    endTime = models.DateTimeField()
     location = models.CharField(max_length=200)
     private = models.BooleanField(default=False)
     lat = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
