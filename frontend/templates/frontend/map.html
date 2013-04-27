@@ -209,8 +209,8 @@
          var map;
          var idled = false;
          var oms;
-         var single_ping = '{% static "frontend/img/single_pin.svg" %}';
-         var multi_pin = '{% static "frontend/img/small_multi_pin.svg" %}';
+         var single_pin = '{% static "frontend/paw_print.png" %}';
+         var multi_pin = '{% static "frontend/small_flower.png" %}';
          var geocoder;
 
          function initialize() {
@@ -236,7 +236,7 @@
             oms.addListener('spiderfy', function (markers) {
                iw.close();
                for (i = 0; i < markers.length; i++) {
-                  markers[i].setIcon(single_ping);
+                  markers[i].setIcon(single_pin);
                }
             });
 
@@ -282,7 +282,7 @@
             var marker = new google.maps.Marker({
                map: map,
                position: position,
-               icon: single_ping
+               icon: single_pin
             });
 
             var contentString = '<div class="infoWindow_content">' +
