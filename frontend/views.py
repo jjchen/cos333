@@ -73,12 +73,12 @@ def settings(request):
 			print this_user.latitude
 			return HttpResponseRedirect('/') # Redirect after POST
 	else:
-		
 		form = SettingsForm(
 			initial={'first_name': this_user.first_name,
 				 'last_name': this_user.last_name,
 				 'latitude': this_user.latitude,
 				 'longitude': this_user.longitude})
+	print "I am here, settings"
 	return render(request, 'frontend/settings.html', {
         'form': form, 'group_info': group_info
 	})
@@ -156,7 +156,7 @@ def addgroup(request):
 def rmgroup(request, group):
 	print group
 	try:
-		group_obj = MyGroup.objects.get(name = group)
+		group_obj = MyGroup.objects.get(id = group)
 	except ObjectDoesNotExist:
 		return HttpResponse('Tried removing non-existent group!', status=401)
 	#if group_obj.creator != request.user.username:
@@ -214,7 +214,7 @@ def personal(request):
 		info = group.name + ": "
 		for user in all_users:
 			info += user.user_id + " "
-		group_info.append((group.name, info))
+		group_info.append((group.id, info))
 #	my_events = []
 	my_events = NewEvent.objects.filter(creator = this_user)
 #	rsvped = []
@@ -261,9 +261,9 @@ def personal(request):
     })	
 
 # Create your views here.  index is called on page load.
-def index(request):
+def index(request, add_form=None):
 	# print "fwef" what is this?
-	if request.method =='POST':
+	if request.method =='POST' and add_form==None:
 		form = SearchForm(request.POST)
 		formEvent = NewEventForm()
 		if form.is_valid():
@@ -276,9 +276,15 @@ def index(request):
 		form = SearchForm()
 		events_list = NewEvent.objects.all().order_by("startTime")
 		show_list = False
-		tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
+	tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	context = {'events_list': events_list, 'user': request.user, 
-		   'show_list': show_list, 'search_form': form, 'form': NewEventForm(), 'tags': tags}
+		   'show_list': show_list, 'search_form': form, 'tags': tags}
+	if add_form == None: 
+		context['form'] = NewEventForm()
+		context['make_visible'] = False
+	else: 
+		context['form'] = add_form
+		context['make_visible'] = True
 	username = request.user.username
 
 	if username != "" and\
@@ -299,9 +305,10 @@ def index(request):
 # add a new event.  add is called when a new event is properly submitted.
 def add(request):
 	if request.method == 'POST':
+		print "oh my god"
 		username = request.user.username
 		this_user = MyUser.objects.filter(user_id = username)
-		form = NewEventForm(request.POST) # A form bound to the POST data
+		form = NewEventForm(request.POST) 
 		if form.is_valid():
 			data = form.cleaned_data
 			buildingAlias = BuildingAlias.objects.filter(alias=data['location'])
@@ -319,15 +326,18 @@ def add(request):
 							tags = data['tags'])
 							#creator = this_user)
 			event.save()
+			
 			if request.is_ajax():
 				return render(request, 'frontend/success.html')
 			else:
 				return redirect('success')
 			# msg = "success!"
-			# return HttpResponseRedirect('/') # Redirect after POST
-	else:
-		form = NewEventForm() # An unbound form
-	return render(request, 'frontend/map.html', {'form': form})
+	print "I am here in add"
+	return index(request, form)
+#	return render(request, '/frontend/map.html', {'form': form})
+#	return HttpResponseRedirect('/') # Redirect after POST
+	#return render(request, 'frontend/map.html')
+
 
 # export event to Facebook
 def export_fb(request):

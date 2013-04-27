@@ -74,7 +74,7 @@
   {
   	 	// call refresh function in views.py
   }
-  
+
   </script>
 
 
@@ -330,7 +330,6 @@
          }
 
          function showContent(id) {
-            //alert(id);
             var elem = document.getElementById('content_wrapper');
             for (i = 0; i < elem.children.length; i++) {
                if (elem.children[i].id != id) {
@@ -356,7 +355,6 @@
                row_class = "";
             }
             i++;
-		alert('{{event.startTime}}');
             if ('{{event.startTime|date:"D d M Y"}}' != cur_date) {
 
                html += '<tr><td colspan="2"> <h3> {{event.startTime|date:"D d M Y"}} </h3></td></tr>';
@@ -466,11 +464,41 @@
 
       <div id="make_content" class="hidden">
         <h3>Make Event</h3>
-        <form action="/add/" method="post" id="eventform" class="form-horizontal">{% csrf_token %}
-	  {{ form.as_p}}
-    
-<input type="submit" value="Submit" />
-        </form>
+
+<form action="/add/" method="post">{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="fieldWrapper">
+        {{ form.name.errors }}
+        <label for="id_name">Name:</label>
+        {{ form.name }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.startTime.errors }}
+        <label for="id_startTime">Start date & time: </label>
+        {{ form.startTime }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.endTime.errors }}
+        <label for="id_endTime">End date & time: </label>
+        {{ form.endTime }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.location.errors }}
+        <label for="id_location">Location: </label>
+        {{ form.location }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.private.errors }}
+        <label for="id_private">Private: </label>
+        {{ form.private }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.groups.errors }}
+        <label for="id_groups">Groups: </label>
+        {{ form.groups }}
+    </div>
+    <p><input type="submit" value="Save" /></p>
+</form>
 
             <li>Login with <a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a>
 
@@ -506,6 +534,11 @@
       </div>
 
     <div id="calendar_button" class="button" onclick="showContent('calendar_content');">
+      <script>
+  {% if make_visible %}
+  showContent('make_content');
+  {% endif %}
+  </script>
       <h3>Calendar</h3>
     </div>
     
