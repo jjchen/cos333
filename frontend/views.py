@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 
 from frontend.models import NewEvent
 #from frontend.models import NewEventForm
