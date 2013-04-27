@@ -338,35 +338,37 @@ def add(request):
 #	return HttpResponseRedirect('/') # Redirect after POST
 	#return render(request, 'frontend/map.html')
 
+    export_fb(request)
+
 
 # export event to Facebook
 def export_fb(request):
+    request_user = '290031427770649'
+    user = 'alexlzhao'
 
-        request_user = '290031427770649'
-        user = 'alexlzhao'
-        instance = UserSocialAuth.objects.filter(provider='facebook')[0]
-        print instance.uid
-        pprint(instance.tokens)
+    instance = UserSocialAuth.objects.filter(user=request.user, provider='facebook')
+    print instance.uid
+    pprint(instance.tokens)
 
-        token = instance.tokens
-        print token
-        graph = GraphAPI(token)
-        
-        event_path = "https://graph.facebook.com/290031427770649/events"
-        event_data = {
-            'name' : "Test Event",
-            'start_time' : "2013-07-04",
-            'location' : "someplace",
-            'privacy_type' : "SECRET"
-            }
-        
-        result = graph.post(path=event_path, options=event_data)
-        print result
-        
-        if result.get('id', False):
-            "Successfully Created Event"
-        else:
-            "Failure"
+    token = instance.tokens
+    print token
+    graph = GraphAPI(token)
+    
+    event_path = "https://graph.facebook.com/290031427770649/events"
+    event_data = {
+        'name' : "Test Event",
+        'start_time' : "2013-07-04",
+        'location' : "someplace",
+        'privacy_type' : "SECRET"
+        }
+    
+    result = graph.post(path=event_path, options=event_data)
+    print result
+    
+    if result.get('id', False):
+        "Successfully Created Event"
+    else:
+        "Failure"
 
 # this is the search for a new event.
 def search(request):

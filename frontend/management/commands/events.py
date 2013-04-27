@@ -27,8 +27,19 @@ class Command(BaseCommand):
                     print event
                     f_name = event['title']
                     f_building = event['locationName']
-                    f_latitude = event['latitude']
-                    f_longitude = event['longitude']
+                    
+                    try:
+                        f_latitude = event['latitude']
+                        break
+                    except KeyError:
+                        f_latitude = 0
+
+                    try:
+                        f_longitude = event['longitude']
+                        break
+                    except KeyError:
+                        f_longitude = 0
+
                     f_startDate = event['startDate']
                     f_startTime = event['startTime']
                     f_endDate = event['endDate']
@@ -37,7 +48,9 @@ class Command(BaseCommand):
                     #f_audience = event['audience']
                     #f_tags = event['categories']['categoryName']
                     print 1
+                    print 'yeah'
                     # start date, time
+                    print type(f_startDate)
                     sDate = datetime.datetime.strptime(f_startDate['0'], "%Y-%m-%d").date()
                     print 2
                     f_sTime = f_startTime.split()
