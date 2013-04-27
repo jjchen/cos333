@@ -37,15 +37,15 @@ tr.rowColor {
 	background-color: rgba(0,102,51,0.1);
 }
 
-header h1 {
-	/* font-weight: bold; */
+/* header h1 {
+	/* font-weight: bold;
 	float:left;
 	font-size: 20px;
 	color: #fff;
 	padding: 0;
 	margin: 10px 10px;
-//	text-align: right;
-//	border-bottom: 1px solid #fff;
+	text-align: right;
+	border-bottom: 1px solid #fff;
 	text-shadow: 0px 0px 5px rgba(0,0,0,.9);
 }
 
@@ -66,6 +66,23 @@ h3 {
 	line-height: normal;
 	text-align: left;
 	text-transform: uppercase;
+} */
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Arvo', Georgia, Times, serif;
+}
+p, div {
+    font-family: 'PT Sans', Helvetica, Arial, sans-serif;
+}
+
+.form-horizontal .control-label {
+	float: left;
+    width: 2px;
+}
+
+.form-horizontal .controls {
+  padding-left: 30px;
+  margin-left: 50px;  /* changed from 180px to 140px */
 }
 
 .settings_buttons {
@@ -104,8 +121,8 @@ div#side_panel{
 	position: absolute;
 	top: 100px;
 	right: 25px;
-	width: 15%;
-	height: 75%;
+	min-width: 15%;
+	min-height: 75%;
 	float: right;
 	background: #f9f9f9;
 	border: 1px solid #eee;
@@ -123,18 +140,18 @@ div#make_button{
 }
 
 div#calendar_button{
-	left: 120px;
+	left: 140px;
 }
 
 div#list_button{
-	left: 265px;
+	left: 300px;
 }
 
 div#settings_button{
-	left: 350px;
+	left: 390px;
 }
 div#minus_button{
-	left: 345px;
+	left: 540px;	
 }
 
 .button {
@@ -161,18 +178,46 @@ div#minus_button{
 
 .errorlist {
 	list-style-type: none;
-	color:red;
+    padding:0px;
+
 }
 
 .valerror {
 	background-color: rgba(255,235,255,0.9);
 }
 
+.purtyForm {
+	 border-radius:5px;
+ 	/* mozilla */
+ 	-moz-border-radius:5px;
+ 	/* webkit */
+ -webkit-border-radius:5px;
+}
+
+.swagButton {
+	background:#5CCD00;
+	background:-moz-linear-gradient(top,#5CCD00 0%,#4AA400 100%);
+	background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#5CCD00),color-stop(100%,#4AA400));
+	background:-webkit-linear-gradient(top,#5CCD00 0%,#4AA400 100%);
+	background:-o-linear-gradient(top,#5CCD00 0%,#4AA400 100%);
+	background:-ms-linear-gradient(top,#5CCD00 0%,#4AA400 100%);
+	background:linear-gradient(top,#5CCD00 0%,#4AA400 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#5CCD00',endColorstr='#4AA400',GradientType=0);
+	padding:10px 15px;
+	color:#fff;
+	font-family:'Helvetica Neue',sans-serif;
+	font-size:16px;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border:1px solid #459A00
+}
+
 .visible {
 	position: absolute;
 	top: 100px;
 	left: 25px;
-	width: 75%;
+	width: 70%;
 	height: 75%;
 	/*width: 20%; */
 	float: right;

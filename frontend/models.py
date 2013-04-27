@@ -29,9 +29,9 @@ class NewEvent(models.Model):
     lat = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
     lon = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
     tags = models.CharField(max_length=200, blank = True, null=True, default="all")
-    creator = models.ForeignKey(MyUser, related_name="creator", null=True)
-    groups = models.ManyToManyField(MyGroup, related_name="groups", null=True)
-    rsvp = models.ManyToManyField(MyUser, related_name="rsvp", null=True)
+    creator = models.ForeignKey(MyUser, related_name="creator", blank=True, null=True)
+    groups = models.ManyToManyField(MyGroup, related_name="groups", blank=True, null=True)
+    rsvp = models.ManyToManyField(MyUser, related_name="rsvp", blank=True, null=True)
 
     def __unicode__(self):
         return self.name
