@@ -30,10 +30,14 @@ class SettingsForm(forms.Form):
 	longitude = forms.DecimalField()
 
 # makes a Form class from the NewEvent model
-class NewEventForm(ModelForm):
-	class Meta:
-		model = NewEvent
-
+class NewEventForm(forms.Form):
+	name = forms.CharField(max_length=200)
+	startTime = forms.DateTimeField()
+	endTime = forms.DateTimeField()
+	location = forms.CharField(max_length=200)
+	private = forms.BooleanField()
+	groups = forms.ModelMultipleChoiceField(queryset=MyGroup.objects.all())
+	
 def settings(request):
 	if request.user.username == "":
 		return HttpResponse('Unauthorized access--you must sign in!', 
@@ -235,9 +239,10 @@ def personal(request):
 				user = MyUser.objects.get(user_id = name)
 				new_group.users.add(user)
 			new_group.save()
-			print form.cleaned_data
+			print "got here to POST"
 			return HttpResponseRedirect('/frontend/personal')
 	else:
+		print "returning form"
 		form = AddgroupForm() # An unbound form
 	return render(request, 'frontend/personal.html', {
         'form': form, 'group_info': group_info, 'my_events': my_events, 'rsvped': rsvped, 'recommended':recommended, 'my_tags':my_tags, "friends":friends 
@@ -253,16 +258,15 @@ def index(request):
 			query = form.cleaned_data['search_query']
 			events_list = NewEvent.objects.filter(
 				Q(name__icontains=query) | 
-				Q(location__icontains=query)).order_by("date", "time")
+				Q(location__icontains=query)).order_by("startTime")
 			show_list = True
 	else:
 		form = SearchForm()
-		formEvent = NewEventForm()
-		events_list = NewEvent.objects.all().order_by("date", "time")
+		events_list = NewEvent.objects.all().order_by("startTime")
 		show_list = False
 		tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	context = {'events_list': events_list, 'user': request.user, 
-		   'show_list': show_list, 'form': form, 'tags': tags}
+		   'show_list': show_list, 'search_form': form, 'form': NewEventForm(), 'tags': tags}
 	username = request.user.username
 
 	if username != "" and\
@@ -270,7 +274,6 @@ def index(request):
 		return HttpResponseRedirect('/signup')
 	else: 
 		return render(request, 'frontend/map.html', context)
-
 # add a new event.  add is called when a new event is properly submitted.
 def add(request):
 	if request.method == 'POST':
@@ -287,8 +290,7 @@ def add(request):
 				latitude = building.lat
 				longitude = building.lon
 			event = NewEvent(name = data['name'],
-							date = data['date'],
-							time = data['time'],
+					 startTime = data['startTime'],
 							location = data['location'],
 							lat = latitude,
 							lon = longitude,
@@ -321,7 +323,7 @@ def search(request):
 
 # call this to refresh events list.
 def refreshEvents(request):
-   events_list = NewEvent.objects.all().order_by("date", "time")
+   events_list = NewEvent.objects.all().order_by("startTime")
 
 
 def eventsXML(request):
