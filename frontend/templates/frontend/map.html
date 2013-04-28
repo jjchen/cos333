@@ -471,11 +471,6 @@
 <form action="/add/" method="post">{% csrf_token %}
     {{ form.non_field_errors }}
     <div class="fieldWrapper">
-        {{ form.date_field.errors }}
-        <label for="id_date_field">Date field:</label>
-        {{ form.date_field }}
-    </div>
-    <div class="fieldWrapper">
         {{ form.name.errors }}
         <label for="id_name">Name:</label>
         {{ form.name }}
