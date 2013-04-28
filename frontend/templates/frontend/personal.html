@@ -47,17 +47,10 @@
 {% endfor %}
 </div>
 
-<div id="my_tags">
-<p> <b>Subscribed Tags (likes): </b></p>
-{% for t in my_tags %}
-<p> {{ t.1 }} <a href="">Remove</a></p>
-{% endfor %}
-</div>
-
 <div id="friends">
 <p> <b>Friends:</b> </p>
 {% for f in friends %}
-<p> {{ f.first_name }} <a href="">Remove</a></p>
+<p> {{ f.first_name }} <a href="{% url 'frontend:rmfriend' f.id %}">Remove</a></p>
 {% endfor %}
 <form action="/addfriend/" method="post">{% csrf_token %}
 <p><b> Add friend: </b> </p>

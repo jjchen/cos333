@@ -23,4 +23,5 @@ urlpatterns = patterns('',
     url(r'^rsvp/(?P<event>\w+)/', views.addrsvp, name='addrsvp'),
     url(r'^rmrsvp/(?P<event>\w+)/', views.rmrsvp, name='rmrsvp'),
     url(r'^rmgroup/(?P<group>\w+)/$', views.rmgroup, name='rmgroup'),
+    url(r'^rmfriend/(?P<user>\w+)/$', views.rmfriend, name='rmfriend'),
 )

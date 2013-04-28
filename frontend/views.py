@@ -190,6 +190,20 @@ def addfriend(request):
   #  })	
 	return HttpResponseRedirect('/signup')	
 
+def rmfriend(request, user):
+	try:
+		remove_obj = MyUser.objects.get(id = user)
+	except ObjectDoesNotExist:
+		return HttpResponse('Tried removing non-existent friend!', status=401) 
+	this_user = MyUser.objects.get(user_id = request.user.username)
+	try: 
+		friend_obj = Friends.objects.get(name = this_user)
+	except ObjectDoesNotExist:
+		return HttpResponseRedirect('/frontend/personal')			
+	friend_obj.friends.remove(remove_obj)
+	friend_obj.save()
+	return HttpResponseRedirect('/frontend/personal')
+
 def rmgroup(request, group):
 	print group
 	try:
@@ -206,7 +220,7 @@ def rmgroup(request, group):
 
 def rmevent(request, event):
 	try:
-		event_obj = NewEvent.objects.get(name = event)
+		event_obj = NewEvent.objects.get(id = event)
 	except ObjectDoesNotExist:
 		return HttpResponse('Tried removing non-existent event!', status=401)
 	if event_obj.creator != request.user.username:
@@ -277,12 +291,11 @@ def personal(request):
 	for group in groups:
 		# group events
 		recommended += NewEvent.objects.filter(groups = group)
-	my_tags = []
 #   
 	form = AddgroupForm() # An unbound form
 	form2 = AddfriendsForm()
 	return render(request, 'frontend/personal.html', {
-        'form': form, 'form2':form2, 'group_info': group_info, 'my_events': my_events, 'rsvped': rsvped, 'recommended':recommended, 'my_tags':my_tags, "friends":friends 
+        'form': form, 'form2':form2, 'group_info': group_info, 'my_events': my_events, 'rsvped': rsvped, 'recommended':recommended, "friends":friends 
     })	
 
 # Create your views here.  index is called on page load.
