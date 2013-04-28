@@ -18,9 +18,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.shortcuts import redirect, render
 from django.template import RequestContext
-
 from social_auth.models import UserSocialAuth
 from facepy import GraphAPI
+from fields import JqSplitDateTimeField
+from widgets import JqSplitDateTimeWidget
 
 MAX_LEN = 50
 class SignupForm(forms.Form):
@@ -36,8 +37,12 @@ class SettingsForm(forms.Form):
 # makes a Form class from the NewEvent model
 class NewEventForm(forms.Form):
 	name = forms.CharField(max_length=200)
-	startTime = forms.DateTimeField()
-	endTime = forms.DateTimeField()
+	startTime =  JqSplitDateTimeField(widget=JqSplitDateTimeWidget(
+			attrs={'date_class':'datepicker',
+			       'time_class':'timepicker'}))
+	endTime =  JqSplitDateTimeField(widget=JqSplitDateTimeWidget(
+			attrs={'date_class':'datepicker',
+			       'time_class':'timepicker'}))
 	location = forms.CharField(max_length=200)
 	private = forms.BooleanField(required=False)
 	groups = forms.ModelMultipleChoiceField(queryset=MyGroup.objects.all(),
@@ -140,23 +145,20 @@ def addgroup(request):
 	if request.method == 'POST':
 		form = AddgroupForm(request.POST) # A form bound to the POST data
 		if form.is_valid():
-			this_user = MyUser.objects.get(user_id = request.user.username)
+			this_user = MyUser.objects.get(user_id = 
+						       request.user.username)
 			new_group = MyGroup()
 			new_group.creator = this_user.user_id
 			new_group.name = form.cleaned_data['group_name']
 			new_group.save()
 			print form.cleaned_data
 			for name in form.cleaned_data['member_names']:
-				print name
 				user = MyUser.objects.get(user_id = name)
 				new_group.users.add(user)
 			new_group.users.add(this_user)
 			new_group.save()
-			print form.cleaned_data
 			return HttpResponseRedirect('/frontend/personal')
 	return HttpResponseRedirect('/frontend/personal')
-
-	return HttpResponseRedirect('/signup')
 
 def addfriend(request):
 	#print request.user.username
@@ -280,7 +282,6 @@ def personal(request):
 
 # Create your views here.  index is called on page load.
 def index(request, add_form=None):
-	# print "fwef" what is this?
 	if request.method =='POST' and add_form==None:
 		form = SearchForm(request.POST)
 		formEvent = NewEventForm()
@@ -324,12 +325,16 @@ def index(request, add_form=None):
 # add a new event.  add is called when a new event is properly submitted.
 def add(request):
 	if request.method == 'POST':
-		print "oh my god"
 		username = request.user.username
 		this_user = MyUser.objects.filter(user_id = username)
 		form = NewEventForm(request.POST) 
 		if form.is_valid():
 			data = form.cleaned_data
+			data['startTime'] = datetime.strptime(
+				data['startTime'], "%m/%d/%Y %I:%M")
+			data['endTime'] = datetime.strptime(
+				data['endTime'], "%m/%d/%Y %I:%M")
+			
 			buildingAlias = BuildingAlias.objects.filter(alias=data['location'])
 			latitude = None
 			longitude = None
@@ -339,13 +344,17 @@ def add(request):
 				longitude = building.lon
 			event = NewEvent(name = data['name'],
 					 startTime = data['startTime'],
-							location = data['location'],
-							lat = latitude,
-							lon = longitude,
-							tags = data['tags'])
+					 endTime = data['endTime'],
+					 location = data['location'],
+					 lat = latitude,
+					 lon = longitude,
+					 private = data['private'],
+					 tags = data['tags'])
 							#creator = this_user)
-			event.save()
-
+			event.save() #must save before adding groups
+			for group in data['groups']:
+				event.groups.add(group)
+			event.save() 
 			if request.is_ajax():
 				return render(request, 'frontend/success.html')
 			else:

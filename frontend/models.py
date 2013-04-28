@@ -19,6 +19,8 @@ class MyGroup(models.Model):
     #creator = models.ForeignKey(MyUser, related_name="creator")
     creator = models.CharField(max_length=NAME_MAXLEN)
     name = models.CharField(max_length=NAME_MAXLEN)
+    def __unicode__(self):
+        return self.name
 
 # Create your models here.
 class NewEvent(models.Model):

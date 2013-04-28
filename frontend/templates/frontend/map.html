@@ -7,13 +7,16 @@
     <link rel="stylesheet" href="{% static "frontend/bootstrap.min.css" %}" media="screen">
     <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "frontend/dhtmlxscheduler.css" %}" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
     </script>
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
     <script src="{% static "frontend/bootstrap.min.js" %}"></script>
     <script src="{% static "frontend/dhtmlxscheduler.js" %}"></script>
 
     <script src="{% static "frontend/bootstrap-datepicker.js" %}"></script>
+
     <script type="text/javascript">
       $('.datepicker').datepicker()({
       format: 'yyyy-mm-dd'
@@ -464,9 +467,14 @@
 
       <div id="make_content" class="hidden">
         <h3>Make Event</h3>
-
+{{form.media}}
 <form action="/add/" method="post">{% csrf_token %}
     {{ form.non_field_errors }}
+    <div class="fieldWrapper">
+        {{ form.date_field.errors }}
+        <label for="id_date_field">Date field:</label>
+        {{ form.date_field }}
+    </div>
     <div class="fieldWrapper">
         {{ form.name.errors }}
         <label for="id_name">Name:</label>
