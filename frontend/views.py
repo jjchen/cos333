@@ -260,7 +260,12 @@ def personal(request):
 	rsvped = NewEvent.objects.filter(rsvp = this_user)
 	#this_user.rsvp_set.all()
 #	friends = []
-	friends_obj = Friends.objects.get(name = this_user)
+	try: 
+		friends_obj = Friends.objects.get(name = this_user)
+	except ObjectDoesNotExist:
+		friends_obj = Friends()
+		friends_obj.name = this_user
+		friends_obj.save()
 	friends = friends_obj.friends.all()
 
 	recommended = []
