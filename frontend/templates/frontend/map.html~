@@ -72,7 +72,12 @@
   
   function reloadEvents ()
   {
+<<<<<<< HEAD
   	 	// call refresh function in views.py
+=======
+  	 alert("I'm trying to reload the events list");
+  	 // call refresh function in views.py
+>>>>>>> sync
   }
   
   </script>
