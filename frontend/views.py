@@ -276,21 +276,21 @@ def personal(request):
 #	friends = []
 	try: 
 		friends_obj = Friends.objects.get(name = this_user)
+		friends = friends_obj.friends.all()
+
+		recommended = []
+	#	friends rsvp, groups 
+		for friend in friends:
+			# get friends rsvp
+			recommended += NewEvent.objects.filter(rsvp = friend)
+			recommended += NewEvent.objects.filter(creator = friend)
+		for group in groups:
+			# group events
+			recommended += NewEvent.objects.filter(groups = group)
 	except ObjectDoesNotExist:
 		friends_obj = Friends()
 		friends_obj.name = this_user
 		friends_obj.save()
-	friends = friends_obj.friends.all()
-
-	recommended = []
-#	friends rsvp, groups 
-	for friend in friends:
-		# get friends rsvp
-		recommended += NewEvent.objects.filter(rsvp = friend)
-		recommended += NewEvent.objects.filter(creator = friend)
-	for group in groups:
-		# group events
-		recommended += NewEvent.objects.filter(groups = group)
 #   
 	form = AddgroupForm() # An unbound form
 	form2 = AddfriendsForm()
