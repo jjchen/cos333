@@ -385,6 +385,7 @@ def add(request):
 		form = NewEvent()
 			# msg = "success!"
 	print "I am here in add"
+	events_list = NewEvent.objects.all().order_by("startTime") # this is to refresh the events list without page refresh.
 	return index(request, form)
 #	return render(request, '/frontend/map.html', {'form': form})
 #	return HttpResponseRedirect('/') # Redirect after POST
