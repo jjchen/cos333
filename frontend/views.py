@@ -13,6 +13,7 @@ from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -334,8 +335,10 @@ def index(request, add_form=None):
 			lat = user.latitude
 			lon = user.longitude
 		except MyUser.DoesNotExist:
-			lat = MyUser.latitude.default
-			lon = MyUser.longitude.default
+			latitude = MyUser._meta.get_field_by_name('latitude')
+			longitude = MyUser._meta.get_field_by_name('longitude')
+			lat = latitude[0].default
+			lon = longitude[0].default
 		context['center_lat'] = lat
 		context['center_lon'] = lon
 	return render(request, 'frontend/map.html', context)
