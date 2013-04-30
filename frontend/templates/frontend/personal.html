@@ -1,76 +1,131 @@
 <html>
-  <head>
+<head>
+
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
-
+ 
     <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
-    </head>
+
+    <title>OC</title>
+</head>
 <body>
 
-    <header>
-      <div class="logo" onclick="window.location.href='/#'"><h1>Princeton University - OC</h1></div>
-      <div id="floatright">
-      <div class="settings_buttons"
-         onclick="window.location.href='/frontend/personal'">
-         {{user}}
+  <div id="personal_container">
+         <div class="logo" onclick="window.location.href='/'">
+            <h1>Princeton University - OC</h1>
+         </div>
+         <div id="floatright">
+            <div class="settings_buttons" onclick="window.location.href='/frontend/personal'">{{user}}</div>
+            <div class="settings_buttons" onclick="window.location.href='/frontend/settings'">settings</div>
+            <div class="settings_buttons" onclick="window.location.href='/'">logout</div>
+         </div>
+      <div class="clear"></div>
+      <div class="clear"></div>
+      <div id="personal_content">
+        <div id="left">
+         <div id="my_events">
+              <div class="events_header"><p><b> Your Events: </b></p></div>
+              <div class="list_group">
+
+                {% for e in my_events %}
+                <div class="events_item" id="{{e.id}}">
+                  <p> {{ e.name }} <a href="">Remove</a>  <a href="">Edit</a></p>
+                </div>
+              {% endfor %}
+              </div>
+          </div>
+          <div id="rsvped">
+            <div class="events_header"><p><b> Rsvped Events: </b></p></div>
+            <div class="list_group">
+
+              {% for e in rsvped %}
+
+                <div class="events_item" id="{{e.id}}">
+                <p> {{ e.name }} <a href="{% url 'frontend:rmrsvp' e.id %}">Remove</a></p>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div id="recommended">
+            <div class="events_header"><p><b> Recommended Events (Friends/Groups): </b></p></div>
+            <div class="list_group">
+
+              {% for e in recommended %}
+                <div class="events_item" id="{{e.id}}">
+                <p> {{ e.name }} <a href="">Remove</a></p>
+              </div>
+              {% endfor %}
+          </div>
+          </div>
+
+          <div id="friends">
+            <div class="friends_header"><p> <b>Friends:</b> </p></div>
+             <div class="list_group">
+
+              {% for f in friends %}
+              <div class="friends_item">
+                <p> {{ f.first_name }} <a href="{% url 'frontend:rmfriend' f.id %}">Remove</a></p>
+              </div>
+              {% endfor %}
+            </div>
+
+          </div>
+
+          <div id="groups">
+            <div class="groups_header"><p><b>Your existing groups:</b></p></div>
+            <div class="list_group">
+
+              {% for g in group_info %}
+              <div class="groups_item">
+                <p> {{ g.1 }} <a href="{% url 'frontend:rmgroup' g.0 %}">Remove</a></p>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div id="right">
+          <div id="more"></div>
+          <div id="friends_form">
+            <form action="/addfriend/" method="post">{% csrf_token %}
+            <p><b> Add friend: </b> </p>
+            {{ form2.as_p }}
+            <input type="submit" value="Submit" />
+            </form>
+          </div>
+          <div id="groups_form">
+            <form action="/addgroup/" method="post">{% csrf_token %}
+            <p><b> Add group: </b> </p>
+            {{ form.as_p }}
+            <input type="submit" value="Submit" />
+            </form>
+          </div>
+        </div>
       </div>
-      <div class="settings_buttons"
-         onclick="window.location.href='/frontend/settings'">
-         settings
-      </div>
-      <div class="settings_buttons"
-         onclick="window.location.href='#'">
-         logout
-      </div>      
     </div>
-    </header>	
-<div id="container">
-<div id="my_events">
-<p><b> Your Events: </b></p>
-{% for e in my_events %}
-<p> {{ e.name }} <a href="">Remove</a>  <a href="">Edit</a></p>
-{% endfor %}
-</div>
-<div id="rsvped">
-<p><b> Rsvped Events: </b></p>
-{% for e in rsvped %}
-<p> {{ e.name }} <a href="{% url 'frontend:rmrsvp' e.id %}">Remove</a></p>
-{% endfor %}
-</div>
-<div id="recommended">
-<p><b> Recommended Events (Friends/Groups): </b></p>
-{% for e in recommended %}
-<p> {{ e.name }} <a href="">Remove</a></p>
-{% endfor %}
-</div>
+    <script type="text/javascript">
+      $(".events_item").click(function() {
+        $(".events_item").removeClass("active");
+        $(this).addClass("active");
 
-<div id="friends">
-<p> <b>Friends:</b> </p>
-{% for f in friends %}
-<p> {{ f.first_name }} <a href="{% url 'frontend:rmfriend' f.id %}">Remove</a></p>
-{% endfor %}
-<form action="/addfriend/" method="post">{% csrf_token %}
-<p><b> Add friend: </b> </p>
-{{ form2.as_p }}
-<input type="submit" value="Submit" />
-</form>
-</div>
+        var id = parseInt($(this).attr("id"));
 
-<div id="groups">
-<p><b>Your existing groups:</b></p>
-{% for g in group_info %}
-<p> {{ g.1 }} <a href="{% url 'frontend:rmgroup' g.0 %}">Remove</a></p>
-{% endfor %}
-
-<form action="/addgroup/" method="post">{% csrf_token %}
-<p><b> Add group: </b> </p>
-{{ form.as_p }}
-<input type="submit" value="Submit" />
-</form>
-</div>
-</div>
+        var parent = document.getElementById("more");
+        var html = ""; 
+        {% for e in rsvped %}
+        var event_id = {{e.id}};
+        if (event_id == id) {
+          html += "{{e.name}}";
+        }
+        {% endfor %}
+        {% for e in recommended %}
+        var event_id = {{e.id}};
+        if (event_id == id) {
+          html += "{{e.name}}";
+        }
+        {% endfor %}
+        parent.innerHTML = html;
+      });
+    </script>   
 </body>
 </html>
