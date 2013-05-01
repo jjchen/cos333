@@ -75,8 +75,13 @@
   
   function reloadEvents ()
   {
-  	// alert("I'm trying to reload the events list");
-  	 // call refresh function in views.py
+  	$.ajax({
+  		  type: "POST",
+  		  url: "~/pythoncode.py",
+  		  data: { param: text}
+  	}).done(function( o ) {
+   		// do something
+	});
   }
 
   </script>
