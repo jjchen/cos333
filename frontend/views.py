@@ -45,6 +45,7 @@ class NewEventForm(forms.Form):
 			attrs={'date_class':'datepicker',
 			       'time_class':'timepicker'}))
 	location = forms.CharField(max_length=200)
+	description = forms.CharField(required=False, widget=forms.Textarea)
 	private = forms.BooleanField(required=False)
 	groups = forms.ModelMultipleChoiceField(queryset=MyGroup.objects.all(),
 						required=False)

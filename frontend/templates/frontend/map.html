@@ -492,6 +492,11 @@
         {{ form.location }}
     </div>
     <div class="fieldWrapper">
+        {{ form.description.errors }}
+        <label for="id_description">Description: </label>
+        {{ form.description }}
+    </div>
+    <div class="fieldWrapper">
         {{ form.private.errors }}
         <label for="id_private">Private: </label>
         {{ form.private }}

@@ -149,8 +149,6 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'dajaxice',
-    'dajax',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

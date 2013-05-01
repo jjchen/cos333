@@ -25,10 +25,11 @@ class MyGroup(models.Model):
 # Create your models here.
 class NewEvent(models.Model):
     name = models.CharField(max_length=200)
-    startTime = models.DateTimeField()
-    endTime = models.DateTimeField()
+    startTime = models.DateTimeField(default=datetime.date.today())
+    endTime = models.DateTimeField(default=datetime.date.today())
     location = models.CharField(max_length=200)
     private = models.BooleanField(default=False)
+    description = models.TextField(blank=True, null=True)
     lat = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
     lon = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
     tags = models.CharField(max_length=200, blank = True, null=True, default="all")
@@ -53,7 +54,7 @@ class Friends(models.Model):
     friends = models.ManyToManyField(MyUser, related_name="friends", null=True)
 
 class CalEvent(models.Model):
-    start_date = models.DateTimeField()
+    start_tete = models.DateTimeField()
     end_date = models.DateTimeField()
     text = models.CharField(max_length=30)
     details = models.CharField(max_length=250)

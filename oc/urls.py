@@ -4,9 +4,6 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-from dajaxice.core import dajaxice_autodiscover, dajaxice_config
-dajaxice_autodiscover()
-
 urlpatterns = patterns(
     '',
     url('', include('social_auth.urls')),
@@ -17,7 +14,6 @@ urlpatterns = patterns(
     url(r'^accounts/logout/$', 'django_cas.views.logout'),
     url(r'^frontend/', include('frontend.urls')),
     url('', include('frontend.urls', namespace='frontend')),
-    url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
 )
 
     # Examples
