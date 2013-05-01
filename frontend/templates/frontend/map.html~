@@ -7,13 +7,16 @@
     <link rel="stylesheet" href="{% static "frontend/bootstrap.min.css" %}" media="screen">
     <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "frontend/dhtmlxscheduler.css" %}" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
     </script>
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
     <script src="{% static "frontend/bootstrap.min.js" %}"></script>
     <script src="{% static "frontend/dhtmlxscheduler.js" %}"></script>
 
     <script src="{% static "frontend/bootstrap-datepicker.js" %}"></script>
+
     <script type="text/javascript">
       $('.datepicker').datepicker()({
       format: 'yyyy-mm-dd'
@@ -72,14 +75,10 @@
   
   function reloadEvents ()
   {
-<<<<<<< HEAD
-  	 	// call refresh function in views.py
-=======
-  	 alert("I'm trying to reload the events list");
+  	// alert("I'm trying to reload the events list");
   	 // call refresh function in views.py
->>>>>>> sync
   }
-  
+
   </script>
 
 
@@ -214,8 +213,8 @@
          var map;
          var idled = false;
          var oms;
-         var single_ping = '{% static "frontend/img/single_pin.svg" %}';
-         var multi_pin = '{% static "frontend/img/small_multi_pin.svg" %}';
+         var single_pin = '{% static "frontend/paw_print.png" %}';
+         var multi_pin = '{% static "frontend/small_flower.png" %}';
          var geocoder;
 
          function initialize() {
@@ -241,7 +240,7 @@
             oms.addListener('spiderfy', function (markers) {
                iw.close();
                for (i = 0; i < markers.length; i++) {
-                  markers[i].setIcon(single_ping);
+                  markers[i].setIcon(single_pin);
                }
             });
 
@@ -287,13 +286,13 @@
             var marker = new google.maps.Marker({
                map: map,
                position: position,
-               icon: single_ping
+               icon: single_pin
             });
 
             var contentString = '<div class="infoWindow_content">' +
                '<h3 class="infoWindow_heading">{{event.name}}</h3>' +
                '<div id="infoWindow_body">' +
-               '<p>Time: {{event.time}} {{event.date}}</p>' +
+               '<p>Time: {{event.startTime|date:"D d M Y H:i"}}</p>' +
                '<p>Location: {{event.location}}</p>' +
                '</div>' +
                '</div>';
@@ -320,7 +319,7 @@
                   var contentString = '<div class="infoWindow_content">' +
                      '<h3 class="infoWindow_heading">{{event.name}}</h3>' +
                      '<div id="infoWindow_body">' +
-                     '<p>Time: {{event.time}} {{event.date}}</p>' +
+                     '<p>Time: {{event.startTime|date:"D d M Y H:i"}}</p>' +
                      '<p>Location: {{event.location}}</p>' +
                      '</div>' +
                      '</div>';
@@ -335,7 +334,6 @@
          }
 
          function showContent(id) {
-            //alert(id);
             var elem = document.getElementById('content_wrapper');
             for (i = 0; i < elem.children.length; i++) {
                if (elem.children[i].id != id) {
@@ -361,13 +359,12 @@
                row_class = "";
             }
             i++;
-		alert('{{event.startTime|date:"D d M Y"}}');
             if ('{{event.startTime|date:"D d M Y"}}' != cur_date) {
 
                html += '<tr><td colspan="2"> <h3> {{event.startTime|date:"D d M Y"}} </h3></td></tr>';
                cur_date = '{{event.startTime|date:"D d M Y"}}';
             }
-            html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"> {{event.time}} </td>' + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
+            html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"> {{event.startTime|date:"H:i"}} - {{event.endTime|date:"H:i"}}</td>' + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
               + '<div style="float:right">'
             html += '<a href="{% url "frontend:addrsvp" event.id %}">RSVP</a></div>'
               + ' </td>' + '<tr class="' + row_class + '"><td> <small>{{event.tags}}</small></td></tr>' 
@@ -471,9 +468,46 @@
 
       <div id="make_content" class="hidden">
         <h3>Make Event</h3>
-        <form action="/add/" method="post" id="eventform" class="form-horizontal">{% csrf_token %}
-	  {{ form.as_p}}
-        </form>
+{{form.media}}
+<form action="/add/" method="post">{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="fieldWrapper">
+        {{ form.name.errors }}
+        <label for="id_name">Name:</label>
+        {{ form.name }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.startTime.errors }}
+        <label for="id_startTime">Start date & time: </label>
+        {{ form.startTime }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.endTime.errors }}
+        <label for="id_endTime">End date & time: </label>
+        {{ form.endTime }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.location.errors }}
+        <label for="id_location">Location: </label>
+        {{ form.location }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.private.errors }}
+        <label for="id_private">Private: </label>
+        {{ form.private }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.groups.errors }}
+        <label for="id_groups">Groups: </label>
+        {{ form.groups }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.tags.errors }}
+        <label for="id_tags">Tags: </label>
+        {{ form.tags }}
+    </div>
+    <p><input type="submit" value="Save" /></p>
+</form>
 
             <li>Login with <a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a>
 
@@ -509,6 +543,11 @@
       </div>
 
     <div id="calendar_button" class="button" onclick="showContent('calendar_content');">
+      <script>
+  {% if make_visible %}
+  showContent('make_content');
+  {% endif %}
+  </script>
       <h3>Calendar</h3>
     </div>
     
