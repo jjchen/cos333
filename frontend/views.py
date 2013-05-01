@@ -349,9 +349,9 @@ def add(request):
 		if form.is_valid():
 			data = form.cleaned_data
 			data['startTime'] = datetime.strptime(
-				data['startTime'], "%m/%d/%Y %I:%M")
+				data['startTime'], "%m/%d/%Y %H:%M")
 			data['endTime'] = datetime.strptime(
-				data['endTime'], "%m/%d/%Y %I:%M")
+				data['endTime'], "%m/%d/%Y %H:%M")
 			
 			buildingAlias = BuildingAlias.objects.filter(alias=data['location'])
 			latitude = None
