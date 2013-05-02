@@ -386,7 +386,7 @@ def add(request):
 			# msg = "success!"
 	print "I am here in add"
 	events_list = NewEvent.objects.all().order_by("startTime") # this is to refresh the events list without page refresh.
-	return index(request, form)
+#	return index(request, form)
 #	return render(request, '/frontend/map.html', {'form': form})
 #	return HttpResponseRedirect('/') # Redirect after POST
 	#return render(request, 'frontend/map.html')
@@ -436,8 +436,15 @@ def search(request):
 	return HttpResponse(html)
 
 # call this to refresh events list.
-def refreshEvents(request):
+def refresh(request):
    events_list = NewEvent.objects.all().order_by("startTime")
+   show_list = False
+   form = SearchForm(request.POST)
+   tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
+   context = {'events_list': events_list, 'user': request.user, 
+		   'show_list': show_list, 'search_form': form, 'tags': tags}
+   print "I am here in refresh"
+   return render(request, 'frontend/map.html', context)
 
 
 def eventsXML(request):
