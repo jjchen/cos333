@@ -62,12 +62,17 @@
             } else {
               rsvp_text = "un RSVP";
             }
+            if (rsvped) {
+              rsvp_class = "rsvp"
+            } else {
+              rsvp_class = ""
+          }
             html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"><div class="list_row"> '
               +' {{event.startTime|date:"H:i"}} - {{event.endTime|date:"H:i"}}</div></td>' 
               + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
               + '<div style="float:right">'
             html += '<a href="#" onclick="showMore({{event.id}})"> Show More </a>'
-              +'<a href="#" onclick="rsvp({{event.id}})" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
+              +'<a href="#" class="'+rsvp_class+'" onclick="rsvp({{event.id}}, '+rsvped+')" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
               + ' </td></tr>' + '<tr id = "list_item_{{event.id}}"" class="' + row_class + '"><td> <small>{{event.tags}}</small></td></tr>' 
             {% endfor %}
             html += "</table>"; 
@@ -105,4 +110,21 @@
             dp.setTransactionMode("POST", false)
             dp.init(scheduler);
 
+         }
+
+         function showMore(id) {
+            {% for e in events_list %}
+            if (id == {{e.id}}) {
+              var parent = document.getElementById("list_item_" + id);
+              var html = "Groups: ";
+              {% for group in e.groups.all %}
+                html += "{{group.name}}" + " ";
+              {% endfor %}
+              html += "RSVPed: ";
+              {% for user in e.rsvp.all %}
+                html += "{{user.first_name}}" + " ";
+              {% endfor %}
+              parent.innerHTML = html;
+            }
+            {% endfor %}
          }

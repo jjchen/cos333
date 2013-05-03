@@ -325,60 +325,34 @@
                }
             }
          }
-
-         function rsvp(id) {
-            var has_rsvped = false;
-            {% for e in rsvped %}
-              if ({{e.id}} == id) has_rsvped = true;
-            {% endfor %} 
+      </script>
+      <script type="text/javascript" charset="utf-8" id="rsvp_script">
+         function rsvp(id, has_rsvped) {
+            var parent = document.getElementById("rsvp_"+id);
+            has_rsvped = (parent.innerHTML == 'RSVP') ? false : true;
             if (!has_rsvped) {
-              {% for e in events_list %}
-                if (id == {{e.id}}) {
-                  $.post('{% url "frontend:addrsvp" e.id %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(json) {
-
+                  $.post('{% url "frontend:addrsvp" %}', {'rsvp_id':id, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(json) {
                       var json_parsed = $.parseJSON(json);
                       if(json_parsed.success == 'true') {
-                        var parent = document.getElementById("rsvp_"+id);
+                        $("rsvp_"+id).addClass('rsvp');
                         var html = 'un RSVP'
                         parent.innerHTML = html;
                       }
                   });
-                }
-              {% endfor %}
+              
            } else {
-            {% for e in events_list %}
-            if (id == {{e.id}}) {
-              $.post('{% url "frontend:rmrsvp" e.id %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(json) {
+              $.post('{% url "frontend:rmrsvp" %}', {'rsvp_id':id, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(json) {
                 var json_parsed = $.parseJSON(json);
 
                 if(json_parsed.success == 'true') {
-                    var parent = document.getElementById("rsvp_"+id);
+                    $("rsvp_"+id).removeClass('rsvp');
                     var html = 'RSVP'
                     parent.innerHTML = html;
                 } 
               });
             }
-            {%endfor%}
-
            }      
-         }
-
-         function showMore(id) {
-            {% for e in events_list %}
-            if (id == {{e.id}}) {
-              var parent = document.getElementById("list_item_" + id);
-              var html = "Groups: ";
-              {% for group in e.groups.all %}
-                html += "{{group.name}}" + " ";
-              {% endfor %}
-              html += "RSVPed: ";
-              {% for user in e.rsvp.all %}
-                html += "{{user.first_name}}" + " ";
-              {% endfor %}
-              parent.innerHTML = html;
-            }
-            {% endfor %}
-         }
+         
       </script>
 
       <script type="text/javascript" charset="utf-8">
@@ -465,6 +439,10 @@
          </form>
 
          <br/> <a href="{% url 'frontend:index' %}"> All </a>
+
+         <br/> <a href="{% url 'frontend:index' %}"> Recommended </a>
+         <br/> <a href="{% url 'frontend:index' %}"> My Events </a>
+
 
          <div id="time_slider">
              <h3>Time</h3>
