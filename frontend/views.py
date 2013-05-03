@@ -28,6 +28,7 @@ from widgets import JqSplitDateTimeWidget
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 import operator
+import django.contrib.auth
 
 MAX_LEN = 50
 class SignupForm(forms.Form):
@@ -292,6 +293,8 @@ def rmrsvp(request, event):
 	return HttpResponseRedirect('/frontend/personal')	
 
 def logout(request):
+	print django.contrib.auth.logout(request)
+	
 	return HttpResponseRedirect(reverse('frontend:personal'))
 
 def personal(request):
@@ -613,4 +616,5 @@ def dataprocessor(request):
                                     mimetype="application/xhtml+xml")
 
 def calendar(request):
-    return render_to_response('frontend/calendar.html', {}, context_instance=RequestContext(request))
+    return render_to_response('frontend/calendar.html', {}, 
+			      context_instance=RequestContext(request))
