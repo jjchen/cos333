@@ -236,11 +236,13 @@ def rmevent(request, event):
 	event_obj.delete()
 	return HttpResponseRedirect('/frontend/personal')	
 
-def addrsvp(request, event):
+def addrsvp(request):
 	if request.method == 'POST':
 		this_user = MyUser.objects.get(user_id = request.user.username)
 		try:
-			event_obj = NewEvent.objects.get(id = event)
+			id = request.POST.get('rsvp_id')
+
+			event_obj = NewEvent.objects.get(id = id)
 		except ObjectDoesNotExist:
 			return HttpResponse('Tried rspving to non-existent group!', status=401)
 		event_obj.rsvp.add(this_user)
@@ -269,13 +271,15 @@ def editevent(request, event):
 	                              {'form' : form},
 	                                context_instance=RequestContext(request))
 
-def rmrsvp(request, event):
+def rmrsvp(request, id=None):
 	if request.method == 'POST':
 
 		this_user = MyUser.objects.get(user_id = request.user.username)
 
 		try:
-			event_obj = NewEvent.objects.get(id = event)
+			if (id == None):
+				id = request.POST.get('rsvp_id')
+			event_obj = NewEvent.objects.get(id = id)
 		except ObjectDoesNotExist:
 			return HttpResponse('Tried rspving to non-existent group!', status=401)
 		event_obj.rsvp.remove(this_user)
@@ -365,6 +369,24 @@ def filter(request):
 			read_only = True
 			cal_events.append({'start_date': startTime, 'end_date': endTime, 'text': e.name, 'readonly': read_only});
 		context['cal_events'] = json.dumps(cal_events, cls=DjangoJSONEncoder);
+	username = request.user.username
+
+	if username != "" and\
+	 len(MyUser.objects.filter(user_id = username)) == 0:
+		return HttpResponseRedirect('/signup')
+	else:
+		try:
+			user = MyUser.objects.get(user_id=username)
+			lat = user.latitude
+			lon = user.longitude
+			context['rsvped'] = NewEvent.objects.filter(rsvp = user)
+		except MyUser.DoesNotExist:
+			latitude = MyUser._meta.get_field_by_name('latitude')
+			longitude = MyUser._meta.get_field_by_name('longitude')
+			lat = latitude[0].default
+			lon = longitude[0].default
+		context['center_lat'] = lat
+		context['center_lon'] = lon
 	return render_to_response('frontend/list.html', context, context_instance=RequestContext(request))
 
 # Create your views here.  index is called on page load.
