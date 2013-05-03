@@ -93,9 +93,12 @@
         element.setAttribute('id','fill_in');
         element.innerHTML = htmlResponse
         head.appendChild(element);
+        showContent('calendar_content');
         showEventsOnMap();
         init();
-        makeList();	});
+        makeList();	
+        showContent('');
+    });
   }
 
   </script>
@@ -260,9 +263,13 @@
                   element.setAttribute('id','fill_in');
                   element.innerHTML = htmlResponse
                   head.appendChild(element);
+                  showContent('calendar_content');
+
                   showEventsOnMap();
                   init();
                   makeList();
+                  showContent('');
+
               });                
           }
       
@@ -279,9 +286,11 @@
                 element.setAttribute('id','fill_in');
                 element.innerHTML = htmlResponse
                 head.appendChild(element);
+                showContent('calendar_content');
                 showEventsOnMap();
                 init();
                 makeList();
+                showContent('');
             });              
             
           }
