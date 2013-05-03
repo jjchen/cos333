@@ -178,17 +178,6 @@
             google.maps.event.addListener(map, 'click', function () {
                iw.close();
             });
-<<<<<<< HEAD
-=======
-
-            {#% if events_list %#}
-            showEventsOnMap(); 
-            {#% endif %#}
-
-            {% if show_list == True %}
-            showContent('list_content'); 
-            {% endif %}
->>>>>>> 7383e05106e27c467cf13ffb8ea8077bd1ebc529
          }
          google.maps.event.addDomListener(window, 'load', initialize);
 
@@ -256,16 +245,6 @@
                 } 
               });
             }
-            html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"> {{event.startTime|date:"H:i"}} - {{event.endTime|date:"H:i"}}</td>' + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
-              + '<div style="float:right">'
-            html += '<a href="{#% url "frontend:addrsvp" event.id %#}">RSVP</a></div>'
-              + ' </td>' + '<tr class="' + row_class + '"><td> <small>{{event.tags}}</small></td></tr>' 
-            {% endfor %}
-            html += "</table>"; 
-            {% else %}
-            html += '<p>No events :(</p>'; 
-            {% endif %}
-            parent.innerHTML = html;
          }
       </script>
 
