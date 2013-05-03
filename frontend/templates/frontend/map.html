@@ -80,10 +80,19 @@
   {
   	 //alert("trying to refresh events");
   	$.ajax({
-  		  url: "/refresh/",
-  	}).done(function() {
-   		//alert("refreshed events");
-	});
+  		  url: '{% url "frontend:filter_init" %}',
+  	}).done(function(htmlResponse) {
+        var old = document.getElementById('fill_in');
+        old.parentNode.removeChild(old);
+        var head = document.getElementsByTagName('head')[0];
+        var element = document.createElement('script');
+        element.setAttribute('type','text/javascript');
+        element.setAttribute('id','fill_in');
+        element.innerHTML = htmlResponse
+        head.appendChild(element);
+        showEventsOnMap();
+        init();
+        makeList();	});
   }
 
   </script>
@@ -375,9 +384,12 @@
       <script type="text/javascript" charset="utf-8">
           function filter() {
                  $.post('{% url "frontend:filter_init" %}', $("#tags_form").serialize(), function(htmlResponse) {
+                      var old = document.getElementById('fill_in');
+                      // old.parentNode.removeChild(old);
                       var head = document.getElementsByTagName('head')[0];
                       var element = document.createElement('script');
                       element.setAttribute('type','text/javascript');
+                      element.setAttribute('id','fill_in');
                       element.innerHTML = htmlResponse
                       head.appendChild(element);
                       showEventsOnMap();
@@ -389,15 +401,21 @@
 
          function init_events(events) {
            $.post('{% url "frontend:filter_init" %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(htmlResponse) {
+                var old = document.getElementById('fill_in');
+              //  old.parentNode.removeChild(old);
                 var head = document.getElementsByTagName('head')[0];
                 var element = document.createElement('script');
                 element.setAttribute('type','text/javascript');
+                element.setAttribute('id','fill_in');
                 element.innerHTML = htmlResponse
                 head.appendChild(element);
                 showEventsOnMap();
                 init();
             });
          }
+      </script>
+
+      <script type="text/javascript" id="fill_in">
       </script>
 
       <style type="text/css" media="screen">
