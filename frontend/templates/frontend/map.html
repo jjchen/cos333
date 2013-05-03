@@ -78,8 +78,12 @@
   
   function reloadEvents ()
   {
-  	// alert("I'm trying to reload the events list");
-  	 // call refresh function in views.py
+  	 //alert("trying to refresh events");
+  	$.ajax({
+  		  url: "/refresh/",
+  	}).done(function() {
+   		//alert("refreshed events");
+	});
   }
 
   </script>

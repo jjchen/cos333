@@ -1,30 +1,34 @@
-from django.shortcuts import redirect, render
+from datetime import datetime, timedelta
+
 from frontend.models import NewEvent
 #from frontend.models import NewEventForm
 from frontend.models import BuildingAlias
 from frontend.models import MyUser
 from frontend.models import MyGroup
 from frontend.models import Friends
-from django.http import HttpResponseRedirect
-from django.http import HttpResponse
-from django.core.urlresolvers import reverse
-from django.db.models import Q
-import datetime
+from frontend.models import CalEvent
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
-from django.forms import ModelForm
+from django.core.urlresolvers import reverse
+from django.db.models import Q
+
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
-from frontend.models import CalEvent
+from django.shortcuts import redirect, render
 from django.template import RequestContext
-
-
+from social_auth.models import UserSocialAuth
+from facepy import GraphAPI
+from fields import JqSplitDateTimeField
+from widgets import JqSplitDateTimeWidget
 
 MAX_LEN = 50
 class SignupForm(forms.Form):
 	first_name = forms.CharField(max_length = MAX_LEN)
 	last_name = forms.CharField(max_length = MAX_LEN)
-		
+
 class SettingsForm(forms.Form):
 	first_name = forms.CharField()
 	last_name = forms.CharField()
@@ -32,9 +36,19 @@ class SettingsForm(forms.Form):
 	longitude = forms.DecimalField()
 
 # makes a Form class from the NewEvent model
-class NewEventForm(ModelForm):
-	class Meta:
-		model = NewEvent
+class NewEventForm(forms.Form):
+	name = forms.CharField(max_length=200)
+	startTime =  JqSplitDateTimeField(widget=JqSplitDateTimeWidget(
+			attrs={'date_class':'datepicker',
+			       'time_class':'timepicker'}))
+	endTime =  JqSplitDateTimeField(widget=JqSplitDateTimeWidget(
+			attrs={'date_class':'datepicker',
+			       'time_class':'timepicker'}))
+	location = forms.CharField(max_length=200)
+	private = forms.BooleanField(required=False)
+	groups = forms.ModelMultipleChoiceField(queryset=MyGroup.objects.all(),
+						required=False)
+	tags = forms.CharField(max_length=200, required=False)
 
 def settings(request):
 	if request.user.username == "":
@@ -51,24 +65,31 @@ def settings(request):
 		for user in all_users:
 			info += user.user_id + " "
 		group_info.append((group.name, info))
-		 #<a href="{% url 'frontend:rmgroup' g.0 %}">Remove</a>
-		#for user in group.users:
-		#	print user
-		#print group.name
-	#print inspect.getmembers(this_user)
-#	print this_user.group_set.all()
+
 	if request.method == 'POST':
-		form = SettingsForm(request.POST) # A form bound to the POST data
+		form = SettingsForm(request.POST)
 		if form.is_valid():
 			print "form is valid"
+			data = form.cleaned_data
+			this_user.first_name = data['first_name']
+			this_user.last_name = data['last_name']
+			this_user.latitude = data['latitude']
+			this_user.longitude = data['longitude']
+			this_user.save()
+			this_user = MyUser.objects.get(
+				user_id = request.user.username)
+			print this_user.latitude
 			return HttpResponseRedirect('/') # Redirect after POST
 	else:
-		
-		form = SettingsForm(initial={'first_name': this_user.first_name,
-									'last_name': this_user.last_name}) # An unbound form
+		form = SettingsForm(
+			initial={'first_name': this_user.first_name,
+				 'last_name': this_user.last_name,
+				 'latitude': this_user.latitude,
+				 'longitude': this_user.longitude})
+	print "I am here, settings"
 	return render(request, 'frontend/settings.html', {
         'form': form, 'group_info': group_info
-    })
+	})
 
 def signup(request):
 	if request.method == 'POST':
@@ -85,28 +106,33 @@ def signup(request):
 	return render(request, 'frontend/signup.html', {
         'form': form,
     })
-	
+
 class MultiNameField(forms.CharField):
 	def __init__(self):
 		super(MultiNameField, self).__init__(widget=forms.Textarea())
 	def to_python(self, value):
 		if not value: return []
 		return value.replace('\r\n', '\n').split('\n')
-	
+
 	def validate(self, value):
 		for name in value:
 			if len(MyUser.objects.filter(user_id = name)) == 0:
 				raise ValidationError("User " + name + " doesn't exist!")
-			
+
 def check_group_name(name):
 	if len(MyGroup.objects.filter(name = name)) != 0:
 		raise ValidationError("MyGroup name already taken!")
-	
+
 class AddgroupForm(forms.Form):
 	#member_names = forms.CharField(widget=forms.Textarea(),
 	#							validators=[validate_names])
 	group_name = forms.CharField(validators=[check_group_name])
 	member_names = MultiNameField()
+
+class AddfriendsForm(forms.Form):
+	#member_names = forms.CharField(widget=forms.Textarea(),
+	#							validators=[validate_names])
+	friends_names = MultiNameField()
 
 class SearchForm(forms.Form):
 	search_query = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Search'}))
@@ -120,39 +146,112 @@ def addgroup(request):
 	if request.method == 'POST':
 		form = AddgroupForm(request.POST) # A form bound to the POST data
 		if form.is_valid():
-			this_user = MyUser.objects.get(user_id = request.user.username)
+			this_user = MyUser.objects.get(user_id = 
+						       request.user.username)
 			new_group = MyGroup()
 			new_group.creator = this_user.user_id
 			new_group.name = form.cleaned_data['group_name']
 			new_group.save()
 			print form.cleaned_data
 			for name in form.cleaned_data['member_names']:
-				print name
 				user = MyUser.objects.get(user_id = name)
 				new_group.users.add(user)
+			new_group.users.add(this_user)
 			new_group.save()
-			print form.cleaned_data
-			return HttpResponseRedirect('/frontend/settings')
-	else:
-		form = AddgroupForm() # An unbound form
-	return render(request, 'frontend/addgroup.html', {
-        'form': form,
-    })	
-	return HttpResponseRedirect('/signup')
+			return HttpResponseRedirect('/frontend/personal')
+	return HttpResponseRedirect('/frontend/personal')
+
+def addfriend(request):
+	#print request.user.username
+	#print MyUser.objects.get(user_id="foo")
+	print "Request is " + request.user.username
+	if request.user.username == "":
+		return HttpResponse('Unauthorized access', status=401)
+	if request.method == 'POST':
+		form = AddfriendsForm(request.POST) # A form bound to the POST data
+		if form.is_valid():
+			this_user = MyUser.objects.get(user_id = request.user.username)
+			try: 
+				friends_obj = Friends.objects.get(name = this_user)
+			except ObjectDoesNotExist:
+				friends_obj = Friends()
+				friends_obj.name = this_user
+				friends_obj.save()
+			for name in form.cleaned_data['friends_names']:
+				print name
+				user = MyUser.objects.get(user_id = name)
+				friends_obj.friends.add(user)
+			friends_obj.save()
+			return HttpResponseRedirect('/frontend/personal')
+	return HttpResponseRedirect('/frontend/personal')
+#	else:
+#		form = AddfriendForm() # An unbound form
+#	return render(request, 'frontend/personal.html', {
+ #       'form': form,
+  #  })	
+	return HttpResponseRedirect('/signup')	
+
+def rmfriend(request, user):
+	try:
+		remove_obj = MyUser.objects.get(id = user)
+	except ObjectDoesNotExist:
+		return HttpResponse('Tried removing non-existent friend!', status=401) 
+	this_user = MyUser.objects.get(user_id = request.user.username)
+	try: 
+		friend_obj = Friends.objects.get(name = this_user)
+	except ObjectDoesNotExist:
+		return HttpResponseRedirect('/frontend/personal')			
+	friend_obj.friends.remove(remove_obj)
+	friend_obj.save()
+	return HttpResponseRedirect('/frontend/personal')
 
 def rmgroup(request, group):
 	print group
 	try:
-		group_obj = MyGroup.objects.get(name = group)
+		group_obj = MyGroup.objects.get(id = group)
 	except ObjectDoesNotExist:
 		return HttpResponse('Tried removing non-existent group!', status=401)
-	if group_obj.creator != request.user.username:
+	#if group_obj.creator != request.user.username:
+	#	return HttpResponse('Unauthorized access', status=401)
+	#group_obj.delete()
+	this_user = MyUser.objects.get(user_id = request.user.username)
+	group_obj.users.remove(this_user)
+	group_obj.save()
+	return HttpResponseRedirect('/frontend/personal')
+
+def rmevent(request, event):
+	try:
+		event_obj = NewEvent.objects.get(id = event)
+	except ObjectDoesNotExist:
+		return HttpResponse('Tried removing non-existent event!', status=401)
+	if event_obj.creator != request.user.username:
 		return HttpResponse('Unauthorized access', status=401)
-	group_obj.delete()
-	return HttpResponseRedirect('/frontend/settings')
+	event_obj.delete()
+	return HttpResponseRedirect('/frontend/personal')	
+
+def addrsvp(request, event):
+	this_user = MyUser.objects.get(user_id = request.user.username)
+	try:
+		event_obj = NewEvent.objects.get(id = event)
+	except ObjectDoesNotExist:
+		return HttpResponse('Tried rspving to non-existent group!', status=401)
+	event_obj.rsvp.add(this_user)
+	event_obj.save()
+	return HttpResponseRedirect('/')
+
+def rmrsvp(request, event):
+	this_user = MyUser.objects.get(user_id = request.user.username)
+
+	try:
+		event_obj = NewEvent.objects.get(id = event)
+	except ObjectDoesNotExist:
+		return HttpResponse('Tried rspving to non-existent group!', status=401)
+	event_obj.rsvp.remove(this_user)
+	event_obj.save()
+	return HttpResponseRedirect(reverse('frontend:index'))
 
 def logout(request):
-	return HttpResponseRedirect(reverse('frontend:index'))
+	return HttpResponseRedirect(reverse('frontend:personal'))
 
 def personal(request):
 	print "Request is " + request.user.username
@@ -169,83 +268,94 @@ def personal(request):
 		info = group.name + ": "
 		for user in all_users:
 			info += user.user_id + " "
-		group_info.append((group.name, info))
+		group_info.append((group.id, info))
 #	my_events = []
 	my_events = NewEvent.objects.filter(creator = this_user)
 #	rsvped = []
 	rsvped = NewEvent.objects.filter(rsvp = this_user)
 	#this_user.rsvp_set.all()
 #	friends = []
-	people = Friends.objects.filter(name = this_user)
-	friends = []
-	for person in people:
-		friends = person.friends.all()
-	recommended = []
-#	friends rsvp, groups 
-	for friend in friends:
-		# get friends rsvp
-		recommended += NewEvent.objects.filter(rsvp = friend)
-	for group in groups:
-		# group events
-		recommended += NewEvent.objects.filter(groups = group)
-	my_tags = []
+	try: 
+		friends_obj = Friends.objects.get(name = this_user)
+		friends = friends_obj.friends.all()
+
+		recommended = []
+	#	friends rsvp, groups 
+		for friend in friends:
+			# get friends rsvp
+			recommended += NewEvent.objects.filter(rsvp = friend)
+			recommended += NewEvent.objects.filter(creator = friend)
+		for group in groups:
+			# group events
+			recommended += NewEvent.objects.filter(groups = group)
+	except ObjectDoesNotExist:
+		friends_obj = Friends()
+		friends_obj.name = this_user
+		friends_obj.save()
 #   
-
-
-	if request.method == 'POST':
-		form = AddgroupForm(request.POST) # A form bound to the POST data
-		if form.is_valid():
-			this_user = MyUser.objects.get(user_id = request.user.username)
-			new_group = MyGroup()
-			new_group.creator = this_user.user_id
-			new_group.name = form.cleaned_data['group_name']
-			new_group.save()
-			print form.cleaned_data
-			for name in form.cleaned_data['member_names']:
-				print name
-				user = MyUser.objects.get(user_id = name)
-				new_group.users.add(user)
-			new_group.save()
-			print form.cleaned_data
-			return HttpResponseRedirect('/frontend/personal')
-	else:
-		form = AddgroupForm() # An unbound form
+	form = AddgroupForm() # An unbound form
+	form2 = AddfriendsForm()
 	return render(request, 'frontend/personal.html', {
-        'form': form, 'group_info': group_info, 'my_events': my_events, 'rsvped': rsvped, 'recommended':recommended, 'my_tags':my_tags, "friends":friends 
+        'form': form, 'form2':form2, 'group_info': group_info, 'my_events': my_events, 'rsvped': rsvped, 'recommended':recommended, "friends":friends 
     })	
 
-# Create your views here.
-def index(request):
-	# print "fwef" what is this?
-	if request.method =='POST':
+# Create your views here.  index is called on page load.
+def index(request, add_form=None):
+	if request.method =='POST' and add_form==None:
 		form = SearchForm(request.POST)
+		formEvent = NewEventForm()
 		if form.is_valid():
 			query = form.cleaned_data['search_query']
 			events_list = NewEvent.objects.filter(
 				Q(name__icontains=query) | 
-				Q(location__icontains=query)).order_by("date", "time")
+				Q(location__icontains=query)).order_by("startTime")
 			show_list = True
 	else:
 		form = SearchForm()
-		events_list = NewEvent.objects.all().order_by("date", "time")
+		time_threshold = datetime.now() - timedelta(days = 1)
+		events_list = NewEvent.objects.filter(startTime__gt=time_threshold).order_by("startTime")
 		show_list = False
+	tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	context = {'events_list': events_list, 'user': request.user, 
-		   'show_list': show_list, 'form': form, }
+		   'show_list': show_list, 'search_form': form, 'tags': tags}
+	if add_form == None: 
+		context['form'] = NewEventForm()
+		context['make_visible'] = False
+	else: 
+		context['form'] = add_form
+		context['make_visible'] = True
 	username = request.user.username
 
 	if username != "" and\
 	 len(MyUser.objects.filter(user_id = username)) == 0:
 		return HttpResponseRedirect('/signup')
-	else: 
-		return render(request, 'frontend/map.html', context)
+	else:
+		try:
+			user = MyUser.objects.get(user_id=username)
+			lat = user.latitude
+			lon = user.longitude
+		except MyUser.DoesNotExist:
+			latitude = MyUser._meta.get_field_by_name('latitude')
+			longitude = MyUser._meta.get_field_by_name('longitude')
+			lat = latitude[0].default
+			lon = longitude[0].default
+		context['center_lat'] = lat
+		context['center_lon'] = lon
+	return render(request, 'frontend/map.html', context)
 
+# add a new event.  add is called when a new event is properly submitted.
 def add(request):
 	if request.method == 'POST':
 		username = request.user.username
 		this_user = MyUser.objects.filter(user_id = username)
-		form = NewEventForm(request.POST) # A form bound to the POST data
+		form = NewEventForm(request.POST) 
 		if form.is_valid():
 			data = form.cleaned_data
+			data['startTime'] = datetime.strptime(
+				data['startTime'], "%m/%d/%Y %H:%M")
+			data['endTime'] = datetime.strptime(
+				data['endTime'], "%m/%d/%Y %H:%M")
+			
 			buildingAlias = BuildingAlias.objects.filter(alias=data['location'])
 			latitude = None
 			longitude = None
@@ -254,24 +364,64 @@ def add(request):
 				latitude = building.lat
 				longitude = building.lon
 			event = NewEvent(name = data['name'],
-							date = data['date'],
-							time = data['time'],
-							location = data['location'],
-							lat = latitude,
-							lon = longitude,
-							tags = data['tags'])
+					 startTime = data['startTime'],
+					 endTime = data['endTime'],
+					 location = data['location'],
+					 lat = latitude,
+					 lon = longitude,
+					 private = data['private'],
+					 tags = data['tags'])
 							#creator = this_user)
-			event.save()
+			event.save() #must save before adding groups
+			for group in data['groups']:
+				event.groups.add(group)
+			event.save() 
 			if request.is_ajax():
 				return render(request, 'frontend/success.html')
 			else:
+				return render(request, 'frontend/success.html')
 				return redirect('success')
-			# msg = "success!"
-			# return HttpResponseRedirect('/') # Redirect after POST
 	else:
-		form = NewEventForm() # An unbound form
-	return render(request, 'frontend/map.html', {'form': form})
+		form = NewEvent()
+			# msg = "success!"
+	print "I am here in add"
+	events_list = NewEvent.objects.all().order_by("startTime") # this is to refresh the events list without page refresh.
+	return index(request, form)
+#	return render(request, '/frontend/map.html', {'form': form})
+#	return HttpResponseRedirect('/') # Redirect after POST
+	#return render(request, 'frontend/map.html')
 
+# export event to Facebook
+def export_fb(request):
+
+        request_user = '290031427770649'
+        user = 'alexlzhao'
+        instance = UserSocialAuth.objects.filter(user=request.user, provider='facebook')
+        
+        print instance.uid
+        pprint(instance.tokens)
+
+        token = instance.tokens
+        print token
+        graph = GraphAPI(token)
+        
+        event_path = "https://graph.facebook.com/290031427770649/events"
+        event_data = {
+            'name' : "Test Event",
+            'start_time' : "2013-07-04",
+            'location' : "someplace",
+            'privacy_type' : "SECRET"
+            }
+        
+        result = graph.post(path=event_path, options=event_data)
+        print result
+        
+        if result.get('id', False):
+            print "Successfully Created Event"
+        else:
+            print "Failure"
+
+# this is the search for a new event.
 def search(request):
 	query = request.POST['search_query']
 
@@ -284,6 +434,10 @@ def search(request):
 	html += "</body></html>"
 
 	return HttpResponse(html)
+
+# call this to refresh events list.
+def refreshEvents(request):
+   events_list = NewEvent.objects.all().order_by("startTime")
 
 
 def eventsXML(request):
@@ -357,7 +511,6 @@ def dataprocessor(request):
                             'sid': e.id,
                             'tid' : e.id}
 
-                
             elif command == 'deleted':
                  e = CalEvent(pk=request.POST[id + '_id'])
                  e.delete()
