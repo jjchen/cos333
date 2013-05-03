@@ -11,7 +11,7 @@ from django.forms.models import model_to_dict
 
 # tagging things
 from tagging.forms import TagField
-from tagging_autocomplete_tagit.widgets import TagAutocompleteTagIt
+#from tagging_autocomplete_tagit.widgets import TagAutocompleteTagIt
 
 from django import forms
 from django.core.exceptions import ValidationError
@@ -27,6 +27,7 @@ from django.shortcuts import redirect, render
 from django.template import RequestContext
 from social_auth.models import UserSocialAuth
 from facepy import GraphAPI
+from facepy import SignedRequest
 from fields import JqSplitDateTimeField
 from widgets import JqSplitDateTimeWidget
 from django.core.serializers.json import DjangoJSONEncoder
@@ -60,7 +61,7 @@ class NewEventForm(forms.Form):
 	groups = forms.ModelMultipleChoiceField(queryset=MyGroup.objects.all(),
 						required=False)
 	#tags = forms.CharField(max_length=200, required=False)
-	tags = TagField(widget=TagAutocompleteTagIt(max_tags=False))
+	#tags = TagField(widget=TagAutocompleteTagIt(max_tags=False))
 
 def settings(request):
 	if request.user.username == "":
@@ -528,6 +529,9 @@ def export_fb(request):
             print "Successfully Created Event"
         else:
             print "Failure"
+
+
+	signed_request_data = SignedRequest
 
 # this is the search for a new event.
 def search(request):

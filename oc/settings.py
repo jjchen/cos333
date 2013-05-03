@@ -177,8 +177,8 @@ INSTALLED_APPS = (
     'timeline',
     'frontend',
     'social_auth',
-    'tagging',
-    'tagging_autocomplete_tagit',
+    #'tagging',
+    #'tagging_autocomplete_tagit',
     'south'
 )
 
