@@ -14,6 +14,7 @@ urlpatterns = patterns(
     url(r'^accounts/logout/$', 'django_cas.views.logout'),
     url(r'^frontend/', include('frontend.urls')),
     url('', include('frontend.urls', namespace='frontend')),
+    url(r'^tagging_autocomplete_tagit/', include('tagging_autocomplete_tagit.urls')),
 )
 
     # Examples

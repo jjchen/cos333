@@ -8,6 +8,10 @@ from frontend.models import MyGroup
 from frontend.models import Friends
 from frontend.models import CalEvent
 
+# tagging things
+from tagging.forms import TagField
+from tagging_autocomplete_tagit.widgets import TagAutocompleteTagIt
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
@@ -49,7 +53,8 @@ class NewEventForm(forms.Form):
 	private = forms.BooleanField(required=False)
 	groups = forms.ModelMultipleChoiceField(queryset=MyGroup.objects.all(),
 						required=False)
-	tags = forms.CharField(max_length=200, required=False)
+	#tags = forms.CharField(max_length=200, required=False)
+	tags = TagField(widget=TagAutocompleteTagIt(max_tags=False))
 
 def settings(request):
 	if request.user.username == "":

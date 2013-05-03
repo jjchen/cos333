@@ -13,9 +13,18 @@
 	z-index: 0;
 }
 
-body{
-		background-color: rgba(0,102,51,0.1);
+/* fixes conflict between google maps css and bootstrap css */
 
+#map-canvas img { 
+  max-width: none;
+}
+
+#map-canvas label { 
+  width: auto; display:inline; 
+} 
+
+body{
+	background-color: rgba(0,102,51,0.1);
 }
 
 #container { 
@@ -111,6 +120,7 @@ p, div {
 header {
 	position: absolute; top: 0; left:0;
 	width: 100%;
+	height: 75px;
 	z-index: 100;
 	box-shadow: 0px 0px 20px rgba(0,0,0,0.5);
 	background-color: #006633;
@@ -156,7 +166,7 @@ div#settings_button{
 	left: 390px;
 }
 div#minus_button{
-	left: 540px;	
+	left: 390px;	
 }
 
 .button {
@@ -184,7 +194,6 @@ div#minus_button{
 .errorlist {
 	list-style-type: none;
     padding:0px;
-
 }
 
 .valerror {

@@ -4,6 +4,8 @@ from django.db import models
 from django.utils import timezone
 from django.forms import ModelForm
 
+from tagging_autocomplete_tagit.models import TagAutocompleteTagItField
+
 NAME_MAXLEN=50
 
 class MyUser(models.Model):
@@ -32,7 +34,8 @@ class NewEvent(models.Model):
     description = models.TextField(blank=True, null=True)
     lat = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
     lon = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
-    tags = models.CharField(max_length=200, blank = True, null=True, default="all")
+    #tags = models.CharField(max_length=200, blank = True, null=True, default="all")
+    tags = TagAutocompleteTagItField(max_tags=False)
     creator = models.ForeignKey(MyUser, related_name="creator", blank=True, null=True)
     groups = models.ManyToManyField(MyGroup, related_name="groups", blank=True, null=True)
     rsvp = models.ManyToManyField(MyUser, related_name="rsvp", blank=True, null=True)
@@ -54,7 +57,8 @@ class Friends(models.Model):
     friends = models.ManyToManyField(MyUser, related_name="friends", null=True)
 
 class CalEvent(models.Model):
-    start_tete = models.DateTimeField()
+    #start_tete = models.DateTimeField() start_tete..?
+    start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     text = models.CharField(max_length=30)
     details = models.CharField(max_length=250)
