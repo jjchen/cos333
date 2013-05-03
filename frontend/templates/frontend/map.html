@@ -296,8 +296,10 @@
                 element.setAttribute('id','fill_in');
                 element.innerHTML = htmlResponse
                 head.appendChild(element);
+                showContent('calendar_content');
                 showEventsOnMap();
                 init();
+                showContent('');
             });
          }
       </script>

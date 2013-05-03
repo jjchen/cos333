@@ -418,6 +418,7 @@ def filter(request):
 		if personal_type == 'my_events':
 			events_list = NewEvent.objects.filter(Q(creator = user) | Q(rsvp = user))
 	else: 
+		print "HIIII"
 		events_list = NewEvent.objects.filter(reduce(operator.or_, (Q(tags__icontains=x) for x in tags)))
 		show_list = False
 	context['events_list'] = events_list
