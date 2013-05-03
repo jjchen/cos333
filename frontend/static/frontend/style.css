@@ -14,7 +14,7 @@
 }
 
 body{
-		background-color: rgba(0,102,51,0.1);
+	background-color: rgba(0,102,51,0.1);
 
 }
 
@@ -40,6 +40,13 @@ table td.list_time {
 
 tr.rowColor {
 	background-color: rgba(0,102,51,0.1);
+}
+
+.list_row {
+}
+
+.list_row_active {
+	height: 500px;
 }
 
 /* header h1 {

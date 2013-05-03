@@ -30,7 +30,9 @@
 
                 {% for e in my_events %}
                 <div class="events_item" id="{{e.id}}">
-                  <p> {{ e.name }} <a href="">Remove</a>  <a href="">Edit</a></p>
+                  <p> {{ e.name }}
+                        <a href="#" onclick="edit_form({{e.id}})"> Edit </a>
+                        <a href="{% url 'frontend:rmevent' e.id %}">Remove</a> </p>
                 </div>
               {% endfor %}
               </div>
@@ -42,7 +44,7 @@
               {% for e in rsvped %}
 
                 <div class="events_item" id="{{e.id}}">
-                <p> {{ e.name }} <a href="{% url 'frontend:rmrsvp' e.id %}">Remove</a></p>
+                <p> {{ e.name }}<a href="{% url 'frontend:rmrsvp' e.id %}">Remove</a></p>
               </div>
               {% endfor %}
             </div>
@@ -53,7 +55,7 @@
 
               {% for e in recommended %}
                 <div class="events_item" id="{{e.id}}">
-                <p> {{ e.name }} <a href="">Remove</a></p>
+                <p> {{ e.name }}</p>
               </div>
               {% endfor %}
           </div>
@@ -85,7 +87,8 @@
           </div>
         </div>
         <div id="right">
-          <div id="more"></div>
+          <div id="more">
+          </div>
           <div id="friends_form">
             <form action="/addfriend/" method="post">{% csrf_token %}
             <p><b> Add friend: </b> </p>
@@ -104,7 +107,7 @@
       </div>
     </div>
     <script type="text/javascript">
-      $(".events_item").click(function() {
+    /*  $(".events_item").click(function() {
         $(".events_item").removeClass("active");
         $(this).addClass("active");
 
@@ -125,7 +128,35 @@
         }
         {% endfor %}
         parent.innerHTML = html;
+      }); */
+
+      $(".events_item").click(function() {
+        $(".events_item").removeClass("active");
+        $(this).addClass("active");
+
+        var id = parseInt($(this).attr("id"));
+        {% for e in events_list %}
+
+          if (id == {{e.id}}) {
+            $.post('{% url "frontend:personal_ajax" e.id %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(htmlResponse) {
+                var parent = document.getElementById("more");
+                parent.innerHTML = htmlResponse;
+            });
+          }
+        {% endfor %}
       });
+
+      function edit_form(id) {
+
+        {% for e in my_events %}
+          if (id == {{e.id}}) {
+            $.post('{% url "frontend:editevent" e.id %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(htmlResponse) {
+                var parent = document.getElementById("more");
+                parent.innerHTML = htmlResponse;
+            });
+          }
+        {% endfor %}
+      }
     </script>   
 </body>
 </html>

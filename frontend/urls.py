@@ -24,4 +24,10 @@ urlpatterns = patterns('',
     url(r'^rmrsvp/(?P<event>\w+)/', views.rmrsvp, name='rmrsvp'),
     url(r'^rmgroup/(?P<group>\w+)/$', views.rmgroup, name='rmgroup'),
     url(r'^rmfriend/(?P<user>\w+)/$', views.rmfriend, name='rmfriend'),
+    url(r'^rmevent/(?P<event>\w+)/$', views.rmevent, name='rmevent'),
+    url(r'^personal_ajax/(?P<event>\w+)/$', views.personal_ajax, name='personal_ajax'),
+    url(r'^editevent/(?P<event>\w+)/$', views.editevent, name='editevent'),
+    url(r'^filter/(?P<tag>\w+)/$', views.filter, name='filter'),
+    url(r'^filter/$', views.filter, name='filter_init'),
 )
+

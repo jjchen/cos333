@@ -1,0 +1,108 @@
+         function showEventsOnMap() {
+            prev_markers = oms.getMarkers();
+            for (var j = 0; j < prev_markers.length; j++) {
+               prev_markers[j].setMap(null);
+            }
+
+            var i = 0; 
+            {% for event in events_list %} 
+            {% if event.lat %}
+            var position = new google.maps.LatLng(
+              {{event.lat}}, {{event.lon}});
+
+            var marker = new google.maps.Marker({
+               map: map,
+               position: position,
+               icon: single_pin
+            });
+
+            var contentString = '<div class="infoWindow_content">' +
+               '<h3 class="infoWindow_heading">{{event.name}}</h3>' +
+               '<div id="infoWindow_body">' +
+               '<p>Time: {{event.startTime|date:"D d M Y H:i"}}</p>' +
+               '<p>Location: {{event.location}}</p>' +
+               '</div>' +
+               '</div>';
+
+            marker.desc = contentString;
+
+            oms.addMarker(marker); 
+            {% else %}
+            codeAddress("{{event.location}}"); 
+            {% endif %} 
+            {% endfor %}
+         }
+
+         function makeList() {
+            var parent = document.getElementById("list_inner_wrapper");
+            var html = ""; 
+            {% if events_list %}
+            html += "<table class='list_table'>"
+            var cur_date = "";
+            var i = 0; 
+            {% for event in events_list %}
+            if (i % 2 == 0) {
+               row_class = "rowColor";
+            } else {
+               row_class = "";
+            }
+            i++;
+            if ('{{event.startTime|date:"D d M Y"}}' != cur_date) {
+
+               html += '<tr><td colspan="2"> <h3> {{event.startTime|date:"D d M Y"}} </h3></td></tr>';
+               cur_date = '{{event.startTime|date:"D d M Y"}}';
+            }
+            var rsvped = false;
+            {% for e in rsvped %}
+              if ({{e.id}} == {{event.id}}) rsvped = true;
+            {% endfor %}
+            var rsvp_text;
+            if (rsvped == false) {
+              rsvp_text = "RSVP"
+            } else {
+              rsvp_text = "un RSVP";
+            }
+            html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"><div class="list_row"> '
+              +' {{event.startTime|date:"H:i"}} - {{event.endTime|date:"H:i"}}</div></td>' 
+              + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
+              + '<div style="float:right">'
+            html += '<a href="#" onclick="showMore({{event.id}})"> Show More </a>'
+              +'<a href="#" onclick="rsvp({{event.id}})" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
+              + ' </td></tr>' + '<tr id = "list_item_{{event.id}}"" class="' + row_class + '"><td> <small>{{event.tags}}</small></td></tr>' 
+            {% endfor %}
+            html += "</table>"; 
+            {% else %}
+            html += '<p>No events :(</p>'; 
+            {% endif %}
+            parent.innerHTML = html;
+         }
+
+         function init() {
+            scheduler.clearAll();
+            scheduler.config.CSRF_Token = "{{ csrf_token }}";
+
+            scheduler.config.multi_day = true;
+            scheduler.config.fix_tab_position = false; // tabs are positioned correctly, no need to fix it
+
+            scheduler.config.xml_date = "%Y-%m-%d %H:%i";
+            scheduler.init('scheduler_here', new Date(), "week");
+
+            scheduler.templates.event_class = function (start, end, event) {
+               if (start < (new Date())) //if date in past
+                  return "past_event"; //then set special css class for it
+            }
+
+            scheduler.parse({{cal_events|safe}}, "json"); 
+
+            //== ===========================
+            // Events handling
+            //=============================
+            // disable events creation, only the properties of existent events can be edited
+            scheduler.config.dblclick_create = false;
+            scheduler.config.drag_create = false;
+
+            var dp = new dataProcessor("frontend/dataprocessor");
+            dp.setTransactionMode("POST", false)
+            dp.init(scheduler);
+
+         }
