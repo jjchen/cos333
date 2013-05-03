@@ -280,10 +280,6 @@
             google.maps.event.addListener(map, 'click', function () {
                iw.close();
             });
-
-            {% if show_list == True %}
-            showContent('list_content'); 
-            {% endif %}
          }
          google.maps.event.addDomListener(window, 'load', initialize);
 
@@ -356,27 +352,47 @@
       </script>
 
       <script type="text/javascript" charset="utf-8">
-          function filter() {
-                 $.post('{% url "frontend:filter_init" %}', $("#tags_form").serialize(), function(htmlResponse) {
-                      var old = document.getElementById('fill_in');
-                      // old.parentNode.removeChild(old);
-                      var head = document.getElementsByTagName('head')[0];
-                      var element = document.createElement('script');
-                      element.setAttribute('type','text/javascript');
-                      element.setAttribute('id','fill_in');
-                      element.innerHTML = htmlResponse
-                      head.appendChild(element);
-                      showEventsOnMap();
-                      init();
-                      makeList();
-                  });                
-              }
+          function filter(type) {
+             data = (type == 'search') ? $("#search_form").serialize() : $("#tags_form").serialize();
+             $.post('{% url "frontend:filter_init" %}', data, function(htmlResponse) {
+                  var old = document.getElementById('fill_in');
+                  old.parentNode.removeChild(old);
+                  var head = document.getElementsByTagName('head')[0];
+                  var element = document.createElement('script');
+                  element.setAttribute('type','text/javascript');
+                  element.setAttribute('id','fill_in');
+                  element.innerHTML = htmlResponse
+                  head.appendChild(element);
+                  showEventsOnMap();
+                  init();
+                  makeList();
+              });                
+          }
       
+
+          function filter_personal(type) {
+              data = {'csrfmiddlewaretoken': '{{csrf_token}}', 'type': type };
+            $.post('{% url "frontend:filter_init" %}', data, function(htmlResponse) {
+
+                var old = document.getElementById('fill_in');
+                old.parentNode.removeChild(old);
+                var head = document.getElementsByTagName('head')[0];
+                var element = document.createElement('script');
+                element.setAttribute('type','text/javascript');
+                element.setAttribute('id','fill_in');
+                element.innerHTML = htmlResponse
+                head.appendChild(element);
+                showEventsOnMap();
+                init();
+                makeList();
+            });              
+            
+          }
 
          function init_events(events) {
            $.post('{% url "frontend:filter_init" %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(htmlResponse) {
                 var old = document.getElementById('fill_in');
-              //  old.parentNode.removeChild(old);
+                old.parentNode.removeChild(old);
                 var head = document.getElementsByTagName('head')[0];
                 var element = document.createElement('script');
                 element.setAttribute('type','text/javascript');
@@ -427,21 +443,21 @@
           <h3>Filter</h3>
 
          <br/>
-         <form action="{% url 'frontend:index' %}" method="post">{% csrf_token %}
+         <form id ="search_form" method="post">{% csrf_token %}
             <input type="text" id="search_query" placeholder="Search" name="search_query" required>
-            <input type="submit" value="Go">
+            <input type="submit" onclick="filter('search')" value="Go">
          </form>
          
          <form id="tags_form" method="post">{% csrf_token %}
             {% for tag in tags %}
-            <input type="checkbox" onclick="filter()" name="tags" value="{{tag}}">{{tag}}</br> 
+            <input type="checkbox" onclick="filter('tags')" name="tags" value="{{tag}}">{{tag}}</br> 
             {% endfor %}
          </form>
 
          <br/> <a href="{% url 'frontend:index' %}"> All </a>
 
-         <br/> <a href="{% url 'frontend:index' %}"> Recommended </a>
-         <br/> <a href="{% url 'frontend:index' %}"> My Events </a>
+         <br/> <a href="#" onclick="filter_personal('recommended')"> Recommended </a>
+         <br/> <a href="#" onclick="filter_personal('my_events')"> My Events </a>
 
 
          <div id="time_slider">

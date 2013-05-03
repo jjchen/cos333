@@ -348,16 +348,71 @@ def personal(request):
 
 def filter(request):
 	tags = request.POST.get('tags')
+	personal_type = request.POST.get('type')
+	search = request.POST.get('search_query')
+	events_list = []
+	context = {'events_list': events_list, 'user': request.user, 'rsvped': [],'tags': tags, 'cal_events': []}
+	username = request.user.username
+	print username
+	if username != "" and\
+	 len(MyUser.objects.filter(user_id = username)) == 0:
+		return HttpResponseRedirect('/signup')
+	else:
+		try:
+			user = MyUser.objects.get(user_id=username)
+			print user
+			lat = user.latitude
+			lon = user.longitude
+			context['rsvped'] = NewEvent.objects.filter(rsvp = user)
+		except MyUser.DoesNotExist:
+			user = None
+			latitude = MyUser._meta.get_field_by_name('latitude')
+			longitude = MyUser._meta.get_field_by_name('longitude')
+			lat = latitude[0].default
+			lon = longitude[0].default
+		context['center_lat'] = lat
+		context['center_lon'] = lon
 	time_threshold = datetime.now() - timedelta(days = 1)
-
-	if tags == None:
+	if search != None:
+		form = SearchForm(request.POST)
+		if form.is_valid():
+			query = form.cleaned_data['search_query']
+			events_list = NewEvent.objects.filter(
+				Q(name__icontains=query) | 
+				Q(location__icontains=query)).order_by("startTime")
+			show_list = True
+	elif tags == None and personal_type == None:
 		events_list = NewEvent.objects.filter(startTime__gt=time_threshold).order_by("startTime")
 		show_list = False
+	elif tags == None:
+		if user == None:
+			return render_to_response('frontend/list.html', context, context_instance=RequestContext(request))
+		if personal_type == 'recommended':
+			try: 
+				friends_obj = Friends.objects.get(name = user)
+				friends = friends_obj.friends.all()
+				groups = MyGroup.objects.filter(users = user)
+
+			#	friends rsvp, groups 
+				for friend in friends:
+					# get friends rsvp
+					events_list += NewEvent.objects.filter(rsvp = friend)
+					events_list += NewEvent.objects.filter(creator = friend)
+				for group in groups:
+					# group events
+					events_list += NewEvent.objects.filter(groups = group)
+			except ObjectDoesNotExist:
+				friends_obj = Friends()
+				friends_obj.name = this_user
+				friends_obj.save()
+		if personal_type == 'my_events':
+			events_list = NewEvent.objects.filter(Q(creator = user) | Q(rsvp = user))
 	else: 
 		events_list = NewEvent.objects.filter(reduce(operator.or_, (Q(tags__icontains=x) for x in tags)))
 		show_list = False
+	context['events_list'] = events_list
+
 	tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
-	context = {'events_list': events_list, 'user': request.user, 'rsvped': [],'tags': tags, 'cal_events': []}
 	cal_events = []
 	for e in events_list:
 		startTime = e.startTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
@@ -366,24 +421,7 @@ def filter(request):
 			read_only = True
 			cal_events.append({'start_date': startTime, 'end_date': endTime, 'text': e.name, 'readonly': read_only});
 		context['cal_events'] = json.dumps(cal_events, cls=DjangoJSONEncoder);
-	username = request.user.username
 
-	if username != "" and\
-	 len(MyUser.objects.filter(user_id = username)) == 0:
-		return HttpResponseRedirect('/signup')
-	else:
-		try:
-			user = MyUser.objects.get(user_id=username)
-			lat = user.latitude
-			lon = user.longitude
-			context['rsvped'] = NewEvent.objects.filter(rsvp = user)
-		except MyUser.DoesNotExist:
-			latitude = MyUser._meta.get_field_by_name('latitude')
-			longitude = MyUser._meta.get_field_by_name('longitude')
-			lat = latitude[0].default
-			lon = longitude[0].default
-		context['center_lat'] = lat
-		context['center_lon'] = lon
 	return render_to_response('frontend/list.html', context, context_instance=RequestContext(request))
 
 # Create your views here.  index is called on page load.
