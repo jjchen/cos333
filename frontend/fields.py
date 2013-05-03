@@ -16,6 +16,9 @@ class JqSplitDateTimeField(fields.MultiValueField):
                        ) 
         super(JqSplitDateTimeField, self).__init__(all_fields, *args, **kwargs) 
     
+    def validate(self, value):
+        print value
+
     def compress(self, data_list): 
         print "in compress fields"
         """ 
