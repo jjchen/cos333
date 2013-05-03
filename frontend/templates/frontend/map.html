@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
 
     {{ form.media }}
@@ -8,7 +9,7 @@
     <!--<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />-->
     <link rel="stylesheet" href="{% static "frontend/bootstrap.min.css" %}" type="text/css">
     <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
-    <link rel="stylesheet" type="text/css" href="{% static "frontend/dhtmlxscheduler.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "frontend/dhtmlxscheduler_dhx_terrace.css" %}" />
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
     </script>
@@ -16,6 +17,8 @@
     <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
     <script src="{% static "frontend/bootstrap.min.js" %}"></script>
     <script src="{% static "frontend/dhtmlxscheduler.js" %}"></script>
+    <script src="{% static "frontend/ext/dhtmlxscheduler_readonly.js"%}" type="text/javascript" charset="utf-8"></script>
+    <script src="{% static "frontend/ext/dhtmlxscheduler_dhx_terrace.js"%}" type="text/javascript" charset="utf-8"></script>
 
     <script src="{% static "frontend/bootstrap-datepicker.js" %}"></script>
 
@@ -78,13 +81,21 @@
   
   function reloadEvents ()
   {
+  	 //alert("trying to refresh events");
   	$.ajax({
-  		  type: "POST",
-  		  url: "~/pythoncode.py",
-  		  data: { param: text}
-  	}).done(function( o ) {
-   		// do something
-	});
+  		  url: '{% url "frontend:filter_init" %}',
+  	}).done(function(htmlResponse) {
+        var old = document.getElementById('fill_in');
+        old.parentNode.removeChild(old);
+        var head = document.getElementsByTagName('head')[0];
+        var element = document.createElement('script');
+        element.setAttribute('type','text/javascript');
+        element.setAttribute('id','fill_in');
+        element.innerHTML = htmlResponse
+        head.appendChild(element);
+        showEventsOnMap();
+        init();
+        makeList();	});
   }
 
   </script>
@@ -178,37 +189,6 @@
          }
          google.maps.event.addDomListener(window, 'load', initialize);
 
-         function showEventsOnMap() {
-
-            var i = 0; 
-            {% for event in events_list %} 
-            {% if event.lat %}
-            var position = new google.maps.LatLng(
-              {{event.lat}}, {{event.lon}});
-
-            var marker = new google.maps.Marker({
-               map: map,
-               position: position,
-               icon: single_pin
-            });
-
-            var contentString = '<div class="infoWindow_content">' +
-               '<h3 class="infoWindow_heading">{{event.name}}</h3>' +
-               '<div id="infoWindow_body">' +
-               '<p>Time: {{event.startTime|date:"D d M Y H:i"}}</p>' +
-               '<p>Location: {{event.location}}</p>' +
-               '</div>' +
-               '</div>';
-
-            marker.desc = contentString;
-
-            oms.addMarker(marker); 
-            {% else %}
-            codeAddress("{{event.location}}"); 
-            {% endif %} 
-            {% endfor %}
-         }
-
          function codeAddress(buildingName) {
             geocoder.geocode({
                'address': buildingName
@@ -247,25 +227,31 @@
                }
             }
          }
+      </script>
+      <script type="text/javascript" charset="utf-8" id="rsvp_script">
+         function rsvp(id, has_rsvped) {
+            var parent = document.getElementById("rsvp_"+id);
+            has_rsvped = (parent.innerHTML == 'RSVP') ? false : true;
+            if (!has_rsvped) {
+                  $.post('{% url "frontend:addrsvp" %}', {'rsvp_id':id, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(json) {
+                      var json_parsed = $.parseJSON(json);
+                      if(json_parsed.success == 'true') {
+                        $("rsvp_"+id).addClass('rsvp');
+                        var html = 'un RSVP'
+                        parent.innerHTML = html;
+                      }
+                  });
+              
+           } else {
+              $.post('{% url "frontend:rmrsvp" %}', {'rsvp_id':id, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(json) {
+                var json_parsed = $.parseJSON(json);
 
-         function makeList() {
-            var parent = document.getElementById("list_inner_wrapper");
-            var html = ""; 
-            {% if events_list %}
-            html += "<table class='list_table'>"
-            var cur_date = "";
-            var i = 0; 
-            {% for event in events_list %}
-            if (i % 2 == 0) {
-               row_class = "rowColor";
-            } else {
-               row_class = "";
-            }
-            i++;
-            if ('{{event.startTime|date:"D d M Y"}}' != cur_date) {
-
-               html += '<tr><td colspan="2"> <h3> {{event.startTime|date:"D d M Y"}} </h3></td></tr>';
-               cur_date = '{{event.startTime|date:"D d M Y"}}';
+                if(json_parsed.success == 'true') {
+                    $("rsvp_"+id).removeClass('rsvp');
+                    var html = 'RSVP'
+                    parent.innerHTML = html;
+                } 
+              });
             }
             html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"> {{event.startTime|date:"H:i"}} - {{event.endTime|date:"H:i"}}</td>' + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
               + '<div style="float:right">'
@@ -281,30 +267,40 @@
       </script>
 
       <script type="text/javascript" charset="utf-8">
-         function init() {
+          function filter() {
+                 $.post('{% url "frontend:filter_init" %}', $("#tags_form").serialize(), function(htmlResponse) {
+                      var old = document.getElementById('fill_in');
+                      // old.parentNode.removeChild(old);
+                      var head = document.getElementsByTagName('head')[0];
+                      var element = document.createElement('script');
+                      element.setAttribute('type','text/javascript');
+                      element.setAttribute('id','fill_in');
+                      element.innerHTML = htmlResponse
+                      head.appendChild(element);
+                      showEventsOnMap();
+                      init();
+                      makeList();
+                  });                
+              }
+      
 
-            scheduler.config.CSRF_Token = "{{ csrf_token }}";
-
-            scheduler.config.xml_date = "%Y-%m-%d %H:%i";
-            scheduler.init('scheduler_here', new Date(2011, 0, 25), "month");
-
-            //define how text inside event bar looks
-            scheduler.templates.event_text = function (start, end, event) {
-               return "Text:<b> " + event.text + "</b><br>" + "Descr." + event.details;
-            }
-
-            scheduler.templates.event_class = function (start, end, event) {
-               if (start < (new Date())) //if date in past
-                  return "past_event"; //then set special css class for it
-            }
-
-            scheduler.load("/eventsXML");
-
-            var dp = new dataProcessor("frontend/dataprocessor");
-            dp.setTransactionMode("POST", false)
-            dp.init(scheduler);
-
+         function init_events(events) {
+           $.post('{% url "frontend:filter_init" %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(htmlResponse) {
+                var old = document.getElementById('fill_in');
+              //  old.parentNode.removeChild(old);
+                var head = document.getElementsByTagName('head')[0];
+                var element = document.createElement('script');
+                element.setAttribute('type','text/javascript');
+                element.setAttribute('id','fill_in');
+                element.innerHTML = htmlResponse
+                head.appendChild(element);
+                showEventsOnMap();
+                init();
+            });
          }
+      </script>
+
+      <script type="text/javascript" id="fill_in">
       </script>
 
       <style type="text/css" media="screen">
@@ -332,7 +328,7 @@
 
    </head>
    
-   <body onload="init();">
+   <body onload="init_events()">
       <header>
          <div class="logo" onclick="window.location.href='/'">
             <h1>Princeton University - OC</h1>
@@ -355,13 +351,17 @@
       </form>
       <br/>
          
-         <form action="{% url 'frontend:index' %}" method="post">{% csrf_token %}
+         <form id="tags_form" method="post">{% csrf_token %}
             {% for tag in tags %}
-            <input type="checkbox" name="tags" value="{{tag}}">{{tag}}</br> 
+            <input type="checkbox" onclick="filter()" name="tags" value="{{tag}}">{{tag}}</br> 
             {% endfor %}
          </form>
 
          <br/> <a href="{% url 'frontend:index' %}"> All </a>
+
+         <br/> <a href="{% url 'frontend:index' %}"> Recommended </a>
+         <br/> <a href="{% url 'frontend:index' %}"> My Events </a>
+
 
          <div id="time_slider">
              <h3>Time</h3>
@@ -453,21 +453,22 @@
             </li>
          </div>
          <div id="calendar_content" class="hidden">
-             <h3>Calendar</h3>
-            <div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:80%;'>
-               <div class="dhx_cal_navline">
-                  <div class="dhx_cal_prev_button">&nbsp;</div>
-                  <div class="dhx_cal_next_button">&nbsp;</div>
-                  <div class="dhx_cal_today_button"></div>
-                  <div class="dhx_cal_date"></div>
-                  <div class="dhx_cal_tab" name="day_tab" style="right:204px;"></div>
-                  <div class="dhx_cal_tab" name="week_tab" style="right:140px;"></div>
-                  <div class="dhx_cal_tab" name="month_tab" style="right:76px;"></div>
-               </div>
-               <div class="dhx_cal_header"></div>
-               <div class="dhx_cal_data"></div>
+            <div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:100%;'>
+                <div class="dhx_cal_navline">
+                    <div class="dhx_cal_prev_button">&nbsp;</div>
+                    <div class="dhx_cal_next_button">&nbsp;</div>
+                    <div class="dhx_cal_today_button"></div>
+                    <div class="dhx_cal_date"></div>
+                    <div class="dhx_cal_tab dhx_cal_tab_first" name="day_tab" style="left:14px;"></div>
+                    <div class="dhx_cal_tab" name="week_tab" style="left:75px;"></div>
+                    <div class="dhx_cal_tab dhx_cal_tab_last" name="month_tab" style="left:136px;"></div>
+                </div>
+                <div class="dhx_cal_header">
+                </div>
+                <div class="dhx_cal_data">
+                </div>
             </div>
-         </div>
+        </div>
          <div id="settings_content" class="hidden">
              <h3>Settings</h3>
 

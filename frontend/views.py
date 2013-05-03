@@ -7,6 +7,7 @@ from frontend.models import MyUser
 from frontend.models import MyGroup
 from frontend.models import Friends
 from frontend.models import CalEvent
+from django.forms.models import model_to_dict
 
 # tagging things
 from tagging.forms import TagField
@@ -20,6 +21,7 @@ from django.db.models import Q
 
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.http import Http404
 from django.shortcuts import render_to_response
 from django.shortcuts import redirect, render
 from django.template import RequestContext
@@ -27,6 +29,10 @@ from social_auth.models import UserSocialAuth
 from facepy import GraphAPI
 from fields import JqSplitDateTimeField
 from widgets import JqSplitDateTimeWidget
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+import operator
+import django.contrib.auth
 
 MAX_LEN = 50
 class SignupForm(forms.Form):
@@ -230,33 +236,75 @@ def rmevent(request, event):
 		event_obj = NewEvent.objects.get(id = event)
 	except ObjectDoesNotExist:
 		return HttpResponse('Tried removing non-existent event!', status=401)
-	if event_obj.creator != request.user.username:
+	this_user = MyUser.objects.get(user_id = request.user.username)
+	if event_obj.creator != this_user:
 		return HttpResponse('Unauthorized access', status=401)
 	event_obj.delete()
 	return HttpResponseRedirect('/frontend/personal')	
 
-def addrsvp(request, event):
-	this_user = MyUser.objects.get(user_id = request.user.username)
-	try:
-		event_obj = NewEvent.objects.get(id = event)
-	except ObjectDoesNotExist:
-		return HttpResponse('Tried rspving to non-existent group!', status=401)
-	event_obj.rsvp.add(this_user)
-	event_obj.save()
-	return HttpResponseRedirect('/')
+def addrsvp(request):
+	if request.method == 'POST':
+		this_user = MyUser.objects.get(user_id = request.user.username)
+		try:
+			id = request.POST.get('rsvp_id')
 
-def rmrsvp(request, event):
-	this_user = MyUser.objects.get(user_id = request.user.username)
+			event_obj = NewEvent.objects.get(id = id)
+		except ObjectDoesNotExist:
+			return HttpResponse('Tried rspving to non-existent group!', status=401)
+		event_obj.rsvp.add(this_user)
+		event_obj.save()
+		return HttpResponse('{"success":"true"}');
+	else:
+		raise Http404('Unauthorized access');
 
-	try:
-		event_obj = NewEvent.objects.get(id = event)
-	except ObjectDoesNotExist:
-		return HttpResponse('Tried rspving to non-existent group!', status=401)
-	event_obj.rsvp.remove(this_user)
-	event_obj.save()
-	return HttpResponseRedirect(reverse('frontend:index'))
+def personal_ajax(request, event):
+	if request.method == 'POST':
+		try:
+			event_obj = NewEvent.objects.get(id = event)
+		except ObjectDoesNotExist:
+			return HttpResponse('event does not exist!', status=401)
+		return render_to_response('frontend/showevent.html', {'event' : event_obj}, context_instance=RequestContext(request))
+
+def editevent(request, event):
+	if request.method == 'POST':
+		try:
+			event_obj = NewEvent.objects.get(id = event)
+			dictionary = model_to_dict(event_obj)
+			form = NewEventForm(dictionary) # A form bound to data
+		except ObjectDoesNotExist:
+			return HttpResponse('Event does not exist!', status=401)
+		return render_to_response('frontend/editevent.html',
+	                              {'form' : form},
+	                                context_instance=RequestContext(request))
+
+def rmrsvp(request, id=None):
+	if request.method == 'POST':
+
+		this_user = MyUser.objects.get(user_id = request.user.username)
+
+		try:
+			if (id == None):
+				id = request.POST.get('rsvp_id')
+			event_obj = NewEvent.objects.get(id = id)
+		except ObjectDoesNotExist:
+			return HttpResponse('Tried rspving to non-existent group!', status=401)
+		event_obj.rsvp.remove(this_user)
+		event_obj.save()
+		return HttpResponse('{"success":"true"}');
+	else:
+		this_user = MyUser.objects.get(user_id = request.user.username)
+
+		try:
+			event_obj = NewEvent.objects.get(id = event)
+		except ObjectDoesNotExist:
+			return HttpResponse('Tried rspving to non-existent group!', status=401)
+		event_obj.rsvp.remove(this_user)
+		event_obj.save()
+	return HttpResponseRedirect('/frontend/personal')	
 
 def logout(request):
+	print django.contrib.auth.logout(request)
+	
 	return HttpResponseRedirect(reverse('frontend:personal'))
 
 def personal(request):
@@ -281,11 +329,11 @@ def personal(request):
 	rsvped = NewEvent.objects.filter(rsvp = this_user)
 	#this_user.rsvp_set.all()
 #	friends = []
+	recommended = []
+
 	try: 
 		friends_obj = Friends.objects.get(name = this_user)
 		friends = friends_obj.friends.all()
-
-		recommended = []
 	#	friends rsvp, groups 
 		for friend in friends:
 			# get friends rsvp
@@ -298,12 +346,54 @@ def personal(request):
 		friends_obj = Friends()
 		friends_obj.name = this_user
 		friends_obj.save()
-#   
+	events_list = list(my_events)
+	events_list.extend(rsvped)
+	events_list.extend(recommended);
 	form = AddgroupForm() # An unbound form
 	form2 = AddfriendsForm()
 	return render(request, 'frontend/personal.html', {
-        'form': form, 'form2':form2, 'group_info': group_info, 'my_events': my_events, 'rsvped': rsvped, 'recommended':recommended, "friends":friends 
+        'form': form, 'form2':form2, 'group_info': group_info, 'my_events': my_events, 'rsvped': rsvped, 'events_list': events_list, 'recommended':recommended, "friends":friends 
     })	
+
+def filter(request):
+	tags = request.POST.get('tags')
+	time_threshold = datetime.now() - timedelta(days = 1)
+
+	if tags == None:
+		events_list = NewEvent.objects.filter(startTime__gt=time_threshold).order_by("startTime")
+		show_list = False
+	else: 
+		events_list = NewEvent.objects.filter(reduce(operator.or_, (Q(tags__icontains=x) for x in tags)))
+		show_list = False
+	tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
+	context = {'events_list': events_list, 'user': request.user, 'rsvped': [],'tags': tags, 'cal_events': []}
+	cal_events = []
+	for e in events_list:
+		startTime = e.startTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
+		if e.endTime != None: 
+			endTime = e.endTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
+			read_only = True
+			cal_events.append({'start_date': startTime, 'end_date': endTime, 'text': e.name, 'readonly': read_only});
+		context['cal_events'] = json.dumps(cal_events, cls=DjangoJSONEncoder);
+	username = request.user.username
+
+	if username != "" and\
+	 len(MyUser.objects.filter(user_id = username)) == 0:
+		return HttpResponseRedirect('/signup')
+	else:
+		try:
+			user = MyUser.objects.get(user_id=username)
+			lat = user.latitude
+			lon = user.longitude
+			context['rsvped'] = NewEvent.objects.filter(rsvp = user)
+		except MyUser.DoesNotExist:
+			latitude = MyUser._meta.get_field_by_name('latitude')
+			longitude = MyUser._meta.get_field_by_name('longitude')
+			lat = latitude[0].default
+			lon = longitude[0].default
+		context['center_lat'] = lat
+		context['center_lon'] = lon
+	return render_to_response('frontend/list.html', context, context_instance=RequestContext(request))
 
 # Create your views here.  index is called on page load.
 def index(request, add_form=None):
@@ -323,7 +413,7 @@ def index(request, add_form=None):
 		show_list = False
 	tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	context = {'events_list': events_list, 'user': request.user, 
-		   'show_list': show_list, 'search_form': form, 'tags': tags}
+		   'show_list': show_list, 'search_form': form, 'rsvped': [],'tags': tags, 'cal_events': []}
 	if add_form == None: 
 		context['form'] = NewEventForm()
 		context['make_visible'] = False
@@ -331,6 +421,15 @@ def index(request, add_form=None):
 		context['form'] = add_form
 		context['make_visible'] = True
 	username = request.user.username
+
+	cal_events = []
+	for e in events_list:
+		startTime = e.startTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
+		if e.endTime != None:
+			endTime = e.endTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
+			read_only = True
+			cal_events.append({'start_date': startTime, 'end_date': endTime, 'text': e.name, 'readonly': read_only});
+		context['cal_events'] = json.dumps(cal_events, cls=DjangoJSONEncoder);
 
 	if username != "" and\
 	 len(MyUser.objects.filter(user_id = username)) == 0:
@@ -340,6 +439,7 @@ def index(request, add_form=None):
 			user = MyUser.objects.get(user_id=username)
 			lat = user.latitude
 			lon = user.longitude
+			context['rsvped'] = NewEvent.objects.filter(rsvp = user)
 		except MyUser.DoesNotExist:
 			latitude = MyUser._meta.get_field_by_name('latitude')
 			longitude = MyUser._meta.get_field_by_name('longitude')
@@ -376,7 +476,8 @@ def add(request):
 					 lat = latitude,
 					 lon = longitude,
 					 private = data['private'],
-					 tags = data['tags'])
+					 tags = data['tags'],
+					 creator = this_user[0])
 							#creator = this_user)
 			event.save() #must save before adding groups
 			for group in data['groups']:
@@ -392,10 +493,11 @@ def add(request):
 			# msg = "success!"
 	print "I am here in add"
 	events_list = NewEvent.objects.all().order_by("startTime") # this is to refresh the events list without page refresh.
-	return index(request, form)
+#	return index(request, form)
 #	return render(request, '/frontend/map.html', {'form': form})
 #	return HttpResponseRedirect('/') # Redirect after POST
 	#return render(request, 'frontend/map.html')
+
 
 # export event to Facebook
 def export_fb(request):
@@ -442,15 +544,22 @@ def search(request):
 	return HttpResponse(html)
 
 # call this to refresh events list.
-def refreshEvents(request):
+def refresh(request):
    events_list = NewEvent.objects.all().order_by("startTime")
+   show_list = False
+   form = SearchForm(request.POST)
+   tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
+   context = {'events_list': events_list, 'user': request.user, 
+		   'show_list': show_list, 'search_form': form, 'tags': tags}
+   print "I am here in refresh"
+   return render(request, 'frontend/map.html', context)
 
 
 def eventsXML(request):
     """
     For now, return the whole event DB.
     """
-    eventList = CalEvent.objects.all()
+    eventList = NewEvent.objects.all()
 
     return render_to_response('frontend/events.xml',
                               {'eventList' : eventList,},
@@ -535,4 +644,5 @@ def dataprocessor(request):
                                     mimetype="application/xhtml+xml")
 
 def calendar(request):
-    return render_to_response('frontend/calendar.html', {}, context_instance=RequestContext(request))
+    return render_to_response('frontend/calendar.html', {}, 
+			      context_instance=RequestContext(request))

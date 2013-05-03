@@ -1,26 +1,32 @@
 <html>
 <head>
-
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
- 
-    <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
 
-    <title>OC</title>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+
+    <link rel="stylesheet" type="text/css" href="{% static "frontend/settings.css" %}" />
 </head>
 <body>
-
-  <div id="personal_container">
-         <div class="logo" onclick="window.location.href='/'">
-            <h1>Princeton University - OC</h1>
-         </div>
-         <div id="floatright">
-            <div class="settings_buttons" onclick="window.location.href='/frontend/personal'">{{user}}</div>
-            <div class="settings_buttons" onclick="window.location.href='/frontend/settings'">settings</div>
-            <div class="settings_buttons" onclick="window.location.href='/'">logout</div>
-         </div>
-      <div class="clear"></div>
+  <header>
+<div class="logo" onclick="window.location.href='/#'"><h1>Princeton University - OC</h1></div>
+      <div id="floatright">
+      <div class="settings_buttons"
+         onclick="window.location.href='/frontend/personal'">
+         {{user}}
+      </div>
+      <div class="settings_buttons"
+         onclick="window.location.href='/frontend/settings'">
+         settings
+      </div>
+      <div class="settings_buttons"
+         onclick="window.location.href='#'">
+         logout
+      </div>      
+    </div>
+    </header>
+  <div id="container">
+    <div class="clear"></div>
       <div class="clear"></div>
       <div id="personal_content">
         <div id="left">
@@ -30,7 +36,9 @@
 
                 {% for e in my_events %}
                 <div class="events_item" id="{{e.id}}">
-                  <p> {{ e.name }} <a href="">Remove</a>  <a href="">Edit</a></p>
+                  <p> {{ e.name }}
+                        <a href="#" onclick="edit_form({{e.id}})"> Edit </a>
+                        <a href="{% url 'frontend:rmevent' e.id %}">Remove</a> </p>
                 </div>
               {% endfor %}
               </div>
@@ -42,7 +50,7 @@
               {% for e in rsvped %}
 
                 <div class="events_item" id="{{e.id}}">
-                <p> {{ e.name }} <a href="{% url 'frontend:rmrsvp' e.id %}">Remove</a></p>
+                <p> {{ e.name }}<a href="{% url 'frontend:rmrsvp' e.id %}">Remove</a></p>
               </div>
               {% endfor %}
             </div>
@@ -53,7 +61,7 @@
 
               {% for e in recommended %}
                 <div class="events_item" id="{{e.id}}">
-                <p> {{ e.name }} <a href="">Remove</a></p>
+                <p> {{ e.name }}</p>
               </div>
               {% endfor %}
           </div>
@@ -85,7 +93,8 @@
           </div>
         </div>
         <div id="right">
-          <div id="more"></div>
+          <div id="more">
+          </div>
           <div id="friends_form">
             <form action="/addfriend/" method="post">{% csrf_token %}
             <p><b> Add friend: </b> </p>
@@ -104,7 +113,7 @@
       </div>
     </div>
     <script type="text/javascript">
-      $(".events_item").click(function() {
+    /*  $(".events_item").click(function() {
         $(".events_item").removeClass("active");
         $(this).addClass("active");
 
@@ -125,7 +134,35 @@
         }
         {% endfor %}
         parent.innerHTML = html;
+      }); */
+
+      $(".events_item").click(function() {
+        $(".events_item").removeClass("active");
+        $(this).addClass("active");
+
+        var id = parseInt($(this).attr("id"));
+        {% for e in events_list %}
+
+          if (id == {{e.id}}) {
+            $.post('{% url "frontend:personal_ajax" e.id %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(htmlResponse) {
+                var parent = document.getElementById("more");
+                parent.innerHTML = htmlResponse;
+            });
+          }
+        {% endfor %}
       });
+
+      function edit_form(id) {
+
+        {% for e in my_events %}
+          if (id == {{e.id}}) {
+            $.post('{% url "frontend:editevent" e.id %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(htmlResponse) {
+                var parent = document.getElementById("more");
+                parent.innerHTML = htmlResponse;
+            });
+          }
+        {% endfor %}
+      }
     </script>   
 </body>
 </html>

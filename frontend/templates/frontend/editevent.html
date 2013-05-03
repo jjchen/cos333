@@ -1,0 +1,40 @@
+{{form.media}}
+<form action="/add/" method="post">{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="fieldWrapper">
+        {{ form.name.errors }}
+        <label for="id_name">Name:</label>
+        {{ form.name }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.startTime.errors }}
+        <label for="id_startTime">Start date & time: </label>
+        {{ form.startTime }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.endTime.errors }}
+        <label for="id_endTime">End date & time: </label>
+        {{ form.endTime }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.location.errors }}
+        <label for="id_location">Location: </label>
+        {{ form.location }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.private.errors }}
+        <label for="id_private">Private: </label>
+        {{ form.private }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.groups.errors }}
+        <label for="id_groups">Groups: </label>
+        {{ form.groups }}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.tags.errors }}
+        <label for="id_tags">Tags: </label>
+        {{ form.tags }}
+    </div>
+    <p><input type="submit" value="Save" /></p>
+</form>
