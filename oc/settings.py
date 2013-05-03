@@ -90,6 +90,20 @@ STATICFILES_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
+TAGGING_AUTOCOMPLETE_MAX_TAGS = 5
+
+TAGGING_AUTOCOMPLETE_JQUERY_UI_FILE = 'http://code.jquery.com/ui/1.10.2/jquery-ui.js'
+
+TAGGING_AUTOCOMPLETE_CSS = (
+    'TAGGING_AUTOCOMPLETE_JS_BASE_URL/css/jquery-ui-1.9.2.custom.css',
+    'TAGGING_AUTOCOMPLETE_JS_BASE_URL/css/jquery.ui.1.10.0.ie.css',
+    'TAGGING_AUTOCOMPLETE_JS_BASE_URL/css/jquery-ui-1.10.0.custom.css',
+    #'TAGGING_AUTOCOMPLETE_JS_BASE_URL/css/jquery.tagit.css',
+    #'TAGGING_AUTOCOMPLETE_JS_BASE_URL/css/tagit.ui-zendesk.css',
+    #'TAGGING_AUTOCOMPLETE_JS_BASE_URL/css/ui-autocomplete-tag-it.css',
+    'TAGGING_AUTOCOMPLETE_JS_BASE_URL/css/jquery.ui.1.9.2.ie.css',
+)
+
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
@@ -149,8 +163,6 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'dajaxice',
-    'dajax',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -165,6 +177,8 @@ INSTALLED_APPS = (
     'timeline',
     'frontend',
     'social_auth',
+    #'tagging',
+    #'tagging_autocomplete_tagit',
     'south'
 )
 

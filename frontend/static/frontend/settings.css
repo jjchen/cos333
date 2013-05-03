@@ -1,9 +1,3 @@
-/*
- * style.css
- *
- * css stylesheet for the general html page
- */
-
 #map-canvas { 
 	position: absolute; 
 	top: 45; 
@@ -13,23 +7,14 @@
 	z-index: 0;
 }
 
-/* fixes conflict between google maps css and bootstrap css */
-
-#map-canvas img { 
-  max-width: none;
-}
-
-#map-canvas label { 
-  width: auto; display:inline; 
-} 
-
 body{
 	background-color: rgba(0,102,51,0.1);
+
 }
 
 #container { 
 	position: absolute; 
-	top: 45; 
+	top: 100px; 
 	padding: 10px;
 	z-index: 0;
 }
@@ -58,36 +43,6 @@ tr.rowColor {
 	height: 500px;
 }
 
-/* header h1 {
-	/* font-weight: bold;
-	float:left;
-	font-size: 20px;
-	color: #fff;
-	padding: 0;
-	margin: 10px 10px;
-	text-align: right;
-	border-bottom: 1px solid #fff;
-	text-shadow: 0px 0px 5px rgba(0,0,0,.9);
-}
-
-h2 {
-	font-weight: normal;
-	color: #006633;
-	padding: 0;
-	margin: 0;
-	text-align: left;
-	text-transform: uppercase;
-}
-
-h3 {
-	font-weight: normal;
-	color: #006633;
-	padding: 0;
-	margin: 0;
-	line-height: normal;
-	text-align: left;
-	text-transform: uppercase;
-} */
 
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Arvo', Georgia, Times, serif;
@@ -127,7 +82,6 @@ p, div {
 header {
 	position: absolute; top: 0; left:0;
 	width: 100%;
-	height: 75px;
 	z-index: 100;
 	box-shadow: 0px 0px 20px rgba(0,0,0,0.5);
 	background-color: #006633;
@@ -137,43 +91,6 @@ div#floatright {
 	float: right;
 	margin: 10px 10px;
 	color: #fff;
-}
-
-div#side_panel{
-	position: absolute;
-	top: 100px;
-	right: 25px;
-	min-width: 15%;
-	min-height: 75%;
-	float: right;
-	background: #f9f9f9;
-	border: 1px solid #eee;
-	padding: 10px;
-	border-radius: 5px;
-	box-sizing: border-box;
-	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
-	box-sizing: border-box;
-	z-index: 1;
-	overflow:scroll;
-}
-
-div#make_button{
-	left: 25px;
-}
-
-div#calendar_button{
-	left: 140px;
-}
-
-div#list_button{
-	left: 300px;
-}
-
-div#settings_button{
-	left: 390px;
-}
-div#minus_button{
-	left: 390px;	
 }
 
 .button {
@@ -201,6 +118,7 @@ div#minus_button{
 .errorlist {
 	list-style-type: none;
     padding:0px;
+
 }
 
 .valerror {

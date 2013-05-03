@@ -9,6 +9,10 @@ from frontend.models import Friends
 from frontend.models import CalEvent
 from django.forms.models import model_to_dict
 
+# tagging things
+from tagging.forms import TagField
+#from tagging_autocomplete_tagit.widgets import TagAutocompleteTagIt
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
@@ -23,11 +27,13 @@ from django.shortcuts import redirect, render
 from django.template import RequestContext
 from social_auth.models import UserSocialAuth
 from facepy import GraphAPI
+from facepy import SignedRequest
 from fields import JqSplitDateTimeField
 from widgets import JqSplitDateTimeWidget
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 import operator
+import django.contrib.auth
 
 MAX_LEN = 50
 class SignupForm(forms.Form):
@@ -50,10 +56,12 @@ class NewEventForm(forms.Form):
 			attrs={'date_class':'datepicker',
 			       'time_class':'timepicker'}))
 	location = forms.CharField(max_length=200)
+	description = forms.CharField(required=False, widget=forms.Textarea)
 	private = forms.BooleanField(required=False)
 	groups = forms.ModelMultipleChoiceField(queryset=MyGroup.objects.all(),
 						required=False)
-	tags = forms.CharField(max_length=200, required=False)
+	#tags = forms.CharField(max_length=200, required=False)
+	#tags = TagField(widget=TagAutocompleteTagIt(max_tags=False))
 
 def settings(request):
 	if request.user.username == "":
@@ -296,6 +304,8 @@ def rmrsvp(request, id=None):
 	return HttpResponseRedirect('/frontend/personal')	
 
 def logout(request):
+	print django.contrib.auth.logout(request)
+	
 	return HttpResponseRedirect(reverse('frontend:personal'))
 
 def personal(request):
@@ -558,6 +568,9 @@ def export_fb(request):
         else:
             print "Failure"
 
+
+	signed_request_data = SignedRequest
+
 # this is the search for a new event.
 def search(request):
 	query = request.POST['search_query']
@@ -673,4 +686,5 @@ def dataprocessor(request):
                                     mimetype="application/xhtml+xml")
 
 def calendar(request):
-    return render_to_response('frontend/calendar.html', {}, context_instance=RequestContext(request))
+    return render_to_response('frontend/calendar.html', {}, 
+			      context_instance=RequestContext(request))
