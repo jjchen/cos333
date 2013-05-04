@@ -63,7 +63,6 @@
       var form = jQuery("#eventform");
       var tags = jQuery("#singleFieldTags");
       form.submit(function(e) {
-          alert("HI");
           jQuery("#sendbutton").attr('disabled', true)
           jQuery("#sendwrapper").prepend('<span>Submitting event, please wait... </span>')
           jQuery("#ajaxwrapper").load(
