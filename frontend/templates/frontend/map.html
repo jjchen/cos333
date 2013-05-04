@@ -63,6 +63,7 @@
       var form = jQuery("#eventform");
       var tags = jQuery("#singleFieldTags");
       form.submit(function(e) {
+          alert("HI");
           jQuery("#sendbutton").attr('disabled', true)
           jQuery("#sendwrapper").prepend('<span>Submitting event, please wait... </span>')
           jQuery("#ajaxwrapper").load(
@@ -75,6 +76,11 @@
           );
           e.preventDefault(); 
       });
+
+     jQuery('#search_form2').submit(function(event){
+            filter('search');
+            event.preventDefault(); 
+     });
   });
 
   </script>
@@ -234,7 +240,7 @@
           function filter(type) {
             var data = '';
             if (type == 'search')
-              data = $("#search_form").serialize();
+              data = $("#search_form2").serialize();
             else if (type == 'tags')
               data = $("#tags_form").serialize();
             else if (type == 'recommended' || type == 'my_events')
@@ -275,15 +281,7 @@
           {
             filter("reload");
           }
-      
-          $("#search_form").submit(function(event){
-            alert('search')
-            filter('search');
-          });
-          $('#search_form').submit(function(event){
-            alert('search')
-            filter('search');
-          });
+    
       </script>
 
       <style type="text/css" media="screen">
@@ -341,7 +339,7 @@
           <h3>Filter</h3>
 
          <br/>
-         <form id ="search_form" method="post" ons>{% csrf_token %}
+         <form id ="search_form2" method="post">{% csrf_token %}
             <input type="text" id="search_query" placeholder="Search..." name="search_query" class="input-medium search-query">
             <div class="clearfix"> <br />  </div>
             <button type="submit" class="btn">Search</button>
