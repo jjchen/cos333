@@ -4,7 +4,8 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
- 
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" /> 
     <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
 
     <title>OC</title>
@@ -92,7 +93,7 @@
           <div id="friends_form">
             <form action="/addfriend/" method="post">{% csrf_token %}
             <p><b> Add friend: </b> </p>
-            {{ form2.as_p }}
+            {{ form2.name }}
             <input type="submit" value="Submit" />
             </form>
           </div>
@@ -107,28 +108,16 @@
       </div>
     </div>
     <script type="text/javascript">
-    /*  $(".events_item").click(function() {
-        $(".events_item").removeClass("active");
-        $(this).addClass("active");
+      $(function() {
+        names = []
 
-        var id = parseInt($(this).attr("id"));
-
-        var parent = document.getElementById("more");
-        var html = ""; 
-        {% for e in rsvped %}
-        var event_id = {{e.id}};
-        if (event_id == id) {
-          html += "{{e.name}}";
-        }
+        {% for u in other_users %}
+          names.push("{{u.user_id}}");
         {% endfor %}
-        {% for e in recommended %}
-        var event_id = {{e.id}};
-        if (event_id == id) {
-          html += "{{e.name}}";
-        }
-        {% endfor %}
-        parent.innerHTML = html;
-      }); */
+        $("#id_name").autocomplete({
+          source: names
+        });
+      })
 
       $(".events_item").click(function() {
         $(".events_item").removeClass("active");
