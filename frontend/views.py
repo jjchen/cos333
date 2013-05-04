@@ -335,8 +335,12 @@ def personal(request):
 	try: 
 		friends_obj = Friends.objects.get(name = this_user)
 		friends = friends_obj.friends.all()
-		if (len(friends) != 0):
+		if (len(friends) != 0 && len(friends) != 0):
 			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))) | (reduce(operator.or_, (Q(groups=x) for x in groups))))
+		elif (len(friends) != 0): 
+			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))))
+		elif (len(friends) != 0):
+			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))))
 		other_users = MyUser.objects.all().exclude(pk__in = friends)
 	except ObjectDoesNotExist:
 		friends_obj = Friends()
