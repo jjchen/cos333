@@ -16,4 +16,3 @@ django-dajax==0.9.2
 django-dajaxice==0.5.4
 tagging_autocomplete_tagit=1.0
 django-tagging==0.3
-

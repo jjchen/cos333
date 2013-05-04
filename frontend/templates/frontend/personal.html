@@ -1,32 +1,46 @@
 <html>
 <head>
+
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+    <script src="{% static "frontend/bootstrap.js" %}"></script>
 
-    <link rel="stylesheet" type="text/css" href="{% static "frontend/settings.css" %}" />
+    <link rel="stylesheet" href="{% static "frontend/bootstrap.min.css" %}" type="text/css"> 
+    <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
+
+    <title>OC</title>
 </head>
 <body>
-  <header>
-<div class="logo" onclick="window.location.href='/#'"><h1>Princeton University - OC</h1></div>
-      <div id="floatright">
-      <div class="settings_buttons"
-         onclick="window.location.href='/frontend/personal'">
-         {{user}}
+  <div class="navbar navbar-fixed-top">  
+    <div class="navbar-inner">  
+      <div class="container">  
+        <ul class="nav pull-left">  
+          <li>  
+            <a class="brand logo" href="{% url 'frontend:index' %}" >Princeton University - OC</a>  
+          </li>
+        </ul>
+        <ul class="nav pull-right">  
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li> notification </li>
+              <li> notification </li>
+            </ul>
+          </li>
+          <li class=""><a href="#">{{user}}</a></li>  
+          <li><a href="{% url 'frontend:settings' %}">Settings</a></li>  
+          <li><a href="{% url 'frontend:logout' %}">Logout</a></li>  
+        </ul>
       </div>
-      <div class="settings_buttons"
-         onclick="window.location.href='/frontend/settings'">
-         settings
-      </div>
-      <div class="settings_buttons"
-         onclick="window.location.href='#'">
-         logout
-      </div>      
     </div>
-    </header>
-  <div id="container">
-    <div class="clear"></div>
+  </div>
+<div class="clear"></div>
+  <div id="personal_container">
       <div class="clear"></div>
       <div id="personal_content">
         <div id="left">
@@ -98,7 +112,7 @@
           <div id="friends_form">
             <form action="/addfriend/" method="post">{% csrf_token %}
             <p><b> Add friend: </b> </p>
-            {{ form2.as_p }}
+            {{ form2.name }}
             <input type="submit" value="Submit" />
             </form>
           </div>
@@ -113,28 +127,16 @@
       </div>
     </div>
     <script type="text/javascript">
-    /*  $(".events_item").click(function() {
-        $(".events_item").removeClass("active");
-        $(this).addClass("active");
+      $(function() {
+        names = []
 
-        var id = parseInt($(this).attr("id"));
-
-        var parent = document.getElementById("more");
-        var html = ""; 
-        {% for e in rsvped %}
-        var event_id = {{e.id}};
-        if (event_id == id) {
-          html += "{{e.name}}";
-        }
+        {% for u in other_users %}
+          names.push("{{u.user_id}}");
         {% endfor %}
-        {% for e in recommended %}
-        var event_id = {{e.id}};
-        if (event_id == id) {
-          html += "{{e.name}}";
-        }
-        {% endfor %}
-        parent.innerHTML = html;
-      }); */
+        $("#id_name").autocomplete({
+          source: names
+        });
+      })
 
       $(".events_item").click(function() {
         $(".events_item").removeClass("active");

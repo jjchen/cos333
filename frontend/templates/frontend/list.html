@@ -31,6 +31,11 @@
             codeAddress("{{event.location}}"); 
             {% endif %} 
             {% endfor %}
+
+                  var overlapped = oms.markersNearAnyOtherMarker();
+                  for (i = 0; i < overlapped.length; i++) {
+                     overlapped[i].setIcon(multi_pin);
+                  }
          }
 
          function makeList() {
@@ -39,7 +44,16 @@
             {% if events_list %}
             html += "<table class='list_table'>"
             var cur_date = "";
-            var i = 0; 
+            var i = 0;
+
+            {% for event in events_list %}
+              rsvp_list['{{event.id}}'] = false;
+            {% endfor %}
+
+            {% for e in rsvped %}
+              rsvp_list['{{e.id}}'] = true;
+            {% endfor %}
+
             {% for event in events_list %}
             if (i % 2 == 0) {
                row_class = "rowColor";
@@ -52,10 +66,8 @@
                html += '<tr><td colspan="2"> <h3> {{event.startTime|date:"D d M Y"}} </h3></td></tr>';
                cur_date = '{{event.startTime|date:"D d M Y"}}';
             }
-            var rsvped = false;
-            {% for e in rsvped %}
-              if ({{e.id}} == {{event.id}}) rsvped = true;
-            {% endfor %}
+            var rsvped = rsvp_list['{{event.id}}'];
+
             var rsvp_text;
             if (rsvped == false) {
               rsvp_text = "RSVP"
@@ -69,7 +81,7 @@
           }
             html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"><div class="list_row"> '
               +' {{event.startTime|date:"H:i"}} - {{event.endTime|date:"H:i"}}</div></td>' 
-              + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
+              + '<td> {{event.name|safe}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
               + '<div style="float:right">'
             html += '<a href="#" onclick="showMore({{event.id}})"> Show More </a>'
               +'<a href="#" class="'+rsvp_class+'" onclick="rsvp({{event.id}}, '+rsvped+')" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
@@ -90,6 +102,7 @@
             scheduler.config.fix_tab_position = false; // tabs are positioned correctly, no need to fix it
 
             scheduler.config.xml_date = "%Y-%m-%d %H:%i";
+            scheduler.config.readonly = true;
             scheduler.init('scheduler_here', new Date(), "week");
 
             scheduler.templates.event_class = function (start, end, event) {
@@ -121,9 +134,10 @@
                 html += "{{group.name}}" + " ";
               {% endfor %}
               html += "RSVPed: ";
-              {% for user in e.rsvp.all %}
-                html += "{{user.first_name}}" + " ";
+              {% for this_user in e.rsvp.all %}
+                if ('{{this_user.user_id}}' != '{{user.username}}') html += "{{this_user.first_name}}" + " ";
               {% endfor %}
+              if (rsvp_list['{{e.id}}']) html += "me"
               parent.innerHTML = html;
             }
             {% endfor %}
