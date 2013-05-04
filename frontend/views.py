@@ -310,9 +310,8 @@ def rmrsvp(request, id=None):
 	return HttpResponseRedirect('/frontend/personal')	
 
 def logout(request):
-	print django.contrib.auth.logout(request)
-	
-	return HttpResponseRedirect(reverse('frontend:personal'))
+	django.contrib.auth.logout(request)
+	return HttpResponseRedirect("/frontend")
 
 def personal(request):
 	print "Request is " + request.user.username
