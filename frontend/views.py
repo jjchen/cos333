@@ -335,7 +335,7 @@ def personal(request):
 	try: 
 		friends_obj = Friends.objects.get(name = this_user)
 		friends = friends_obj.friends.all()
-		if (len(friends) != 0 && len(friends) != 0):
+		if (len(friends) != 0 and len(friends) != 0):
 			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))) | (reduce(operator.or_, (Q(groups=x) for x in groups))))
 		elif (len(friends) != 0): 
 			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))))
@@ -408,7 +408,7 @@ def filter(request):
 					friends = friends_obj.friends.all()
 					groups = MyGroup.objects.filter(users = user)
 
-					if (len(friends) != 0 && len(friends) != 0):
+					if (len(friends) != 0 and len(friends) != 0):
 						events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))) | (reduce(operator.or_, (Q(groups=x) for x in groups))))
 					elif (len(friends) != 0): 
 						events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))))
