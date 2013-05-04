@@ -503,6 +503,7 @@ def index(request, add_form=None):
 
 # add a new event.  add is called when a new event is properly submitted.
 def add(request):
+	print "IN add"
 	if request.method == 'POST':
 		username = request.user.username
 		this_user = MyUser.objects.filter(user_id = username)
@@ -528,7 +529,7 @@ def add(request):
 					 lat = latitude,
 					 lon = longitude,
 					 private = data['private'],
-					 tags = data['tags'],
+					 #tags = data['tags'],
 					 creator = this_user[0])
 							#creator = this_user)
 			event.save() #must save before adding groups
@@ -542,11 +543,12 @@ def add(request):
 				return redirect('success')
 	else:
 		form = NewEvent()
+		print "newform"
 			# msg = "success!"
 	print "I am here in add"
 	events_list = NewEvent.objects.all().order_by("startTime") # this is to refresh the events list without page refresh.
 #	return index(request, form)
-#	return render(request, '/frontend/map.html', {'form': form})
+	return render(request, '/frontend/map.html', {'form': form})
 #	return HttpResponseRedirect('/') # Redirect after POST
 	#return render(request, 'frontend/map.html')
 
