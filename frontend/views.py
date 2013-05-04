@@ -35,6 +35,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 import json
 import operator
 import django.contrib.auth
+import unicodedata
 
 MAX_LEN = 50
 class SignupForm(forms.Form):
@@ -123,10 +124,10 @@ def signup(request):
 
 class MultiNameField(forms.CharField):
 	def __init__(self):
-		super(MultiNameField, self).__init__(widget=forms.Textarea())
+		super(MultiNameField, self).__init__(widget=forms.TextInput())
 	def to_python(self, value):
 		if not value: return []
-		return value.replace('\r\n', '\n').split('\n')
+		return value.split(',')
 
 	def validate(self, value):
 		for name in value:
@@ -332,6 +333,8 @@ def personal(request):
 	rsvped = NewEvent.objects.filter(rsvp = this_user)
 	recommended = []
 
+	all_users_obj =  MyUser.objects.all()
+	all_users = [unicodedata.normalize('NFKD', user.user_id).encode('ascii', 'ignore') for user in all_users_obj]
 	try: 
 		friends_obj = Friends.objects.get(name = this_user)
 		friends = friends_obj.friends.all()
@@ -341,12 +344,13 @@ def personal(request):
 			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))))
 		elif (len(groups) != 0):
 			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))))
-		other_users = MyUser.objects.all().exclude(pk__in = friends)
+		other_users = all_users_obj.exclude(pk__in = friends)
 	except ObjectDoesNotExist:
 		friends_obj = Friends()
 		friends_obj.name = this_user
 		friends_obj.save()
-		other_users = MyUser.objects.all()
+		other_users = all_users_obj
+
 	events_list = list(my_events)
 	events_list.extend(rsvped)
 	events_list.extend(recommended);
@@ -354,7 +358,7 @@ def personal(request):
 	form2 = AddfriendsForm()
 	return render(request, 'frontend/personal.html', {
         'form': form, 'form2':form2, 'group_info': group_info, 'my_events': my_events, 'rsvped': rsvped, 
-        'events_list': events_list, 'recommended':recommended, "friends":friends, 'other_users': other_users 
+        'events_list': events_list, 'recommended':recommended, "friends":friends, 'other_users': other_users, 'all_users': all_users 
     })	
 
 def filter(request):

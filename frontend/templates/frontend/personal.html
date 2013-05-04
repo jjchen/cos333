@@ -10,6 +10,23 @@
 
     <link rel="stylesheet" href="{% static "frontend/bootstrap.min.css" %}" type="text/css"> 
     <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
+    <link href="{% static "frontend/jquery.tagit.css" %}" rel="stylesheet" type="text/css">
+    <script src="{% static "frontend/tag-it.min.js" %}" type="text/javascript" charset="utf-8"></script>
+
+    <script type="text/javascript">
+      $(document).ready(function() {
+        var availableTags = {{all_users|safe}}
+        $("#id_member_names").tagit({
+          availableTags: availableTags,
+         beforeTagAdded: function(event, ui) { 
+           // only allow existing values
+           if($.inArray(ui.tagLabel, availableTags)==-1) {
+            return false;
+           }
+        }
+        });
+      });
+    </script>
 
     <title>OC</title>
 </head>
