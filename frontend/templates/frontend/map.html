@@ -275,6 +275,15 @@
           {
             filter("reload");
           }
+      
+          $("#search_form").submit(function(event){
+            alert('search')
+            filter('search');
+          });
+          $('#search_form').submit(function(event){
+            alert('search')
+            filter('search');
+          });
       </script>
 
       <style type="text/css" media="screen">
@@ -335,7 +344,7 @@
          <form id ="search_form" method="post">{% csrf_token %}
             <input type="text" id="search_query" placeholder="Search..." name="search_query" class="input-medium search-query">
             <div class="clearfix"> <br />  </div>
-            <div onclick="filter('search')" class="btn">Search</div>
+            <button type="submit" class="btn">Search</button>
           </form>
          <br/>
          <div style='width:100%; height:150px; overflow:scroll;'>
