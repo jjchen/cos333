@@ -407,8 +407,13 @@ def filter(request):
 					friends_obj = Friends.objects.get(name = user)
 					friends = friends_obj.friends.all()
 					groups = MyGroup.objects.filter(users = user)
-					
-					events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))) | (reduce(operator.or_, (Q(groups=x) for x in groups))))
+
+					if (len(friends) != 0 && len(friends) != 0):
+						events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))) | (reduce(operator.or_, (Q(groups=x) for x in groups))))
+					elif (len(friends) != 0): 
+						events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))))
+					elif (len(friends) != 0):
+						events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))))					
 				except ObjectDoesNotExist:
 					friends_obj = Friends()
 					friends_obj.name = this_user
