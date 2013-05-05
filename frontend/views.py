@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from frontend.models import NewEvent
 #from frontend.models import NewEventForm
 from frontend.models import BuildingAlias
+from frontend.models import Building
 from frontend.models import MyUser
 from frontend.models import MyGroup
 from frontend.models import Friends
@@ -334,6 +335,7 @@ def personal(request):
 
 	all_users_obj =  MyUser.objects.all()
 	all_users = [unicodedata.normalize('NFKD', user.user_id).encode('ascii', 'ignore') for user in all_users_obj]
+	friends = []
 	try: 
 		friends_obj = Friends.objects.get(name = this_user)
 		friends = friends_obj.friends.all()
@@ -464,6 +466,7 @@ def index(request, add_form=None):
 		show_list = False
 	#tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	tags = Tag.objects.all()
+
 	context = {'events_list': events_list, 'user': request.user, 
 		   'show_list': show_list, 'search_form': form, 'rsvped': [],'tags': tags, 'cal_events': []}
 	if add_form == None: 

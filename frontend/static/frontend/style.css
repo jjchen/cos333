@@ -39,20 +39,20 @@ body{
 	z-index: 0;
 }
 
-table {
+.list_table {
 	border-collapse: collapse;
 	width: 100%;
 }
 
-table td {
+.list_table td {
 	padding: 2px 5px;
 }
 
-table td.list_time {
+.list_table td.list_time {
 	white-space: nowrap;
 }
 
-tr.rowColor {
+.list_table tr.rowColor {
 	background-color: rgba(0,102,51,0.1);
 }
 
@@ -338,7 +338,7 @@ div#right {
 	-webkit-transition: 0.1s background, 0.3s padding;
 }
 
-.active{
+.list_group .active{
 	padding-left: 30px;
 	background: rgba(255,255,255, 0.9);
 }
