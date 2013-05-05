@@ -507,9 +507,12 @@ def index(request, add_form=None):
 # add a new event.  add is called when a new event is properly submitted.
 def add(request):
 	print "IN add"
+	if request.user.username == "":
+		return HttpResponse('Unauthorized access--you must sign in!', 
+					status=401)		
 	if request.method == 'POST':
 		username = request.user.username
-		this_user = MyUser.objects.filter(user_id = username)
+		this_user = MyUser.objects.get(user_id = username)
 		form = NewEventForm(request.POST) 
 		if form.is_valid():
 			data = form.cleaned_data
