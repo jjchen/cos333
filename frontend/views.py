@@ -285,6 +285,25 @@ def editevent(request, event):
 	                              {'form' : form},
 	                                context_instance=RequestContext(request))
 
+def editgroup(request, group):
+	#print request.user.username
+	#print MyUser.objects.get(user_id="foo")
+	if request.user.username == "":
+		return HttpResponse('Unauthorized access', status=401)
+	if request.method == 'POST':
+		try:
+			new_group = MyGroup.objects.get(id = group)
+			for name in form.cleaned_data['member_names']:
+				user = MyUser.objects.get(user_id = name)
+				new_group.users.add(user)
+			new_group.users.add(this_user)
+			new_group.save()
+		except ObjectDoesNotExist:
+			return HttpResponse('Group does not exist!', status=401)
+		return render_to_response('frontend/editgroup.html',
+	                              {'form' : form},
+	                                context_instance=RequestContext(request))
+
 def rmrsvp(request, id=None):
 	if request.method == 'POST':
 

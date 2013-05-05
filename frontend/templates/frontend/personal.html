@@ -117,7 +117,7 @@
 
               {% for g in group_info %}
               <div class="groups_item">
-                <p> {{ g.1 }} <a href="{% url 'frontend:rmgroup' g.0 %}">Remove</a></p>
+                <p> {{ g.1 }} <a href="{% url 'frontend:rmgroup' g.0 %}">Leave</a></p>
               </div>
               {% endfor %}
             </div>
@@ -125,6 +125,14 @@
         </div>
         <div id="right">
           <div id="more">
+          </div>
+          <div id="edit_groups_form">
+            <form action="/editgroup/" method="post">{% csrf_token %}
+              <p><b>Add users to Group: </b></p>
+              <div id="edit_group_name"></div>
+              {{form3.id}}
+              {{form3.member_names}}
+            </from>
           </div>
           <div id="friends_form">
             <form action="/addfriend/" method="post">{% csrf_token %}
@@ -157,6 +165,7 @@
 
       $(".events_item").click(function() {
         $(".events_item").removeClass("active");
+        $(".events_item").removeClass("active");
         $(this).addClass("active");
 
         var id = parseInt($(this).attr("id"));
@@ -167,6 +176,22 @@
                 var parent = document.getElementById("more");
                 parent.innerHTML = htmlResponse;
             });
+          }
+        {% endfor %}
+      });
+
+      $(".groups_item").click(function() {
+        alert("HI");
+        $(".groups_item").removeClass("active");
+        $(".events_item").removeClass("active");
+        $(this).addClass("active");
+
+        var id = parseInt($(this).attr("id"));
+        {% for g in group_info %}
+
+          if (id == {{g.name}}) {
+                var parent = document.getElementById("edit_group_name");
+                parent.innerHTML = {{g.name}};
           }
         {% endfor %}
       });

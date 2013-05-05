@@ -81,7 +81,7 @@
           }
             html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"><div class="list_row"> '
               +' {{event.startTime|date:"H:i"}} - {{event.endTime|date:"H:i"}}</div></td>' 
-              + '<td> {{event.name|safe}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
+              + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
               + '<div style="float:right">'
             html += '<a href="#" onclick="showMore({{event.id}})"> Show More </a>'
               +'<a href="#" class="'+rsvp_class+'" onclick="rsvp({{event.id}}, '+rsvped+')" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
