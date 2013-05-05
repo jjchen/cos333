@@ -31,5 +31,6 @@ urlpatterns = patterns('',
     url(r'^editevent/(?P<event>\w+)/$', views.editevent, name='editevent'),
     url(r'^filter/(?P<tag>\w+)/$', views.filter, name='filter'),
     url(r'^filter/$', views.filter, name='filter_init'),
+    url(r'^api/get_names/', views.get_names, name='get_names'),
 )
 

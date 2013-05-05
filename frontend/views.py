@@ -66,6 +66,22 @@ class NewEventForm(forms.Form):
 	#tags = forms.CharField(max_length=200, required=False)
 	#tags = TagField(widget=TagAutocompleteTagIt(max_tags=False))
 
+# testing JSON autocomplete
+def get_names(request):
+	if request.is_ajax():
+		q = request.GET.get('term', '')
+		names = NewEvent.objects.filter(name__icontains = q)[:20]
+		results = []
+		for name in names:
+			name_json = {}
+			name_json['label'] = name.name
+			results.append(name_json)
+		data = json.dumps(results)
+	else:
+		data = 'fail'
+	mimetype = 'application/json'
+	return HttpResponse(data, mimetype)
+
 def settings(request):
 	if request.user.username == "":
 		return HttpResponse('Unauthorized access--you must sign in!', 
@@ -517,9 +533,9 @@ def add(request):
 		if form.is_valid():
 			data = form.cleaned_data
 			data['startTime'] = datetime.strptime(
-				data['startTime'], "%m/%d/%Y %H:%M")
+				data['startTime'], "%Y-%m-%d %H:%M")
 			data['endTime'] = datetime.strptime(
-				data['endTime'], "%m/%d/%Y %H:%M")
+				data['endTime'], "%Y-%m-%d %H:%M")
 			
 			buildingAlias = BuildingAlias.objects.filter(alias=data['location'])
 			latitude = None
