@@ -536,7 +536,7 @@ def add(request):
 					 lon = longitude,
 					 private = data['private'],
 					 #tags = data['tags'],
-					 creator = this_user[0])
+					 creator = this_user)
 							#creator = this_user)
 			event.save() #must save before adding groups
 			for group in data['groups']:
