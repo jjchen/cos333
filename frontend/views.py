@@ -259,12 +259,56 @@ def rmevent(request, event):
 	try:
 		event_obj = NewEvent.objects.get(id = event)
 	except ObjectDoesNotExist:
-		return HttpResponse('Tried removing non-existent event!', status=401)
+		return HttpResponse('Tried removing non-existent event!', 
+				    status=401)
 	this_user = MyUser.objects.get(user_id = request.user.username)
 	if event_obj.creator != this_user:
 		return HttpResponse('Unauthorized access', status=401)
 	event_obj.delete()
 	return HttpResponseRedirect('/frontend/personal')	
+
+# export event to Facebook
+def process_export(user, event_obj):
+	#user and event_obj are MyUser and NewEvent type, respectively. Returns
+	#True on success, False on failure
+        instance = UserSocialAuth.objects.get(
+		user=user, provider='facebook')        
+        token = instance.tokens['access_token']
+        graph = GraphAPI(token)
+        if event_obj.private:
+		privacy_type = "SECRET"
+	else:
+		privacy_type = "OPEN"
+        event_path = str(instance.uid) + "/events"
+        event_data = {
+            'name' : event_obj.name,
+            'start_time' : event_obj.startTime.isoformat(),
+	    'end_time': event_obj.endTime.isoformat(),
+            'location' : event_obj.location,
+            'privacy_type' : privacy_type
+            }
+	print event_data
+        result = graph.post(path=event_path, **event_data)
+        print "Result: " + str(result)
+        if result.get('id', False):
+		return True
+	else:
+		return False
+
+def exportevent(request, event):
+	try:
+		event_obj = NewEvent.objects.get(id = event)
+	except ObjectDoesNotExist:
+		return HttpResponse('Tried exporting non-existent event!', 
+				    status=401)
+	this_user = MyUser.objects.get(user_id = request.user.username)
+	if event_obj.creator != this_user:
+		return HttpResponse('Unauthorized access', status=401)
+	success = process_export(this_user, event_obj)
+	if success:
+		return HttpResponseRedirect('/frontend/personal')
+	return HttpResponse('Export failed!', status=401)
+
 
 def addrsvp(request):
 	if request.method == 'POST':
@@ -301,11 +345,28 @@ def editevent(request, event):
 	                              {'form' : form},
 	                                context_instance=RequestContext(request))
 
+def editgroup(request, group):
+	#print request.user.username
+	#print MyUser.objects.get(user_id="foo")
+	if request.user.username == "":
+		return HttpResponse('Unauthorized access', status=401)
+	if request.method == 'POST':
+		try:
+			new_group = MyGroup.objects.get(id = group)
+			for name in form.cleaned_data['member_names']:
+				user = MyUser.objects.get(user_id = name)
+				new_group.users.add(user)
+			new_group.users.add(this_user)
+			new_group.save()
+		except ObjectDoesNotExist:
+			return HttpResponse('Group does not exist!', status=401)
+		return render_to_response('frontend/editgroup.html',
+	                              {'form' : form},
+	                                context_instance=RequestContext(request))
+
 def rmrsvp(request, id=None):
 	if request.method == 'POST':
-
 		this_user = MyUser.objects.get(user_id = request.user.username)
-
 		try:
 			if (id == None):
 				id = request.POST.get('rsvp_id')
@@ -374,8 +435,10 @@ def personal(request):
 	form = AddgroupForm() # An unbound form
 	form2 = AddfriendsForm()
 	return render(request, 'frontend/personal.html', {
-        'form': form, 'form2':form2, 'group_info': group_info, 'my_events': my_events, 'rsvped': rsvped, 
-        'events_list': events_list, 'recommended':recommended, "friends":friends, 'other_users': other_users, 'all_users': all_users 
+        'form': form, 'form2':form2, 'group_info': group_info, 
+	'my_events': my_events, 'rsvped': rsvped, 
+        'events_list': events_list, 'recommended':recommended, 
+	"friends":friends, 'other_users': other_users, 'all_users': all_users 
     })	
 
 def filter(request):
@@ -522,7 +585,6 @@ def index(request, add_form=None):
 
 # add a new event.  add is called when a new event is properly submitted.
 def add(request):
-	print "IN add"
 	if request.user.username == "":
 		return HttpResponse('Unauthorized access--you must sign in!', 
 					status=401)		
@@ -558,56 +620,18 @@ def add(request):
 			for group in data['groups']:
 				event.groups.add(group)
 			event.save() 
-			if request.is_ajax():
-				return render(request, 'frontend/success.html')
-			else:
-				return render(request, 'frontend/success.html')
-				return redirect('success')
+			return render(request, 'frontend/success.html',
+				      {'event': event})			
+
 	else:
 		form = NewEvent()
 		print "newform"
 			# msg = "success!"
 	print "I am here in add"
 	events_list = NewEvent.objects.all().order_by("startTime") # this is to refresh the events list without page refresh.
-#	return index(request, form)
 	return render(request, '/frontend/map.html', {'form': form})
-#	return HttpResponseRedirect('/') # Redirect after POST
-	#return render(request, 'frontend/map.html')
 
-
-# export event to Facebook
-def export_fb(request):
-
-        request_user = '290031427770649'
-        user = 'alexlzhao'
-        instance = UserSocialAuth.objects.filter(user=request.user, provider='facebook')
-        
-        print instance.uid
-        pprint(instance.tokens)
-
-        token = instance.tokens
-        print token
-        graph = GraphAPI(token)
-        
-        event_path = "https://graph.facebook.com/290031427770649/events"
-        event_data = {
-            'name' : "Test Event",
-            'start_time' : "2013-07-04",
-            'location' : "someplace",
-            'privacy_type' : "SECRET"
-            }
-        
-        result = graph.post(path=event_path, options=event_data)
-        print result
-        
-        if result.get('id', False):
-            print "Successfully Created Event"
-        else:
-            print "Failure"
-
-
-	signed_request_data = SignedRequest
-
+	
 # this is the search for a new event.
 def search(request):
 	query = request.POST['search_query']
