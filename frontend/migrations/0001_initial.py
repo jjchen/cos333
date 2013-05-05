@@ -39,10 +39,11 @@ class Migration(SchemaMigration):
         db.create_table(u'frontend_newevent', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=200)),
-            ('startTime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 4, 30, 0, 0))),
-            ('endTime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 4, 30, 0, 0))),
+            ('startTime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 5, 4, 0, 0))),
+            ('endTime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 5, 4, 0, 0))),
             ('location', self.gf('django.db.models.fields.CharField')(max_length=200)),
             ('private', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('description', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
             ('lat', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=15, decimal_places=10, blank=True)),
             ('lon', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=15, decimal_places=10, blank=True)),
             ('tags', self.gf('django.db.models.fields.CharField')(default='all', max_length=200, null=True, blank=True)),
@@ -101,7 +102,7 @@ class Migration(SchemaMigration):
         # Adding model 'CalEvent'
         db.create_table(u'frontend_calevent', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('start_tete', self.gf('django.db.models.fields.DateTimeField')()),
+            ('start_date', self.gf('django.db.models.fields.DateTimeField')()),
             ('end_date', self.gf('django.db.models.fields.DateTimeField')()),
             ('text', self.gf('django.db.models.fields.CharField')(max_length=30)),
             ('details', self.gf('django.db.models.fields.CharField')(max_length=250)),
@@ -163,7 +164,7 @@ class Migration(SchemaMigration):
             'details': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
             'end_date': ('django.db.models.fields.DateTimeField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'start_tete': ('django.db.models.fields.DateTimeField', [], {}),
+            'start_date': ('django.db.models.fields.DateTimeField', [], {}),
             'text': ('django.db.models.fields.CharField', [], {'max_length': '30'})
         },
         u'frontend.friends': {
@@ -191,7 +192,8 @@ class Migration(SchemaMigration):
         u'frontend.newevent': {
             'Meta': {'object_name': 'NewEvent'},
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'creator'", 'null': 'True', 'to': u"orm['frontend.MyUser']"}),
-            'endTime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 4, 30, 0, 0)'}),
+            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'endTime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 5, 4, 0, 0)'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'groups'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['frontend.MyGroup']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'lat': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '15', 'decimal_places': '10', 'blank': 'True'}),
@@ -200,7 +202,7 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'private': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'rsvp': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'rsvp'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['frontend.MyUser']"}),
-            'startTime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 4, 30, 0, 0)'}),
+            'startTime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 5, 4, 0, 0)'}),
             'tags': ('django.db.models.fields.CharField', [], {'default': "'all'", 'max_length': '200', 'null': 'True', 'blank': 'True'})
         }
     }

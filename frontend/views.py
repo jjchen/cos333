@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from frontend.models import NewEvent
 #from frontend.models import NewEventForm
 from frontend.models import BuildingAlias
+from frontend.models import Building
 from frontend.models import MyUser
 from frontend.models import MyGroup
 from frontend.models import Friends
@@ -35,6 +36,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 import json
 import operator
 import django.contrib.auth
+import unicodedata
 
 MAX_LEN = 50
 class SignupForm(forms.Form):
@@ -123,10 +125,10 @@ def signup(request):
 
 class MultiNameField(forms.CharField):
 	def __init__(self):
-		super(MultiNameField, self).__init__(widget=forms.Textarea())
+		super(MultiNameField, self).__init__(widget=forms.TextInput())
 	def to_python(self, value):
 		if not value: return []
-		return value.replace('\r\n', '\n').split('\n')
+		return value.split(',')
 
 	def validate(self, value):
 		for name in value:
@@ -309,9 +311,8 @@ def rmrsvp(request, id=None):
 	return HttpResponseRedirect('/frontend/personal')	
 
 def logout(request):
-	print django.contrib.auth.logout(request)
-	
-	return HttpResponseRedirect(reverse('frontend:personal'))
+	django.contrib.auth.logout(request)
+	return HttpResponseRedirect("/frontend")
 
 def personal(request):
 	print "Request is " + request.user.username
@@ -332,6 +333,9 @@ def personal(request):
 	rsvped = NewEvent.objects.filter(rsvp = this_user)
 	recommended = []
 
+	all_users_obj =  MyUser.objects.all()
+	all_users = [unicodedata.normalize('NFKD', user.user_id).encode('ascii', 'ignore') for user in all_users_obj]
+	friends = []
 	try: 
 		friends_obj = Friends.objects.get(name = this_user)
 		friends = friends_obj.friends.all()
@@ -341,12 +345,13 @@ def personal(request):
 			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))))
 		elif (len(groups) != 0):
 			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))))
-		other_users = MyUser.objects.all().exclude(pk__in = friends)
+		other_users = all_users_obj.exclude(pk__in = friends)
 	except ObjectDoesNotExist:
 		friends_obj = Friends()
 		friends_obj.name = this_user
 		friends_obj.save()
-		other_users = MyUser.objects.all()
+		other_users = all_users_obj
+
 	events_list = list(my_events)
 	events_list.extend(rsvped)
 	events_list.extend(recommended);
@@ -354,7 +359,7 @@ def personal(request):
 	form2 = AddfriendsForm()
 	return render(request, 'frontend/personal.html', {
         'form': form, 'form2':form2, 'group_info': group_info, 'my_events': my_events, 'rsvped': rsvped, 
-        'events_list': events_list, 'recommended':recommended, "friends":friends, 'other_users': other_users 
+        'events_list': events_list, 'recommended':recommended, "friends":friends, 'other_users': other_users, 'all_users': all_users 
     })	
 
 def filter(request):
@@ -461,6 +466,7 @@ def index(request, add_form=None):
 		show_list = False
 	#tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	tags = Tag.objects.all()
+
 	context = {'events_list': events_list, 'user': request.user, 
 		   'show_list': show_list, 'search_form': form, 'rsvped': [],'tags': tags, 'cal_events': []}
 	if add_form == None: 
@@ -500,9 +506,13 @@ def index(request, add_form=None):
 
 # add a new event.  add is called when a new event is properly submitted.
 def add(request):
+	print "IN add"
+	if request.user.username == "":
+		return HttpResponse('Unauthorized access--you must sign in!', 
+					status=401)		
 	if request.method == 'POST':
 		username = request.user.username
-		this_user = MyUser.objects.filter(user_id = username)
+		this_user = MyUser.objects.get(user_id = username)
 		form = NewEventForm(request.POST) 
 		if form.is_valid():
 			data = form.cleaned_data
@@ -525,8 +535,8 @@ def add(request):
 					 lat = latitude,
 					 lon = longitude,
 					 private = data['private'],
-					 tags = data['tags'],
-					 creator = this_user[0])
+					 #tags = data['tags'],
+					 creator = this_user)
 							#creator = this_user)
 			event.save() #must save before adding groups
 			for group in data['groups']:
@@ -539,11 +549,12 @@ def add(request):
 				return redirect('success')
 	else:
 		form = NewEvent()
+		print "newform"
 			# msg = "success!"
 	print "I am here in add"
 	events_list = NewEvent.objects.all().order_by("startTime") # this is to refresh the events list without page refresh.
 #	return index(request, form)
-#	return render(request, '/frontend/map.html', {'form': form})
+	return render(request, '/frontend/map.html', {'form': form})
 #	return HttpResponseRedirect('/') # Redirect after POST
 	#return render(request, 'frontend/map.html')
 
