@@ -7,6 +7,7 @@ urlpatterns = patterns('',
 
     url(r'^signup/', views.signup),
     url(r'^settings/', views.settings, name='settings'),
+    url(r'^export_fb/', views.export_fb, name='export_fb'),
     url(r'', include('social_auth.urls')),
 
     url(r'^add/', views.add, name='add'),

@@ -10,7 +10,8 @@ FACEBOOK_APP_ID =  '125667410957888'
 FACEBOOK_API_SECRET = 'db68bafe52ea7a11b7081e539f2a4191'
 
 FACEBOOK_EXTENDED_PERMISSIONS = ['user_groups', 'user_events', 'friends_events',
-                                 'create_event', 'rsvp_event', 'read_friendlists']
+                                 'create_event', 'rsvp_event', 
+                                 'read_friendlists']
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'

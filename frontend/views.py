@@ -555,37 +555,29 @@ def add(request):
 
 # export event to Facebook
 def export_fb(request):
-
-        request_user = '290031427770649'
-        user = 'alexlzhao'
-        instance = UserSocialAuth.objects.filter(user=request.user, provider='facebook')
-        
-        print instance.uid
-        pprint(instance.tokens)
-
-        token = instance.tokens
-        print token
+        instance = UserSocialAuth.objects.get(
+		user=request.user, provider='facebook')        
+        token = instance.tokens['access_token']
         graph = GraphAPI(token)
         
-        event_path = "https://graph.facebook.com/290031427770649/events"
+        event_path = str(instance.uid) + "/events"
         event_data = {
             'name' : "Test Event",
             'start_time' : "2013-07-04",
-            'location' : "someplace",
-            'privacy_type' : "SECRET"
+ #           'location' : "someplace",
+#            'privacy_type' : "SECRET"
             }
-        
-        result = graph.post(path=event_path, options=event_data)
+        result = graph.post(path=event_path, **event_data)
         print result
-        
         if result.get('id', False):
             print "Successfully Created Event"
+	    return HttpResponseRedirect('/')
         else:
-            print "Failure"
+		print "Couldn't create event!"
+		return HttpResponse('Could not export event', status=401)
+#	signed_request_data = SignedRequest
 
-
-	signed_request_data = SignedRequest
-
+	
 # this is the search for a new event.
 def search(request):
 	query = request.POST['search_query']
