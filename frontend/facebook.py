@@ -4,6 +4,8 @@ from frontend.models import MyUser
 from frontend.models import MyGroup
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.core.exceptions import ObjectDoesNotExist
+from frontend.models import NewEvent
 
 def importgroup(request, group):
     #import a group from Facebook
@@ -13,7 +15,6 @@ def importgroup(request, group):
         try:
             result = MyUser.objects.filter(
                 user_id = user_info['username'])
-            print "username " + user_info['username']
             if len(result) != 0:
                 assert(len(result) == 1)
                 return result[0]
@@ -108,4 +109,3 @@ def get_fb_groups(user):
     user_path = str(instance.uid) + "/groups"
     groups = graph.get(user_path).get('data')
     return groups
-

@@ -158,8 +158,8 @@ def signup(request):
 		if form.is_valid():
 			data = form.cleaned_data
 			user = MyUser(first_name = data['first_name'],
-								last_name = data['last_name'],
-								user_id = request.user.username)
+				      last_name = data['last_name'],
+				      user_id = request.user.username)
 			user.save()
 			return HttpResponseRedirect('/') # Redirect after POST
 	else:
