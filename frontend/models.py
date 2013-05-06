@@ -9,7 +9,7 @@ from django.forms import ModelForm
 NAME_MAXLEN=50
 
 class Tag(models.Model):
-        name = models.CharField(max_length=20, primary_key=True)
+    name = models.CharField(max_length=20, primary_key=True)
 
 class MyUser(models.Model):
     first_name = models.CharField(max_length=NAME_MAXLEN)
