@@ -447,15 +447,8 @@ def personal(request):
 	form = AddgroupForm() # An unbound form
 	form2 = AddfriendsForm()
 	return render(request, 'frontend/personal.html', {
-<<<<<<< HEAD
         'form': form, 'form2':form2, 'groups_list': groups, 'my_events': my_events, 'rsvped': rsvped, 
         'events_list': events_list, 'recommended':recommended, "friends":friends, 'other_users': other_users, 'all_users': all_users 
-=======
-        'form': form, 'form2':form2, 'group_info': group_info, 
-	'my_events': my_events, 'rsvped': rsvped, 
-        'events_list': events_list, 'recommended':recommended, 
-	"friends":friends, 'other_users': other_users, 'all_users': all_users 
->>>>>>> 2fbfe64132f2be90f7376e0c95fbd650e2864edb
     })	
 
 def filter(request):
