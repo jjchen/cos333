@@ -85,9 +85,6 @@ class Command(BaseCommand):
         events = root.findall(self.xml_tag('event'))
 
         for e in events:
-            print e.tag
-            print ET.tostring(e)
-
             f_title = e.find(self.xml_tag('title')).text
             f_description = e.find(self.xml_tag('description')).text
             f_locationID = e.find(self.xml_tag('locationID')).text
@@ -123,9 +120,18 @@ class Command(BaseCommand):
 
             # make into tags
             #categories = event['categories']
-            
-            new_event = NewEvent(name=f_title, startTime=startDateTime, endTime=endDateTime,
-                                 location=f_locationName, lat=40.344725, lon=-74.6556, tags="")
-            new_event.save()
+
+
+            f_event = NewEvent.objects.filter(name=f_title, location=f_locationName,
+                                              startTime=startDateTime)
+            print len(f_event)
+            if (len(f_event) > 0):
+                continue
+
+            else:
+                                
+                new_event = NewEvent(name=f_title, startTime=startDateTime, endTime=endDateTime,
+                                     location=f_locationName, lat=40.344725, lon=-74.6556, tags="")
+                new_event.save()
 
     
