@@ -7,7 +7,6 @@ urlpatterns = patterns('',
 
     url(r'^signup/', views.signup),
     url(r'^settings/', views.settings, name='settings'),
-    url(r'^export_fb/', views.export_fb, name='export_fb'),
     url(r'', include('social_auth.urls')),
 
     url(r'^add/', views.add, name='add'),
@@ -29,9 +28,12 @@ urlpatterns = patterns('',
  #   url(r'^tagging_autocomplete_tagit/', include('tagging_autocomplete_tagit.urls')),
     url(r'^rmevent/(?P<event>\w+)/$', views.rmevent, name='rmevent'),
     url(r'^edit/(?P<event>\w+)/$', views.edit, name='edit'),
+    url(r'^exportevent/(?P<event>\w+)/$', views.exportevent, 
+        name='exportevent'),
     url(r'^personal_ajax/(?P<event>\w+)/$', views.personal_ajax, name='personal_ajax'),
     url(r'^editevent/(?P<event>\w+)/$', views.editevent, name='editevent'),
     url(r'^filter/(?P<tag>\w+)/$', views.filter, name='filter'),
     url(r'^filter/$', views.filter, name='filter_init'),
+    url(r'^api/get_names/', views.get_names, name='get_names'),
 )
 

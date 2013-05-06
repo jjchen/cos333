@@ -1,6 +1,5 @@
 <html>
 <head>
-
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
@@ -70,7 +69,9 @@
                 <div class="events_item" id="{{e.id}}">
                   <p> {{ e.name }}
                         <a href="#" onclick="edit_form({{e.id}})"> Edit </a>
-                        <a href="{% url 'frontend:rmevent' e.id %}">Remove</a> </p>
+                        <a href="{% url 'frontend:rmevent' e.id %}">Remove</a>
+		  <a href="{% url 'frontend:exportevent' e.id %}"> Export </a>
+		  </p>
                 </div>
               {% endfor %}
               </div>

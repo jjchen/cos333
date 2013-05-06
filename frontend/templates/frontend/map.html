@@ -10,11 +10,11 @@
     <link rel="stylesheet" href="{% static "frontend/bootstrap.min.css" %}" type="text/css">
     <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% static "frontend/dhtmlxscheduler_dhx_terrace.css" %}" />
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
     </script>
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <script src="{% static "frontend/bootstrap.min.js" %}"></script>
     <script src="{% static "frontend/dhtmlxscheduler.js" %}"></script>
     <script src="{% static "frontend/ext/dhtmlxscheduler_readonly.js"%}" type="text/javascript" charset="utf-8"></script>
@@ -43,6 +43,43 @@
     "frisbee"                                                                
   ]                                                                           
 });
+    </script>
+
+     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+  <script>
+  $(function() {
+  var availableTags = [
+      "ActionScript",
+      "AppleScript",
+      "Asp",
+      "BASIC",
+      "C",
+      "C++",
+      "Clojure",
+      "COBOL",
+      "ColdFusion",
+      "Erlang",
+      "Fortran",
+      "Groovy",
+      "Haskell",
+      "Java",
+      "JavaScript",
+      "Lisp",
+      "Perl",
+      "PHP",
+      "Python",
+      "Ruby",
+      "Scala",
+      "Scheme"
+    ];
+  $( "#testAutocomplete" ).autocomplete({
+    source: "/api/get_names/"
+  });
+  });
+
     </script>
 
 
@@ -348,6 +385,12 @@
             <div class="clearfix"> <br />  </div>
             <button type="submit" class="btn">Search</button>
           </form>
+
+   <div class="ui-widget">
+      <label for="testAutocomplete">Names: </label>
+      <input id="testAutocomplete" />
+    </div>
+
          <br/>
          <div style='width:100%; height:150px; overflow:scroll;'>
          <form id="tags_form" method="post">{% csrf_token %}
@@ -391,20 +434,28 @@
                 <span class="help-block">{{ form.name.errors }}</span>
                 </div>
             </div>
-            <div class="control-group {% if form.startTime.errors %}error{% endif %}">
+
+        <div class="control-group ">
                 <label class="control-label" for="id_startTime">Start:</label>
                 <div class="controls">
-                {{ form.startTime }}
-                <span class="help-block">{{ form.startTime.errors }}</span>
+                Date: <input class="datepicker" id="id_startTime_0" name="startTime_0" type="text" /><br/>Time: <input class="span1" id="id_startTime_1" name="startTime_1" type="text" />:<input class="span1" id="id_startTime_2" name="startTime_2" type="text" /> <select class="span1" id="id_startTime_3" name="startTime_3">
+<option value="AM">AM</option>
+<option value="PM">PM</option>
+</select>
+                <span class="help-block"></span>
                 </div>
             </div>
-           <div class="control-group {% if form.endTime.errors %}error{% endif %}">
+           <div class="control-group ">
                 <label class="control-label" for="id_endTime">End:</label>
                 <div class="controls">
-                {{ form.endTime }}
-                <span class="help-block">{{ form.endTime.errors }}</span>
+                Date: <input class="datepicker" id="id_endTime_0" name="endTime_0" type="text" /><br/>Time: <input class="span1" id="id_endTime_1" name="endTime_1" type="text" />:<input class="span1" id="id_endTime_2" name="endTime_2" type="text" /> <select class="span1" id="id_endTime_3" name="endTime_3">
+<option value="AM">AM</option>
+<option value="PM">PM</option>
+</select>
+                <span class="help-block"></span>
                 </div>
             </div>
+
            <div class="control-group {% if form.location.errors %}error{% endif %}">
                 <label class="control-label" for="id_location">Location:</label>
                 <div class="controls">
