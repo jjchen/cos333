@@ -288,18 +288,19 @@ def rmfriend(request, user):
 
 def importgroup(request, group):
 	def create_ret_user(user_info):
-		#if user doesn't exist, create it
-		result = MyUser.objects.filter(user_id = user_info['username'])
-		if len(result) != 0:
-			assert(len(result) == 1)
-			return result[0]
-		new_user = MyUser(user_id = user_info['username'],
-				  first_name = user_info['first_name'],
-				  last_name = user_info['last_name'])
-		print new_user.user_id
-		print new_user.first_name
-		print new_user.last_name
-		print ""
+		#if user doesn't exist, create it. Return None if Facebook is
+		#missing information on them; otherwise, return MyUser object
+		try:
+			result = MyUser.objects.filter(
+				user_id = user_info['username'])
+			if len(result) != 0:
+				assert(len(result) == 1)
+				return result[0]
+			new_user = MyUser(user_id = user_info['username'],
+					  first_name = user_info['first_name'],
+					  last_name = user_info['last_name'])
+		except KeyError:
+			return None
 		new_user.save()
 		return new_user
 
@@ -315,8 +316,8 @@ def importgroup(request, group):
 	#check if this group already exists
 	db_groups = MyGroup.objects.filter(creator=request.user.username,
 					   name=group_info['name'])
-	if len(db_groups) != 0:
-		return HttpResponse("Group already exists!", status=401)
+#	if len(db_groups) != 0:
+	#	return HttpResponse("Group already exists!", status=401)
 
 
 	#save group, except for member info
@@ -330,7 +331,8 @@ def importgroup(request, group):
 	for member in members:
 		fb_user = graph.get("/" + member['id'])
 		our_user = create_ret_user(fb_user) #MyUser object
-		new_group.users.add(our_user)
+		if our_user != None:
+			new_group.users.add(our_user)
 	new_group.save()
 	return HttpResponseRedirect('/frontend/personal')	
 
