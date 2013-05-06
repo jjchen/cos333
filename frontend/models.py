@@ -9,7 +9,7 @@ from django.forms import ModelForm
 NAME_MAXLEN=50
 
 class Tag(models.Model):
-        name = models.CharField(max_length=20, primary_key=True)
+    name = models.CharField(max_length=20, primary_key=True)
 
 class MyUser(models.Model):
     first_name = models.CharField(max_length=NAME_MAXLEN)
@@ -32,12 +32,12 @@ class NewEvent(models.Model):
     name = models.CharField(max_length=200)
     startTime = models.DateTimeField(default=datetime.date.today())
     endTime = models.DateTimeField(default=datetime.date.today())
-    location = models.CharField(max_length=200)
+    location = models.CharField(max_length=200, null=True, default="Princeton University")
     private = models.BooleanField(default=False)
     description = models.TextField(blank=True, null=True)
     lat = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
     lon = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
-    tags = models.CharField(max_length=200, blank = True, null=True, default="all")
+    tags = models.CharField(max_length=200, blank=True, null=True, default="all")
     #tags = models.ManyToManyField(Tag)
     #tags = TagAutocompleteTagItField(max_tags=False)
     creator = models.ForeignKey(MyUser, related_name="creator", blank=True, null=True)
