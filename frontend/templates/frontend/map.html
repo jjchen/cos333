@@ -81,6 +81,14 @@
   });
 
     </script>
+    
+   <!-- This is for the updating of slider time -->
+    <script type="text/javascript">
+    function updateSliderInput(field, val) {
+      document.getElementById(field).innerHTML=val; 
+    }
+    //document.getElementById("p1").innerHTML="New text!";
+  </script>
 
 
     <!--<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>-->
@@ -421,12 +429,21 @@
 
 
          <div id="time_slider">
-         	Events in the next X hours
+         	<p id="displaySliderTime"> 3 hours </p>
          	<form id ="slider" method="post">{% csrf_token %}
-            	<input type="range" required name="time" id="sliderTime" min="1" max="48" step="1">
+            	<input type="range" required name="time" id="sliderTime" min="1" max="48" step="1" onchange="updateSliderInput('displaySliderTime', 'sliderTime')">
             	<output for="time" onforminput="value = range.valueAsNumber;"></output>
             	<!--<input id="textTime" type="text" size="2"/>-->
             </form>
+            
+            <!--
+            <script type="text/javascript">
+            function updateTextInput(val) {
+               document.getElementById('textInput').value=val; 
+            }
+            </script>
+            -->
+            
          </div>
       </div>
     </div>
