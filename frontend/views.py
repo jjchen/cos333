@@ -28,9 +28,6 @@ from django.http import Http404
 from django.shortcuts import render_to_response
 from django.shortcuts import redirect, render
 from django.template import RequestContext
-from social_auth.models import UserSocialAuth
-from facepy import GraphAPI
-from facepy import SignedRequest
 from fields import JqSplitDateTimeField
 from widgets import JqSplitDateTimeWidget
 from django.core.serializers.json import DjangoJSONEncoder
@@ -38,6 +35,7 @@ import json
 import operator
 import django.contrib.auth
 import unicodedata
+import facebook 
 
 MAX_LEN = 50
 class SignupForm(forms.Form):
@@ -285,56 +283,7 @@ def rmfriend(request, user):
 	friend_obj.friends.remove(remove_obj)
 	friend_obj.save()
 	return HttpResponseRedirect('/frontend/personal')
-
-def importgroup(request, group):
-	def create_ret_user(user_info):
-		#if user doesn't exist, create it. Return None if Facebook is
-		#missing information on them; otherwise, return MyUser object
-		try:
-			result = MyUser.objects.filter(
-				user_id = user_info['username'])
-			if len(result) != 0:
-				assert(len(result) == 1)
-				return result[0]
-			new_user = MyUser(user_id = user_info['username'],
-					  first_name = user_info['first_name'],
-					  last_name = user_info['last_name'])
-		except KeyError:
-			return None
-		new_user.save()
-		return new_user
-
-	if request.user.username == "":
-		return HttpResponse('Unauthorized access', status=401)
-	this_user = MyUser.objects.get(user_id = request.user.username)	
-        instance = UserSocialAuth.objects.get(
-		user=this_user, provider='facebook')        
-        token = instance.tokens['access_token']
-        graph = GraphAPI(token)	
-
-	group_info = graph.get("/" + str(group))
-	#check if this group already exists
-	db_groups = MyGroup.objects.filter(creator=request.user.username,
-					   name=group_info['name'])
-#	if len(db_groups) != 0:
-	#	return HttpResponse("Group already exists!", status=401)
-
-
-	#save group, except for member info
-	new_group = MyGroup()
-	new_group.name = group_info['name']
-	new_group.creator = request.user.username
-	new_group.save()
-
-	#save member info
-	members = graph.get("/" + str(group) + "/members").get('data')
-	for member in members:
-		fb_user = graph.get("/" + member['id'])
-		our_user = create_ret_user(fb_user) #MyUser object
-		if our_user != None:
-			new_group.users.add(our_user)
-	new_group.save()
-	return HttpResponseRedirect('/frontend/personal')	
+	
 
 def rmgroup(request, group):
 	try:
@@ -360,47 +309,6 @@ def rmevent(request, event):
 		return HttpResponse('Unauthorized access', status=401)
 	event_obj.delete()
 	return HttpResponseRedirect('/frontend/personal')	
-
-# export event to Facebook
-def process_export(user, event_obj):
-	#user and event_obj are MyUser and NewEvent type, respectively. Returns
-	#True on success, False on failure
-        instance = UserSocialAuth.objects.get(
-		user=user, provider='facebook')        
-        token = instance.tokens['access_token']
-        graph = GraphAPI(token)
-        if event_obj.private:
-		privacy_type = "SECRET"
-	else:
-		privacy_type = "OPEN"
-        event_path = str(instance.uid) + "/events"
-        event_data = {
-            'name' : event_obj.name,
-            'start_time' : event_obj.startTime.isoformat(),
-	    'end_time': event_obj.endTime.isoformat(),
-            'location' : event_obj.location,
-            'privacy_type' : privacy_type
-            }
-        result = graph.post(path=event_path, **event_data)
-        if result.get('id', False):
-		return True
-	else:
-		return False
-
-def exportevent(request, event):
-	try:
-		event_obj = NewEvent.objects.get(id = event)
-	except ObjectDoesNotExist:
-		return HttpResponse('Tried exporting non-existent event!', 
-				    status=401)
-	this_user = MyUser.objects.get(user_id = request.user.username)
-	if event_obj.creator != this_user:
-		return HttpResponse('Unauthorized access', status=401)
-	success = process_export(this_user, event_obj)
-	if success:
-		return HttpResponseRedirect('/frontend/personal')
-	return HttpResponse('Export failed!', status=401)
-
 
 def addrsvp(request):
 	if request.method == 'POST':
@@ -519,7 +427,7 @@ def personal(request):
 	events_list.extend(recommended);
 	form = AddgroupForm() # An unbound form
 	form2 = AddfriendsForm()
-	fb_groups = get_fb_groups(this_user)
+	fb_groups = facebook.get_fb_groups(this_user)
 	return render(request, 'frontend/personal.html', {
         'form': form, 'form2':form2, 'groups_list': groups, 'my_events': my_events, 'rsvped': rsvped, 
         'events_list': events_list, 'recommended':recommended, "friends":friends, 'other_users': other_users, 'all_users': all_users, 'fb_groups': fb_groups
@@ -611,7 +519,6 @@ def filter(request):
 
 # Create your views here.  index is called on page load.
 def index(request, add_form=None):
-
 	events_list = []
 	show_list = False
 	if request.method =='POST' and add_form==None:
@@ -797,16 +704,6 @@ def refresh(request):
    context = {'events_list': events_list, 'user': request.user, 
 		   'show_list': show_list, 'search_form': form, 'tags': tags}
    return render(request, 'frontend/map.html', context)
-
-
-def get_fb_groups(user):
-	instance = UserSocialAuth.objects.get(
-		user=user, provider='facebook')        
-        token = instance.tokens['access_token']
-        graph = GraphAPI(token)
-	user_path = str(instance.uid) + "/groups"
-	groups = graph.get(user_path).get('data')
-	return groups
 
 def eventsXML(request):
     """
