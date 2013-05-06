@@ -371,7 +371,13 @@
           </li>
           <li class=""><a href="{% url 'frontend:personal' %}">{{user}}</a></li>  
           <li><a href="{% url 'frontend:settings' %}">Settings</a></li>  
-          <li><a href="{% url 'frontend:logout' %}">Logout</a></li>  
+          <li>
+	    {% if logged_in %}
+	    <a href="{% url 'frontend:logout' %}">Logout</a>
+	    {% else %}
+	    <a href="{% url 'socialauth_begin' 'facebook' %}">Login</a>
+	    {% endif %}
+	  </li>  
         </ul>
       </div>
     </div>
@@ -406,7 +412,7 @@
 
 
          <div id="time_slider">
-             <h3>Time</h3>
+             Time
 
             <input type="range">
          </div>
@@ -497,9 +503,6 @@
         {% else %}
           You have to sign in.
         {% endifnotequal %}
-            <li>Login with <a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a>
-
-            </li>
             <li>Import from Facebook</li>
       <li><a rel="nofollow" href="{% url 'django_cas.views.login' %}">CAS</a> 
             </li>

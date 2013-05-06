@@ -597,17 +597,20 @@ def index(request, add_form=None):
 		return HttpResponseRedirect('/signup')
 	else:
 		try:
+			#User exists
 			user = MyUser.objects.get(user_id=username)
 			lat = user.latitude
 			lon = user.longitude
 			context['rsvped'] = NewEvent.objects.filter(rsvp = user)
 		except MyUser.DoesNotExist:
+			#User doesn't exist
 			latitude = MyUser._meta.get_field_by_name('latitude')
 			longitude = MyUser._meta.get_field_by_name('longitude')
 			lat = latitude[0].default
 			lon = longitude[0].default
 		context['center_lat'] = lat
 		context['center_lon'] = lon
+	context['logged_in'] = (username != "")
 	return render(request, 'frontend/map.html', context)
 
 # add a new event.  add is called when a new event is properly submitted.
