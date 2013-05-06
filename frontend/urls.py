@@ -37,5 +37,7 @@ urlpatterns = patterns('',
     url(r'^filter/(?P<tag>\w+)/$', views.filter, name='filter'),
     url(r'^filter/$', views.filter, name='filter_init'),
     url(r'^api/get_names/', views.get_names, name='get_names'),
+    url(r'^api/get_tags/', views.get_tags, name='get_tags'),
+    url(r'^api/get_memnames/', views.get_memnames, name='get_memnames'),
 )
 
