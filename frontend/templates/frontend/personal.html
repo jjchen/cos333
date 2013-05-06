@@ -144,6 +144,14 @@
             <input type="submit" value="Submit" />
             </form>
           </div>
+	  <div id="import_groups_form">
+              {% for g in fb_groups %}
+	      <p>{{g.name}} 
+		<a href="{% url 'frontend:importgroup' g.id %}">Import</a>
+		
+	      </p>
+              {% endfor %}
+	    </div>
         </div>
       </div>
     </div>

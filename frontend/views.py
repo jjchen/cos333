@@ -255,8 +255,55 @@ def rmfriend(request, user):
 	friend_obj.save()
 	return HttpResponseRedirect('/frontend/personal')
 
+def importgroup(request, group):
+	def create_ret_user(user_info):
+		#if user doesn't exist, create it
+		result = MyUser.objects.filter(user_id = user_info['username'])
+		if len(result) != 0:
+			assert(len(result) == 1)
+			return result[0]
+		new_user = MyUser(user_id = user_info['username'],
+				  first_name = user_info['first_name'],
+				  last_name = user_info['last_name'])
+		print new_user.user_id
+		print new_user.first_name
+		print new_user.last_name
+		print ""
+		new_user.save()
+		return new_user
+
+	if request.user.username == "":
+		return HttpResponse('Unauthorized access', status=401)
+	this_user = MyUser.objects.get(user_id = request.user.username)	
+        instance = UserSocialAuth.objects.get(
+		user=this_user, provider='facebook')        
+        token = instance.tokens['access_token']
+        graph = GraphAPI(token)	
+
+	group_info = graph.get("/" + str(group))
+	#check if this group already exists
+	db_groups = MyGroup.objects.filter(creator=request.user.username,
+					   name=group_info['name'])
+	if len(db_groups) != 0:
+		return HttpResponse("Group already exists!", status=401)
+
+
+	#save group, except for member info
+	new_group = MyGroup()
+	new_group.name = group_info['name']
+	new_group.creator = request.user.username
+	new_group.save()
+
+	#save member info
+	members = graph.get("/" + str(group) + "/members").get('data')
+	for member in members:
+		fb_user = graph.get("/" + member['id'])
+		our_user = create_ret_user(fb_user) #MyUser object
+		new_group.users.add(our_user)
+	new_group.save()
+	return HttpResponseRedirect('/frontend/personal')	
+
 def rmgroup(request, group):
-	print group
 	try:
 		group_obj = MyGroup.objects.get(id = group)
 	except ObjectDoesNotExist:
@@ -301,9 +348,7 @@ def process_export(user, event_obj):
             'location' : event_obj.location,
             'privacy_type' : privacy_type
             }
-	print event_data
         result = graph.post(path=event_path, **event_data)
-        print "Result: " + str(result)
         if result.get('id', False):
 		return True
 	else:
@@ -352,12 +397,7 @@ def editevent(request, event):
 		try:
 			event_obj = NewEvent.objects.get(id = event)
 			dictionary = model_to_dict(event_obj)
-			print dictionary
-	
-			print dictionary['startTime']
-
 			form = NewEventForm(initial=dictionary) # A form bound to data
-			print form['startTime'] 
 		except ObjectDoesNotExist:
 			return HttpResponse('Event does not exist!', status=401)
 		return render_to_response('frontend/editevent.html',
@@ -446,9 +486,10 @@ def personal(request):
 	events_list.extend(recommended);
 	form = AddgroupForm() # An unbound form
 	form2 = AddfriendsForm()
+	fb_groups = get_fb_groups(this_user)
 	return render(request, 'frontend/personal.html', {
         'form': form, 'form2':form2, 'groups_list': groups, 'my_events': my_events, 'rsvped': rsvped, 
-        'events_list': events_list, 'recommended':recommended, "friends":friends, 'other_users': other_users, 'all_users': all_users 
+        'events_list': events_list, 'recommended':recommended, "friends":friends, 'other_users': other_users, 'all_users': all_users, 'fb_groups': fb_groups
     })	
 
 def filter(request):
@@ -537,6 +578,7 @@ def filter(request):
 
 # Create your views here.  index is called on page load.
 def index(request, add_form=None):
+
 	events_list = []
 	show_list = False
 	if request.method =='POST' and add_form==None:
@@ -721,6 +763,15 @@ def refresh(request):
    print "I am here in refresh"
    return render(request, 'frontend/map.html', context)
 
+
+def get_fb_groups(user):
+	instance = UserSocialAuth.objects.get(
+		user=user, provider='facebook')        
+        token = instance.tokens['access_token']
+        graph = GraphAPI(token)
+	user_path = str(instance.uid) + "/groups"
+	groups = graph.get(user_path).get('data')
+	return groups
 
 def eventsXML(request):
     """
