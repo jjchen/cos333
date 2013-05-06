@@ -135,7 +135,6 @@ def settings(request):
 				 'last_name': this_user.last_name,
 				 'latitude': this_user.latitude,
 				 'longitude': this_user.longitude})
-	print "I am here, settings"
 	return render(request, 'frontend/settings.html', {
         'form': form, 'group_info': group_info
 	})
@@ -661,7 +660,6 @@ def add(request):
 		form = NewEvent()
 		print "newform"
 			# msg = "success!"
-	print "I am here in add"
 	events_list = NewEvent.objects.all().order_by("startTime") # this is to refresh the events list without page refresh.
 	return render(request, '/frontend/map.html', {'form': form})
 
@@ -739,7 +737,6 @@ def refresh(request):
    tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
    context = {'events_list': events_list, 'user': request.user, 
 		   'show_list': show_list, 'search_form': form, 'tags': tags}
-   print "I am here in refresh"
    return render(request, 'frontend/map.html', context)
 
 
