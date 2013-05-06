@@ -8,6 +8,7 @@ from frontend.models import MyUser
 from frontend.models import MyGroup
 from frontend.models import Friends
 from frontend.models import CalEvent
+from frontend.models import Tag
 from django.forms.models import model_to_dict
 
 # tagging things
@@ -63,7 +64,7 @@ class NewEventForm(forms.Form):
 	private = forms.BooleanField(required=False)
 	groups = forms.ModelMultipleChoiceField(queryset=MyGroup.objects.all(),
 						required=False)
-	#tags = forms.CharField(max_length=200, required=False)
+	tags = forms.CharField(max_length=200, required=False)
 	#tags = TagField(widget=TagAutocompleteTagIt(max_tags=False))
 
 # testing JSON autocomplete
@@ -81,6 +82,22 @@ def get_names(request):
 		data = 'fail'
 	mimetype = 'application/json'
 	return HttpResponse(data, mimetype)
+
+# needs fixin'
+def get_tags(request):
+	if request.is_ajax():
+		q = request.GET.get('term', '')
+		tags = NewEvent.objects.filter(tags__icontains = q)[:20]
+		results = []
+		for tag in tags:
+			tag_json = {}
+			tag_json['label'] = tag.tags
+			results.append(tag_json)
+		data = json.dumps(results)
+	else:
+		data = 'fail'
+	mimetype = 'application/json'
+	return HttpResponse(data, mimetype)		
 
 def settings(request):
 	if request.user.username == "":
@@ -118,7 +135,6 @@ def settings(request):
 				 'last_name': this_user.last_name,
 				 'latitude': this_user.latitude,
 				 'longitude': this_user.longitude})
-	print "I am here, settings"
 	return render(request, 'frontend/settings.html', {
         'form': form, 'group_info': group_info
 	})
@@ -626,10 +642,14 @@ def add(request):
 					 lat = latitude,
 					 lon = longitude,
 					 private = data['private'],
-					 #tags = data['tags'],
 					 creator = this_user)
 							#creator = this_user)
 			event.save() #must save before adding groups
+			# new tagging method
+			tag_list = [Tag.objects.get_or_create(name=tag)[0] for tag in data['tags'].split()],
+			#for tag in tag_list:
+			#	event.tags.add(tag)
+			# group stuff
 			for group in data['groups']:
 				event.groups.add(group)
 			event.save() 
@@ -640,7 +660,6 @@ def add(request):
 		form = NewEvent()
 		print "newform"
 			# msg = "success!"
-	print "I am here in add"
 	events_list = NewEvent.objects.all().order_by("startTime") # this is to refresh the events list without page refresh.
 	return render(request, '/frontend/map.html', {'form': form})
 
@@ -718,7 +737,6 @@ def refresh(request):
    tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
    context = {'events_list': events_list, 'user': request.user, 
 		   'show_list': show_list, 'search_form': form, 'tags': tags}
-   print "I am here in refresh"
    return render(request, 'frontend/map.html', context)
 
 

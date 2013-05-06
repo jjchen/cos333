@@ -8,6 +8,9 @@ from django.forms import ModelForm
 
 NAME_MAXLEN=50
 
+class Tag(models.Model):
+        name = models.CharField(max_length=20, primary_key=True)
+
 class MyUser(models.Model):
     first_name = models.CharField(max_length=NAME_MAXLEN)
     last_name = models.CharField(max_length=NAME_MAXLEN)
@@ -35,6 +38,7 @@ class NewEvent(models.Model):
     lat = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
     lon = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
     tags = models.CharField(max_length=200, blank = True, null=True, default="all")
+    #tags = models.ManyToManyField(Tag)
     #tags = TagAutocompleteTagItField(max_tags=False)
     creator = models.ForeignKey(MyUser, related_name="creator", blank=True, null=True)
     groups = models.ManyToManyField(MyGroup, related_name="groups", blank=True, null=True)
