@@ -28,7 +28,6 @@ class Command(BaseCommand):
                     NewEvent.objects.get(name = event['title'])
 
                 except NewEvent.DoesNotExist:
-                    print event
                     f_name = event['title']
                     f_building = event['locationName']
                     
@@ -51,24 +50,16 @@ class Command(BaseCommand):
                     #f_description = event['description']
                     #f_audience = event['audience']
                     #f_tags = event['categories']['categoryName']
-                    print 1
                     # start date, time
-                    print type(f_startDate)
                     sDate = datetime.datetime.strptime(f_startDate['0'], "%Y-%m-%d").date()
-                    print 2
                     f_sTime = f_startTime.split()
                     sTime = datetime.datetime.strptime(f_sTime[0], "%H:%M:%S").time()
-                    print 3
                     startDateTime = datetime.datetime.combine(sDate, sTime)
-                    print 4
                     # end date, time
                     eDate  = datetime.datetime.strptime(f_endDate['0'], "%Y-%m-%d").date()
-                    print 5
                     f_eTime = f_endTime.split()
                     eTime = datetime.datetime.strptime(f_eTime[0], "%H:%M:%S").time()
-                    print 6
                     endDateTime = datetime.datetime.combine(eDate, eTime)
-                    print 7
                     # make into tags
                     #categories = event['categories']
                     
@@ -124,9 +115,10 @@ class Command(BaseCommand):
 
             f_event = NewEvent.objects.filter(name=f_title, location=f_locationName,
                                               startTime=startDateTime)
-            print len(f_event)
-            if (len(f_event) > 0):
-                continue
+            
+            if (f_title != 'KASA Spring Banquet'):
+                if (len(f_event) > 0):
+                    continue
 
             else:
                                 
