@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
 from frontend import views
+from frontend import facebook
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
@@ -24,11 +25,13 @@ urlpatterns = patterns('',
     url(r'^rmrsvp/(?P<id>\w+)/', views.rmrsvp, name='rmrsvp'),
     url(r'^rmrsvp/', views.rmrsvp, name='rmrsvp'),
     url(r'^rmgroup/(?P<group>\w+)/$', views.rmgroup, name='rmgroup'),
+    url(r'^importgroup/(?P<group>\w+)/$', facebook.importgroup, 
+        name='importgroup'),
     url(r'^rmfriend/(?P<user>\w+)/$', views.rmfriend, name='rmfriend'),
  #   url(r'^tagging_autocomplete_tagit/', include('tagging_autocomplete_tagit.urls')),
     url(r'^rmevent/(?P<event>\w+)/$', views.rmevent, name='rmevent'),
     url(r'^edit/(?P<event>\w+)/$', views.edit, name='edit'),
-    url(r'^exportevent/(?P<event>\w+)/$', views.exportevent, 
+    url(r'^exportevent/(?P<event>\w+)/$', facebook.exportevent, 
         name='exportevent'),
     url(r'^personal_ajax/(?P<event>\w+)/$', views.personal_ajax, name='personal_ajax'),
     url(r'^editevent/(?P<event>\w+)/$', views.editevent, name='editevent'),
@@ -36,5 +39,6 @@ urlpatterns = patterns('',
     url(r'^filter/$', views.filter, name='filter_init'),
     url(r'^api/get_names/', views.get_names, name='get_names'),
     url(r'^api/get_tags/', views.get_tags, name='get_tags'),
+    url(r'^api/get_memnames/', views.get_memnames, name='get_memnames'),
 )
 

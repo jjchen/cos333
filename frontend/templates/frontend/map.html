@@ -19,7 +19,7 @@
     <script src="{% static "frontend/dhtmlxscheduler.js" %}"></script>
     <script src="{% static "frontend/ext/dhtmlxscheduler_readonly.js"%}" type="text/javascript" charset="utf-8"></script>
     <script src="{% static "frontend/ext/dhtmlxscheduler_dhx_terrace.js"%}" type="text/javascript" charset="utf-8"></script>
-
+    <script src="{% static "frontend/ext/dhtmlxscheduler_tooltip.js"%}" type="text/javascript" charset="utf-8"></script>
     <script src="{% static "frontend/bootstrap-datepicker.js" %}"></script>
 
 <!-- bootstrap stuff that doesn't work -->
@@ -147,6 +147,16 @@
       <script type="text/javascript" id="fill_in">
       </script>
       <script type="text/javascript">
+        $(function() {
+          names = {{locations|safe}}
+
+          {% for u in other_users %}
+            names.push("{{u.user_id}}");
+          {% endfor %}
+          $("#id_location").autocomplete({
+            source: names
+          });
+        })
 
          var map;
          var idled = false;
@@ -315,7 +325,6 @@
           }
       
 
-          setInterval( "reloadEvents()", 60000);
           
           function reloadEvents()
           {
@@ -412,9 +421,12 @@
 
 
          <div id="time_slider">
-             Time
-
-            <input type="range">
+         	Events in the next X hours
+         	<form id ="slider" method="post">{% csrf_token %}
+            	<input type="range" required name="time" id="sliderTime" min="1" max="48" step="1">
+            	<output for="time" onforminput="value = range.valueAsNumber;"></output>
+            	<!--<input id="textTime" type="text" size="2"/>-->
+            </form>
          </div>
       </div>
     </div>
