@@ -1,40 +1,63 @@
-{{form.media}}
-<form action="/add/" method="post">{% csrf_token %}
-    {{ form.non_field_errors }}
-    <div class="fieldWrapper">
-        {{ form.name.errors }}
-        <label for="id_name">Name:</label>
-        {{ form.name }}
-    </div>
-    <div class="fieldWrapper">
-        {{ form.startTime.errors }}
-        <label for="id_startTime">Start date & time: </label>
-        {{ form.startTime }}
-    </div>
-    <div class="fieldWrapper">
-        {{ form.endTime.errors }}
-        <label for="id_endTime">End date & time: </label>
-        {{ form.endTime }}
-    </div>
-    <div class="fieldWrapper">
-        {{ form.location.errors }}
-        <label for="id_location">Location: </label>
-        {{ form.location }}
-    </div>
-    <div class="fieldWrapper">
-        {{ form.private.errors }}
-        <label for="id_private">Private: </label>
-        {{ form.private }}
-    </div>
-    <div class="fieldWrapper">
-        {{ form.groups.errors }}
-        <label for="id_groups">Groups: </label>
-        {{ form.groups }}
-    </div>
-    <div class="fieldWrapper">
-        {{ form.tags.errors }}
-        <label for="id_tags">Tags: </label>
-        {{ form.tags }}
-    </div>
-    <p><input type="submit" value="Save" /></p>
-</form>
+        {{form.media}}
+        <form action="{% url 'frontend:edit' 'change_event_id' %}" method="post" id="eventform" class="form-horizontal">{% csrf_token %}
+            {{ form.non_field_errors }}
+            <div id="ajaxwrapper">
+            <div class="control-group {% if form.name.errors %}error{% endif %}">
+                <label class="control-label" for="id_name">Name:</label>
+                <div class="controls">
+                {{ form.name }}
+                <span class="help-block">{{ form.name.errors }}</span>
+                </div>
+            </div>
+            <div class="control-group {% if form.startTime.errors %}error{% endif %}">
+                <label class="control-label" for="id_startTime">Start:</label>
+                <div class="controls">
+                {{ form.startTime }}
+                <span class="help-block">{{ form.startTime.errors }}</span>
+                </div>
+            </div>
+           <div class="control-group {% if form.endTime.errors %}error{% endif %}">
+                <label class="control-label" for="id_endTime">End:</label>
+                <div class="controls">
+                {{ form.endTime }}
+                <span class="help-block">{{ form.endTime.errors }}</span>
+                </div>
+            </div>
+           <div class="control-group {% if form.location.errors %}error{% endif %}">
+                <label class="control-label" for="id_location">Location:</label>
+                <div class="controls">
+                {{ form.location }}
+                <span class="help-block">{{ form.location.errors }}</span>
+                </div>
+            </div>
+            <div class="control-group {% if form.description.errors %}error{% endif %}">
+                <label class="control-label" for="id_description">Description:</label>
+                <div class="controls">
+                {{ form.description }}
+                <span class="help-block">{{ form.description.errors }}</span>
+                </div>
+            </div>
+           <div class="control-group {% if form.private.errors %}error{% endif %}">
+                <label class="control-label" for="id_private">Private:</label>
+                <div class="controls">
+                {{ form.private }}
+                <span class="help-block">{{ form.private.errors }}</span>
+                </div>
+            </div>
+           <div class="control-group {% if form.groups.errors %}error{% endif %}">
+                <label class="control-label" for="id_groups">Groups:</label>
+                <div class="controls">
+                {{ form.groups }}
+                <span class="help-block">{{ form.groups.errors }}</span>
+                </div>
+            </div>
+           <div class="control-group {% if form.tags.errors %}error{% endif %}">
+                <label class="control-label" for="id_tags">Tags:</label>
+                <div class="controls">
+                {{ form.tags }}
+                <span class="help-block">{{ form.tags.errors }}</span>
+                </div>
+            </div>
+            <p><button class="btn btn-primary" type="submit">Save</button></p>
+          </div>
+        </form>

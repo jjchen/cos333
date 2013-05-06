@@ -15,7 +15,7 @@
     <script type="text/javascript">
       $(document).ready(function() {
         var availableTags = {{all_users|safe}}
-        $("#id_member_names").tagit({
+        $("#groups_form #id_member_names").tagit({
           availableTags: availableTags,
          beforeTagAdded: function(event, ui) { 
            // only allow existing values
@@ -24,6 +24,7 @@
            }
         }
         });
+
       });
     </script>
 
@@ -116,9 +117,9 @@
             <div class="groups_header"><p><b>Your existing groups:</b></p></div>
             <div class="list_group">
 
-              {% for g in group_info %}
-              <div class="groups_item">
-                <p> {{ g.1 }} <a href="{% url 'frontend:rmgroup' g.0 %}">Leave</a></p>
+              {% for g in groups_list %}
+              <div class="groups_item" id="{{g.id}}">
+                <p> {{ g.name }} <a href="{% url 'frontend:rmgroup' g.id %}">Leave</a></p>
               </div>
               {% endfor %}
             </div>
@@ -128,12 +129,6 @@
           <div id="more">
           </div>
           <div id="edit_groups_form">
-            <form action="/editgroup/" method="post">{% csrf_token %}
-              <p><b>Add users to Group: </b></p>
-              <div id="edit_group_name"></div>
-              {{form3.id}}
-              {{form3.member_names}}
-            </from>
           </div>
           <div id="friends_form">
             <form action="/addfriend/" method="post">{% csrf_token %}
@@ -166,7 +161,7 @@
 
       $(".events_item").click(function() {
         $(".events_item").removeClass("active");
-        $(".events_item").removeClass("active");
+        $(".groups_item").removeClass("active");
         $(this).addClass("active");
 
         var id = parseInt($(this).attr("id"));
@@ -182,32 +177,51 @@
       });
 
       $(".groups_item").click(function() {
-        alert("HI");
         $(".groups_item").removeClass("active");
         $(".events_item").removeClass("active");
         $(this).addClass("active");
-
         var id = parseInt($(this).attr("id"));
-        {% for g in group_info %}
 
-          if (id == {{g.name}}) {
-                var parent = document.getElementById("edit_group_name");
-                parent.innerHTML = {{g.name}};
+        {% for g in groups_list %}
+          if (id == {{g.id}}) {
+                var parent = document.getElementById("edit_groups_form");
+                html = "{{g.name}} :";
+                {% for u in g.users.all %}
+                  html += " {{u.first_name}}"
+                {% endfor %}
+                html += "<form action='/addgroup/' method='post' id='edit_group_form'>{% csrf_token %}"
+                      + "<p><b> Add user to group: </b></p>"+'{{form.group_name}} {{form.member_names}}'+ "<input type='submit' value='Submit' />"
+                      + "</form>"
+                parent.innerHTML = html;
+                $("#edit_groups_form #id_group_name").attr({type:"hidden", value:'{{g.name}}'})
+
           }
         {% endfor %}
+        var availableTags = {{all_users|safe}}
+
+
+        $("#edit_groups_form #id_member_names").tagit({
+          availableTags: availableTags,
+         beforeTagAdded: function(event, ui) { 
+           // only allow existing values
+           if($.inArray(ui.tagLabel, availableTags)==-1) {
+            return false;
+           }
+        }
+        });
       });
 
       function edit_form(id) {
+        var url = '{% url "frontend:editevent" 555 %}'
+        url = url.replace('555', id);
 
-        {% for e in my_events %}
-          if (id == {{e.id}}) {
-            $.post('{% url "frontend:editevent" e.id %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(htmlResponse) {
-                var parent = document.getElementById("more");
-                parent.innerHTML = htmlResponse;
-            });
-          }
-        {% endfor %}
+        $.post(url, {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(htmlResponse) {
+            var parent = document.getElementById("more");
+            htmlResponse = htmlResponse.replace('/change_event_id/', '/'+id+'/');
+            parent.innerHTML = htmlResponse;
+        });
       }
+
     </script>   
 </body>
 </html>

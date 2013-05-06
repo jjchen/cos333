@@ -259,6 +259,7 @@ div#minus_button{
 	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 	box-sizing: border-box;
 	z-index: 1;
+	padding-bottom: 40px
 }
 
 div#list_content{
@@ -278,6 +279,10 @@ div#time_slider {
 	position: absolute;
 	bottom: 0;
 	padding: 10px;
+}
+
+div#content_wrapper{
+	padding: 100px;
 }
 
 div#content_wrapper h3 {

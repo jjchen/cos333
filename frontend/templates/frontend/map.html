@@ -287,6 +287,9 @@
               if($('input[type=checkbox]:checked').length != 0){
                 data = $("#tags_form").serialize();
               }
+              if($('#search_query').val()) {
+                data = $("#search_form2").serialize();
+              }
             }
             else if (type == 'init')
               data = {'csrfmiddlewaretoken': '{{csrf_token}}'}
