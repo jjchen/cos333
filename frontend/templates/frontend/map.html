@@ -147,6 +147,16 @@
       <script type="text/javascript" id="fill_in">
       </script>
       <script type="text/javascript">
+        $(function() {
+          names = {{locations|safe}}
+
+          {% for u in other_users %}
+            names.push("{{u.user_id}}");
+          {% endfor %}
+          $("#id_location").autocomplete({
+            source: names
+          });
+        })
 
          var map;
          var idled = false;
