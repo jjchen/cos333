@@ -14,10 +14,12 @@ class Tag(models.Model):
 class MyUser(models.Model):
     first_name = models.CharField(max_length=NAME_MAXLEN)
     last_name = models.CharField(max_length=NAME_MAXLEN)
-    user_id = models.CharField(max_length=20)
+    user_id = models.CharField(max_length=NAME_MAXLEN)
     latitude = models.FloatField(default=40.344725)
     longitude = models.FloatField(default=-74.6556)
     # friends = models.ForeignKey('self', null=True) #recursive relation
+    def __unicode__(self):
+        return self.first_name + " " + self.last_name
 
 class MyGroup(models.Model):
     users = models.ManyToManyField(MyUser, related_name="users")

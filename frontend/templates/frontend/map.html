@@ -421,9 +421,12 @@
 
 
          <div id="time_slider">
-             Time
-
-            <input type="range">
+         	Events in the next X hours
+         	<form id ="slider" method="post">{% csrf_token %}
+            	<input type="range" required name="time" id="sliderTime" min="1" max="48" step="1">
+            	<output for="time" onforminput="value = range.valueAsNumber;"></output>
+            	<!--<input id="textTime" type="text" size="2"/>-->
+            </form>
          </div>
       </div>
     </div>

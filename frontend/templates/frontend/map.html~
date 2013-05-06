@@ -1,22 +1,28 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
 
+    {{ form.media }}
+
     <!--<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />-->
-    <link rel="stylesheet" href="{% static "frontend/bootstrap.min.css" %}" media="screen">
+    <link rel="stylesheet" href="{% static "frontend/bootstrap.min.css" %}" type="text/css">
     <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
-    <link rel="stylesheet" type="text/css" href="{% static "frontend/dhtmlxscheduler.css" %}" />
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="{% static "frontend/dhtmlxscheduler_dhx_terrace.css" %}" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbkTcw7IQzJtELnuovVYEMDQg-zex6oG0&sensor=true">
     </script>
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
     <script src="{% static "frontend/bootstrap.min.js" %}"></script>
     <script src="{% static "frontend/dhtmlxscheduler.js" %}"></script>
+    <script src="{% static "frontend/ext/dhtmlxscheduler_readonly.js"%}" type="text/javascript" charset="utf-8"></script>
+    <script src="{% static "frontend/ext/dhtmlxscheduler_dhx_terrace.js"%}" type="text/javascript" charset="utf-8"></script>
 
     <script src="{% static "frontend/bootstrap-datepicker.js" %}"></script>
 
+<!-- bootstrap stuff that doesn't work -->
     <script type="text/javascript">
       $('.datepicker').datepicker()({
       format: 'yyyy-mm-dd'
@@ -37,6 +43,43 @@
     "frisbee"                                                                
   ]                                                                           
 });
+    </script>
+
+     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+  <script>
+  $(function() {
+  var availableTags = [
+      "ActionScript",
+      "AppleScript",
+      "Asp",
+      "BASIC",
+      "C",
+      "C++",
+      "Clojure",
+      "COBOL",
+      "ColdFusion",
+      "Erlang",
+      "Fortran",
+      "Groovy",
+      "Haskell",
+      "Java",
+      "JavaScript",
+      "Lisp",
+      "Perl",
+      "PHP",
+      "Python",
+      "Ruby",
+      "Scala",
+      "Scheme"
+    ];
+  $( "#testAutocomplete" ).autocomplete({
+    source: "/api/get_names/"
+  });
+  });
+
     </script>
 
 
@@ -69,20 +112,12 @@
           );
           e.preventDefault(); 
       });
+
+     jQuery('#search_form2').submit(function(event){
+            filter('search');
+            event.preventDefault(); 
+     });
   });
-  
-  setInterval( "reloadEvents()", 60000);
-  
-  function reloadEvents ()
-  {
-  	$.ajax({
-  		  type: "POST",
-  		  url: "~/pythoncode.py",
-  		  data: { param: text}
-  	}).done(function( o ) {
-   		// do something
-	});
-  }
 
   </script>
 
@@ -96,9 +131,10 @@
     <!--   - Any theme CSS (either a jQuery UI theme such as "flick", or one that's bundled with Tag-it, e.g. tagit.ui-zendesk.css as in this example.) -->
     <!-- The base CSS and tagit.ui-zendesk.css theme are scoped to the Tag-it widget, so they shouldn't affect anything else in your site, unlike with jQuery UI themes. -->
     <link href="{% static "frontend/jquery.tagit.css" %}" rel="stylesheet" type="text/css">
+    <link href="{% static "frontend/ui-autocomplete-tag-it.css" %}" rel="stylesheet" type="text/css">
     <link href="{% static "frontend/tagit.ui-zendesk.css" %}" rel="stylesheet" type="text/css">
     <!-- If you want the jQuery UI "flick" theme, you can use this instead, but it's not scoped to just Tag-it like tagit.ui-zendesk is: -->
-    <!--   <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css"> -->
+    <!--<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css">-->
 
     <!-- jQuery and jQuery UI are required dependencies. -->
     <!-- Although we use jQuery 1.4 here, it's tested with the latest too (1.8.3 as of writing this.) -->
@@ -108,118 +144,15 @@
     <!-- The real deal -->
     <!--<script src="https://raw.github.com/aehlke/tag-it/master/js/tag-it.js" type="text/javascript" charset="utf-8"></script>-->
 
-    <script>
-        $("#eventform").live("aCustomEvent",function(){
-            var sampleTags = ['cos', '333', 'music', 'needs', 'database', 'integration'];
-            // var sampleTags = {{tags}};
-            //-------------------------------
-            // Minimal
-            //-------------------------------
-            $('#myTags').tagit();
-
-            //-------------------------------
-            // Single field
-            //-------------------------------
-            $('#singleFieldTags').tagit({
-                availableTags: sampleTags,
-                // This will make Tag-it submit a single form value, as a comma-delimited field.
-                singleField: true,
-                singleFieldNode: $('#id_tags')
-            });
-
-            // singleFieldTags2 is an INPUT element, rather than a UL as in the other 
-            // examples, so it automatically defaults to singleField.
-            $('#singleFieldTags2').tagit({
-                availableTags: sampleTags
-            });
-
-            //-------------------------------
-            // Preloading data in markup
-            //-------------------------------
-            $('#myULTags').tagit({
-                availableTags: sampleTags, // this param is of course optional. it's for autocomplete.
-                // configure the name of the input field (will be submitted with form), default: item[tags]
-                itemName: 'item',
-                fieldName: 'tags'
-            });
-
-            //-------------------------------
-            // Tag events
-            //-------------------------------
-            var eventTags = $('#eventTags');
-
-            var addEvent = function(text) {
-                $('#events_container').append(text + '<br>');
-            };
-
-            eventTags.tagit({
-                availableTags: sampleTags,
-                beforeTagAdded: function(evt, ui) {
-                    if (!ui.duringInitialization) {
-                        addEvent('beforeTagAdded: ' + eventTags.tagit('tagLabel', ui.tag));
-                    }
-                },
-                afterTagAdded: function(evt, ui) {
-                    if (!ui.duringInitialization) {
-                        addEvent('afterTagAdded: ' + eventTags.tagit('tagLabel', ui.tag));
-                    }
-                },
-                beforeTagRemoved: function(evt, ui) {
-                    addEvent('beforeTagRemoved: ' + eventTags.tagit('tagLabel', ui.tag));
-                },
-                afterTagRemoved: function(evt, ui) {
-                    addEvent('afterTagRemoved: ' + eventTags.tagit('tagLabel', ui.tag));
-                },
-                onTagClicked: function(evt, ui) {
-                    addEvent('onTagClicked: ' + eventTags.tagit('tagLabel', ui.tag));
-                },
-                onTagExists: function(evt, ui) {
-                    addEvent('onTagExists: ' + eventTags.tagit('tagLabel', ui.existingTag));
-                }
-            });
-
-            //-------------------------------
-            // Read-only
-            //-------------------------------
-            $('#readOnlyTags').tagit({
-                readOnly: true
-            });
-
-            //-------------------------------
-            // Tag-it methods
-            //-------------------------------
-            $('#methodTags').tagit({
-                availableTags: sampleTags
-            });
-
-            //-------------------------------
-            // Allow spaces without quotes.
-            //-------------------------------
-            $('#allowSpacesTags').tagit({
-                availableTags: sampleTags,
-                allowSpaces: true
-            });
-
-            //-------------------------------
-            // Remove confirmation
-            //-------------------------------
-            $('#removeConfirmationTags').tagit({
-                availableTags: sampleTags,
-                removeConfirmation: true
-            });
-
-            alwaysOn();
-            
-        });
-        
-    </script>
-
+      <script type="text/javascript" id="fill_in">
+      </script>
       <script type="text/javascript">
+
          var map;
          var idled = false;
          var oms;
          var single_pin = '{% static "frontend/paw_print.png" %}';
-         var multi_pin = '{% static "frontend/small_flower.png" %}';
+         var multi_pin = '{% static "frontend/small_shield.png" %}';
          var geocoder;
 
          function initialize() {
@@ -269,47 +202,8 @@
             google.maps.event.addListener(map, 'click', function () {
                iw.close();
             });
-
-            {% if events_list %}
-            showEventsOnMap(); 
-            {% endif %}
-
-            {% if show_list == True %}
-            showContent('list_content'); 
-            {% endif %}
          }
          google.maps.event.addDomListener(window, 'load', initialize);
-
-         function showEventsOnMap() {
-
-            var i = 0; 
-            {% for event in events_list %} 
-            {% if event.lat %}
-            var position = new google.maps.LatLng(
-              {{event.lat}}, {{event.lon}});
-
-            var marker = new google.maps.Marker({
-               map: map,
-               position: position,
-               icon: single_pin
-            });
-
-            var contentString = '<div class="infoWindow_content">' +
-               '<h3 class="infoWindow_heading">{{event.name}}</h3>' +
-               '<div id="infoWindow_body">' +
-               '<p>Time: {{event.startTime|date:"D d M Y H:i"}}</p>' +
-               '<p>Location: {{event.location}}</p>' +
-               '</div>' +
-               '</div>';
-
-            marker.desc = contentString;
-
-            oms.addMarker(marker); 
-            {% else %}
-            codeAddress("{{event.location}}"); 
-            {% endif %} 
-            {% endfor %}
-         }
 
          function codeAddress(buildingName) {
             geocoder.geocode({
@@ -350,63 +244,84 @@
             }
          }
 
-         function makeList() {
-            var parent = document.getElementById("list_inner_wrapper");
-            var html = ""; 
-            {% if events_list %}
-            html += "<table class='list_table'>"
-            var cur_date = "";
-            var i = 0; 
-            {% for event in events_list %}
-            if (i % 2 == 0) {
-               row_class = "rowColor";
-            } else {
-               row_class = "";
-            }
-            i++;
-            if ('{{event.startTime|date:"D d M Y"}}' != cur_date) {
+         var rsvp_list = {};
 
-               html += '<tr><td colspan="2"> <h3> {{event.startTime|date:"D d M Y"}} </h3></td></tr>';
-               cur_date = '{{event.startTime|date:"D d M Y"}}';
+         function rsvp(id, has_rsvped) {
+            var parent = document.getElementById("rsvp_"+id);
+            has_rsvped = rsvp_list[id];
+            if (!has_rsvped) {
+                  $.post('{% url "frontend:addrsvp" %}', {'rsvp_id':id, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(json) {
+                      var json_parsed = $.parseJSON(json);
+                      if(json_parsed.success == 'true') {
+                        $("rsvp_"+id).addClass('rsvp');
+                        var html = 'un RSVP'
+                        parent.innerHTML = html;
+                        rsvp_list[id] = true;
+                      }
+                  });
+              
+           } else {
+              $.post('{% url "frontend:rmrsvp" %}', {'rsvp_id':id, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(json) {
+                var json_parsed = $.parseJSON(json);
+
+                if(json_parsed.success == 'true') {
+                    $("rsvp_"+id).removeClass('rsvp');
+                    var html = 'RSVP'
+                    parent.innerHTML = html;
+                    rsvp_list[id] = false;
+                } 
+              });
             }
-            html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"> {{event.startTime|date:"H:i"}} - {{event.endTime|date:"H:i"}}</td>' + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
-              + '<div style="float:right">'
-            html += '<a href="{% url "frontend:addrsvp" event.id %}">RSVP</a></div>'
-              + ' </td>' + '<tr class="' + row_class + '"><td> <small>{{event.tags}}</small></td></tr>' 
-            {% endfor %}
-            html += "</table>"; 
-            {% else %}
-            html += '<p>No events :(</p>'; 
-            {% endif %}
-            parent.innerHTML = html;
          }
-      </script>
 
-      <script type="text/javascript" charset="utf-8">
-         function init() {
-
-            scheduler.config.CSRF_Token = "{{ csrf_token }}";
-
-            scheduler.config.xml_date = "%Y-%m-%d %H:%i";
-            scheduler.init('scheduler_here', new Date(2011, 0, 25), "month");
-
-            //define how text inside event bar looks
-            scheduler.templates.event_text = function (start, end, event) {
-               return "Text:<b> " + event.text + "</b><br>" + "Descr." + event.details;
+          function filter(type) {
+            var data = '';
+            if (type == 'search')
+              data = $("#search_form2").serialize();
+            else if (type == 'tags')
+              data = $("#tags_form").serialize();
+            else if (type == 'recommended' || type == 'my_events')
+              data = {'csrfmiddlewaretoken': '{{csrf_token}}', 'type': type };
+            else if (type == 'reload') {
+              data = {'csrfmiddlewaretoken': '{{csrf_token}}'}
+              if($('input[type=checkbox]:checked').length != 0){
+                data = $("#tags_form").serialize();
+              }
+              if($('#search_query').val()) {
+                data = $("#search_form2").serialize();
+              }
             }
+            else if (type == 'init')
+              data = {'csrfmiddlewaretoken': '{{csrf_token}}'}
+             $.post('{% url "frontend:filter_init" %}', data, function(htmlResponse) {
+                  var old = document.getElementById('fill_in');
+                  old.parentNode.removeChild(old);
+                  var head = document.getElementsByTagName('head')[0];
+                  var element = document.createElement('script');
+                  element.setAttribute('type','text/javascript');
+                  element.setAttribute('id','fill_in');
+                  element.innerHTML = htmlResponse
+                  head.appendChild(element);
+                  var cal = document.getElementById('calendar_content');
+                  var hidden = (cal.className == 'hidden');
+                  if (hidden)
+                    cal.className = 'visible';
+                  showEventsOnMap();
+                  init();
+                  makeList();
+                  if (hidden)
+                    cal.className = 'hidden';
+              });                
+          }
+      
 
-            scheduler.templates.event_class = function (start, end, event) {
-               if (start < (new Date())) //if date in past
-                  return "past_event"; //then set special css class for it
-            }
-
-            scheduler.load("/eventsXML");
-
-            var dp = new dataProcessor("frontend/dataprocessor");
-            dp.setTransactionMode("POST", false)
-            dp.init(scheduler);
-
-         }
+          setInterval( "reloadEvents()", 60000);
+          
+          function reloadEvents()
+          {
+            filter("reload");
+          }
+    
       </script>
 
       <style type="text/css" media="screen">
@@ -417,7 +332,8 @@
          }
          /*multi-day event in month view*/
          .dhx_cal_event_line.past_event {
-            background-color:purple !important;
+            background-color:
+             !important;
             color:white !important;
          }
          /*event with fixed time, in month view*/
@@ -426,38 +342,77 @@
          }
       </style>
 
+      <!-- jQuery bootstrap stylesheets -->
+    <link rel="stylesheet" href="{% static "frontend/jquery-ui-1.9.2.custom.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "frontend/jquery-ui-1.10.0.custom.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "frontend/jquery.ui.1.9.2.ie.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "frontend/jquery.ui.1.10.0.ie.css" %}" type="text/css">
+
    </head>
    
-   <body onload="init();">
-      <header>
-         <div class="logo" onclick="window.location.href='/'">
-            <h1>Princeton University - OC</h1>
-         </div>
-         <div id="floatright">
-            <div class="settings_buttons" onclick="window.location.href='/frontend/personal'">{{user}}</div>
-            <div class="settings_buttons" onclick="window.location.href='/frontend/settings'">settings</div>
-            <div class="settings_buttons" onclick="window.location.href='/'">logout</div>
-         </div>
-      </header>
+   <body onload="filter('init')">
+  <div class="navbar navbar-fixed-top">  
+    <div class="navbar-inner">  
+      <div class="container">  
+        <ul class="nav pull-left">  
+          <li>  
+            <a class="brand logo" href="#" >Princeton University - OC</a>  
+          </li>
+        </ul>
+        <ul class="nav pull-right">  
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li> notification </li>
+              <li> notification </li>
+            </ul>
+          </li>
+          <li class=""><a href="{% url 'frontend:personal' %}">{{user}}</a></li>  
+          <li><a href="{% url 'frontend:settings' %}">Settings</a></li>  
+          <li>
+	    {% if logged_in %}
+	    <a href="{% url 'frontend:logout' %}">Logout</a>
+	    {% else %}
+	    <a href="{% url 'socialauth_begin' 'facebook' %}">Login</a>
+	    {% endif %}
+	  </li>  
+        </ul>
+      </div>
+    </div>
+  </div>
       <div id="side_panel">
           <h3>Filter</h3>
 
          <br/>
-         <form action="{% url 'frontend:index' %}" method="post">{% csrf_token %}
-            <input type="text" id="search_query" placeholder="Search" name="search_query" required>
-            <input type="submit" value="Go">
-         </form>
-         
-         <form action="{% url 'frontend:index' %}" method="post">{% csrf_token %}
+         <form id ="search_form2" method="post">{% csrf_token %}
+            <input type="text" id="search_query" placeholder="Search..." name="search_query" class="input-medium search-query">
+            <div class="clearfix"> <br />  </div>
+            <button type="submit" class="btn">Search</button>
+          </form>
+
+   <div class="ui-widget">
+      <label for="testAutocomplete">Names: </label>
+      <input id="testAutocomplete" />
+    </div>
+
+         <br/>
+         <div style='width:100%; height:150px; overflow:scroll;'>
+         <form id="tags_form" method="post">{% csrf_token %}
             {% for tag in tags %}
-            <input type="checkbox" name="tags" value="{{tag}}">{{tag}}</br> 
+            <input type="checkbox" onclick="filter('tags')" name="tags" value="{{tag}}">{{tag}}</br> 
             {% endfor %}
          </form>
-
+         </div>
          <br/> <a href="{% url 'frontend:index' %}"> All </a>
 
+         <br/> <a href="#" onclick="filter('recommended')"> Recommended </a>
+         <br/> <a href="#" onclick="filter('my_events')"> My Events </a>
+
+
          <div id="time_slider">
-             <h3>Time</h3>
+             Time
 
             <input type="range">
          </div>
@@ -472,72 +427,103 @@
             </div>
 
       <div id="make_content" class="hidden">
+        {%ifnotequal user.username "" %}
         <h3>Make Event</h3>
-{{form.media}}
-<form action="/add/" method="post">{% csrf_token %}
-    {{ form.non_field_errors }}
-    <div class="fieldWrapper">
-        {{ form.name.errors }}
-        <label for="id_name">Name:</label>
-        {{ form.name }}
-    </div>
-    <div class="fieldWrapper">
-        {{ form.startTime.errors }}
-        <label for="id_startTime">Start date & time: </label>
-        {{ form.startTime }}
-    </div>
-    <div class="fieldWrapper">
-        {{ form.endTime.errors }}
-        <label for="id_endTime">End date & time: </label>
-        {{ form.endTime }}
-    </div>
-    <div class="fieldWrapper">
-        {{ form.location.errors }}
-        <label for="id_location">Location: </label>
-        {{ form.location }}
-    </div>
-    <div class="fieldWrapper">
-        {{ form.private.errors }}
-        <label for="id_private">Private: </label>
-        {{ form.private }}
-    </div>
-    <div class="fieldWrapper">
-        {{ form.groups.errors }}
-        <label for="id_groups">Groups: </label>
-        {{ form.groups }}
-    </div>
-    <div class="fieldWrapper">
-        {{ form.tags.errors }}
-        <label for="id_tags">Tags: </label>
-        {{ form.tags }}
-    </div>
-    <p><input type="submit" value="Save" /></p>
-</form>
+        {{form.media}}
+        <form action="/add/" method="post" id="eventform" class="form-horizontal">{% csrf_token %}
+            {{ form.non_field_errors }}
+            <div id="ajaxwrapper">
+            <div class="control-group {% if form.name.errors %}error{% endif %}">
+                <label class="control-label" for="id_name">Name:</label>
+                <div class="controls">
+                {{ form.name }}
+                <span class="help-block">{{ form.name.errors }}</span>
+                </div>
+            </div>
 
-            <li>Login with <a rel="nofollow" href="{% url 'socialauth_begin' 'facebook' %}">Facebook</a>
+        <div class="control-group ">
+                <label class="control-label" for="id_startTime">Start:</label>
+                <div class="controls">
+                Date: <input class="datepicker" id="id_startTime_0" name="startTime_0" type="text" /><br/>Time: <input class="span1" id="id_startTime_1" name="startTime_1" type="text" />:<input class="span1" id="id_startTime_2" name="startTime_2" type="text" /> <select class="span1" id="id_startTime_3" name="startTime_3">
+<option value="AM">AM</option>
+<option value="PM">PM</option>
+</select>
+                <span class="help-block"></span>
+                </div>
+            </div>
+           <div class="control-group ">
+                <label class="control-label" for="id_endTime">End:</label>
+                <div class="controls">
+                Date: <input class="datepicker" id="id_endTime_0" name="endTime_0" type="text" /><br/>Time: <input class="span1" id="id_endTime_1" name="endTime_1" type="text" />:<input class="span1" id="id_endTime_2" name="endTime_2" type="text" /> <select class="span1" id="id_endTime_3" name="endTime_3">
+<option value="AM">AM</option>
+<option value="PM">PM</option>
+</select>
+                <span class="help-block"></span>
+                </div>
+            </div>
 
-            </li>
+           <div class="control-group {% if form.location.errors %}error{% endif %}">
+                <label class="control-label" for="id_location">Location:</label>
+                <div class="controls">
+                {{ form.location }}
+                <span class="help-block">{{ form.location.errors }}</span>
+                </div>
+            </div>
+            <div class="control-group {% if form.description.errors %}error{% endif %}">
+                <label class="control-label" for="id_description">Description:</label>
+                <div class="controls">
+                {{ form.description }}
+                <span class="help-block">{{ form.description.errors }}</span>
+                </div>
+            </div>
+           <div class="control-group {% if form.private.errors %}error{% endif %}">
+                <label class="control-label" for="id_private">Private:</label>
+                <div class="controls">
+                {{ form.private }}
+                <span class="help-block">{{ form.private.errors }}</span>
+                </div>
+            </div>
+           <div class="control-group {% if form.groups.errors %}error{% endif %}">
+                <label class="control-label" for="id_groups">Groups:</label>
+                <div class="controls">
+                {{ form.groups }}
+                <span class="help-block">{{ form.groups.errors }}</span>
+                </div>
+            </div>
+           <div class="control-group {% if form.tags.errors %}error{% endif %}">
+                <label class="control-label" for="id_tags">Tags:</label>
+                <div class="controls">
+                {{ form.tags }}
+                <span class="help-block">{{ form.tags.errors }}</span>
+                </div>
+            </div>
+            <p><button class="btn btn-primary" type="submit">Save</button></p>
+          </div>
+        </form>
+        {% else %}
+          You have to sign in.
+        {% endifnotequal %}
             <li>Import from Facebook</li>
-            <li><a rel="nofollow" href="{% url 'django_cas.views.login' %}">CAS</a>
-
+      <li><a rel="nofollow" href="{% url 'django_cas.views.login' %}">CAS</a> 
             </li>
          </div>
          <div id="calendar_content" class="hidden">
-             <h3>Calendar</h3>
-            <div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:80%;'>
-               <div class="dhx_cal_navline">
-                  <div class="dhx_cal_prev_button">&nbsp;</div>
-                  <div class="dhx_cal_next_button">&nbsp;</div>
-                  <div class="dhx_cal_today_button"></div>
-                  <div class="dhx_cal_date"></div>
-                  <div class="dhx_cal_tab" name="day_tab" style="right:204px;"></div>
-                  <div class="dhx_cal_tab" name="week_tab" style="right:140px;"></div>
-                  <div class="dhx_cal_tab" name="month_tab" style="right:76px;"></div>
-               </div>
-               <div class="dhx_cal_header"></div>
-               <div class="dhx_cal_data"></div>
+            <div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:100%;'>
+                <div class="dhx_cal_navline">
+                    <div class="dhx_cal_prev_button">&nbsp;</div>
+                    <div class="dhx_cal_next_button">&nbsp;</div>
+                    <div class="dhx_cal_today_button"></div>
+                    <div class="dhx_cal_date"></div>
+                    <div class="dhx_cal_tab dhx_cal_tab_first" name="day_tab" style="left:14px;"></div>
+                    <div class="dhx_cal_tab" name="week_tab" style="left:75px;"></div>
+                    <div class="dhx_cal_tab dhx_cal_tab_last" name="month_tab" style="left:136px;"></div>
+                </div>
+                <div class="dhx_cal_header">
+                </div>
+                <div class="dhx_cal_data">
+                </div>
             </div>
-         </div>
+        </div>
          <div id="settings_content" class="hidden">
              <h3>Settings</h3>
 
@@ -548,11 +534,7 @@
       </div>
 
     <div id="calendar_button" class="button" onclick="showContent('calendar_content');">
-      <script>
-  {% if make_visible %}
-  showContent('make_content');
-  {% endif %}
-  </script>
+
       <h3>Calendar</h3>
     </div>
     

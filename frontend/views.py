@@ -28,9 +28,6 @@ from django.http import Http404
 from django.shortcuts import render_to_response
 from django.shortcuts import redirect, render
 from django.template import RequestContext
-from social_auth.models import UserSocialAuth
-from facepy import GraphAPI
-from facepy import SignedRequest
 from fields import JqSplitDateTimeField
 from widgets import JqSplitDateTimeWidget
 from django.core.serializers.json import DjangoJSONEncoder
@@ -38,6 +35,7 @@ import json
 import operator
 import django.contrib.auth
 import unicodedata
+import facebook 
 
 MAX_LEN = 50
 class SignupForm(forms.Form):
@@ -165,8 +163,8 @@ def signup(request):
 		if form.is_valid():
 			data = form.cleaned_data
 			user = MyUser(first_name = data['first_name'],
-								last_name = data['last_name'],
-								user_id = request.user.username)
+				      last_name = data['last_name'],
+				      user_id = request.user.username)
 			user.save()
 			return HttpResponseRedirect('/') # Redirect after POST
 	else:
@@ -290,9 +288,9 @@ def rmfriend(request, user):
 	friend_obj.friends.remove(remove_obj)
 	friend_obj.save()
 	return HttpResponseRedirect('/frontend/personal')
+	
 
 def rmgroup(request, group):
-	print group
 	try:
 		group_obj = MyGroup.objects.get(id = group)
 	except ObjectDoesNotExist:
@@ -316,49 +314,6 @@ def rmevent(request, event):
 		return HttpResponse('Unauthorized access', status=401)
 	event_obj.delete()
 	return HttpResponseRedirect('/frontend/personal')	
-
-# export event to Facebook
-def process_export(user, event_obj):
-	#user and event_obj are MyUser and NewEvent type, respectively. Returns
-	#True on success, False on failure
-        instance = UserSocialAuth.objects.get(
-		user=user, provider='facebook')        
-        token = instance.tokens['access_token']
-        graph = GraphAPI(token)
-        if event_obj.private:
-		privacy_type = "SECRET"
-	else:
-		privacy_type = "OPEN"
-        event_path = str(instance.uid) + "/events"
-        event_data = {
-            'name' : event_obj.name,
-            'start_time' : event_obj.startTime.isoformat(),
-	    'end_time': event_obj.endTime.isoformat(),
-            'location' : event_obj.location,
-            'privacy_type' : privacy_type
-            }
-	print event_data
-        result = graph.post(path=event_path, **event_data)
-        print "Result: " + str(result)
-        if result.get('id', False):
-		return True
-	else:
-		return False
-
-def exportevent(request, event):
-	try:
-		event_obj = NewEvent.objects.get(id = event)
-	except ObjectDoesNotExist:
-		return HttpResponse('Tried exporting non-existent event!', 
-				    status=401)
-	this_user = MyUser.objects.get(user_id = request.user.username)
-	if event_obj.creator != this_user:
-		return HttpResponse('Unauthorized access', status=401)
-	success = process_export(this_user, event_obj)
-	if success:
-		return HttpResponseRedirect('/frontend/personal')
-	return HttpResponse('Export failed!', status=401)
-
 
 def addrsvp(request):
 	print "in rsvp"
@@ -397,12 +352,7 @@ def editevent(request, event):
 		try:
 			event_obj = NewEvent.objects.get(id = event)
 			dictionary = model_to_dict(event_obj)
-			print dictionary
-	
-			print dictionary['startTime']
-
 			form = NewEventForm(initial=dictionary) # A form bound to data
-			print form['startTime'] 
 		except ObjectDoesNotExist:
 			return HttpResponse('Event does not exist!', status=401)
 		return render_to_response('frontend/editevent.html',
@@ -495,9 +445,10 @@ def personal(request):
 	events_list.extend(recommended);
 	form = AddgroupForm() # An unbound form
 	form2 = AddfriendsForm()
+	fb_groups = facebook.get_fb_groups(this_user)
 	return render(request, 'frontend/personal.html', {
         'form': form, 'form2':form2, 'groups_list': groups, 'my_events': my_events, 'rsvped': rsvped, 
-        'events_list': events_list, 'recommended':recommended, "friends":friends, 'other_users': other_users, 'all_users': all_users 
+        'events_list': events_list, 'recommended':recommended, "friends":friends, 'other_users': other_users, 'all_users': all_users, 'fb_groups': fb_groups
     })	
 
 def filter(request):
@@ -787,7 +738,6 @@ def refresh(request):
    context = {'events_list': events_list, 'user': request.user, 
 		   'show_list': show_list, 'search_form': form, 'tags': tags}
    return render(request, 'frontend/map.html', context)
-
 
 def eventsXML(request):
     """
