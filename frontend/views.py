@@ -434,7 +434,8 @@ def personal(request):
 			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))), (Q(private = False) | Q(groups__in=groups)))
 		elif (len(groups) != 0):
 			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))), (Q(private = False) | Q(groups__in=groups)))
-		recommended = recommended.filter(~Q(rsvp=this_user))
+		if len(recommended) != 0:
+			recommended = recommended.filter(~Q(rsvp=this_user))
 
 		other_users = all_users_obj.exclude(pk__in = friends)
 	except ObjectDoesNotExist:
