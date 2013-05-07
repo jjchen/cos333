@@ -6,6 +6,7 @@ import urllib2
 import xml.etree.ElementTree as ET
 from django.core.management.base import BaseCommand, CommandError
 from frontend.models import NewEvent
+from frontend.models import Tag
 
 class Command(BaseCommand):
     def xml_tag(self, uri, tag):
@@ -97,8 +98,11 @@ class Command(BaseCommand):
 
             new_event = NewEvent(name=f_title, startTime=startDateTime, 
                                  endTime=endDateTime, location=f_locationName, 
-                                 lat=f_latitude, lon=f_longitude, tags=calendarName,
+                                 lat=f_latitude, lon=f_longitude,
                                  description = f_description)
+            new_event.save()
+            tag_list = Tag.objects.get_or_create(name=calendarName)[0]
+            event.tags.add(*tag)
             new_event.save()
 
     def handle(self, *args, **options):

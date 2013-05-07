@@ -55,6 +55,9 @@
                 <label class="control-label" for="id_tags">Tags:</label>
                 <div class="controls">
                 {{ form.tags }}
+                <ul id="singleFieldTags">
+                <script> jQuery("#eventform").trigger("aCustomEvent") </script>
+                </ul>
                 <span class="help-block">{{ form.tags.errors }}</span>
                 </div>
             </div>
