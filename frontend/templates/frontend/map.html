@@ -565,26 +565,34 @@
       var startTime;
       var endTime;
       $( "#time-slider" ).slider({
+        // 15 minute increments for up to 24-hours
         range: "min",
         value: 720,
-        min: 1,
-        max: 1440,
+        min: 15,
+        max: 1455, // extra 15 min for full 24 hours
+        step: 15,
         slide: slideTime
       });
 
       function slideTime(event, ui){
         var val = $("#time-slider").slider("value"),
-            hours = parseInt(val / 60 % 24, 10),
-            minutes = parseInt(val % 60, 10),
-        currentdate = new Date()
-        startTime = getTime(currentdate.getHours(), currentdate.getMinutes());
-        endTime = getTime(hours, minutes);
+        startTime = getTime(0);
+        endTime = getTime(parseInt(val, 10));
         $("#time").text(startTime + ' - ' + endTime);
       }
 
-      function getTime(hours, minutes) {
+      function getTime(plus_min) {
         var time = null;
+            currDate = new Date();
+            hours = currDate.getHours();
+            minutes = Math.floor(currDate.getMinutes()/15)*15;
+        minutes = minutes + plus_min;
+        if (minutes >= 60) {
+          hours = hours + Math.floor(minutes/60);
+          minutes = minutes % 60;
+        }
         minutes = minutes + "";
+        if (hours >= 24) { hours = hours - 24; }
         if (hours < 12) { time = "AM"; }
         else {  time = "PM"; }
         if (hours == 0) { hours = 12; }
