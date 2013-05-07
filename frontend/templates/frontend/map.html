@@ -484,9 +484,9 @@
     <link rel="stylesheet" href="{% static "frontend/jquery.ui.1.9.2.ie.css" %}" type="text/css">
     <link rel="stylesheet" href="{% static "frontend/jquery.ui.1.10.0.ie.css" %}" type="text/css">
 
-   </head>
+  </head>
    
-   <body onload="filter('init')">
+  <body onload="filter('init')">
   <div class="navbar navbar-fixed-top">  
     <div class="navbar-inner">  
       <div class="container">  
@@ -518,92 +518,123 @@
       </div>
     </div>
   </div>
-      <div id="side_panel">
-          <h3>Filter</h3>
+    
+  <div id="side_panel">
+    <h3>Filter</h3>
 
-         <br/>
-         <form id ="search_form2" method="post">{% csrf_token %}
-            <input type="text" id="search_query" placeholder="Search..." name="search_query" class="input-medium search-query">
-            <div class="clearfix"> <br />  </div>
-            <button type="submit" class="btn">Search</button>
-          </form>
+    <br/>
+    <form id ="search_form2" method="post">{% csrf_token %}
+      <input type="text" id="search_query" placeholder="Search..." name="search_query" class="input-medium search-query">
+      <div class="clearfix"> <br />  </div>
+      <button type="submit" class="btn">Search</button>
+    </form>
 
-         <br/>
-         <div style='width:100%; height:150px; overflow:scroll;'>
-         <form id="tags_form" method="post">{% csrf_token %}
-            {% for tag in tags %}
-            <input type="checkbox" onclick="filter('tags')" name="tags" value="{{tag}}">{{tag}}</br> 
-            {% endfor %}
-         </form>
-         </div>
-         <br/> <a href="{% url 'frontend:index' %}"> All </a>
+    <br/>
+    <div style='width:100%; height:150px; overflow:scroll;'>
+    <form id="tags_form" method="post">{% csrf_token %}
+      {% for tag in tags %}
+      <input type="checkbox" onclick="filter('tags')" name="tags" value="{{tag}}">{{tag}}</br> 
+      {% endfor %}
+    </form>
+    </div>
+    <br/> <a href="{% url 'frontend:index' %}"> All </a>
 
-         <br/> <a href="#" onclick="filter('recommended')"> Recommended </a>
-         <br/> <a href="#" onclick="filter('my_events')"> My Events </a>
+    <br/> <a href="#" onclick="filter('recommended')"> Recommended </a>
+    <br/> <a href="#" onclick="filter('my_events')"> My Events </a>
+    <br/>
 
-        <script>
-        $(function() {
-          $( "#slider-range" ).slider({
-            range: true,
-            min: 0,
-            max: 500,
-            values: [ 75, 300 ],
-            slide: function( event, ui ) {
-              $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
-            }
-          });
-          $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
-            " - $" + $( "#slider-range" ).slider( "values", 1 ) );
-        });
-        </script>
+    <div id="time-slider"></div>
+    <span id="SlideMax"></span>
+    <br/>
+    <span id="time"></span>
+    </br>
+    <input type="submit" name="scheduleSubmit" value="Submit" id="scheduleSubmit" class="ui-button ui-state-default ui-corner-all"/> 
+    <table id="Schedule">
+      <thead>
+        <tr>
+          <th>Start Time</th>
+          <th>End Time</th>
+          </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    <br/>
 
-        <p>
-          <label for="amount">Price range:</label>
-          <input type="text" id="amount" style="border: 0; color: #f6931f; font-weight: bold;" />
-        </p>
-        <div id="slider-rage"></div>
+    <script>
+      var startTime;
+      var endTime;
+      $( "#time-slider" ).slider({
+        // 15 minute increments for up to 24-hours
+        range: "min",
+        value: 720,
+        min: 15,
+        max: 1455, // extra 15 min for full 24 hours
+        step: 15,
+        slide: slideTime
+      });
 
-         <div id="time_slider">
-         	<p id="displaySliderTime"> 3 hours </p>
-         	<form id ="slider" method="post">{% csrf_token %}
-            	<input type="range" required name="time" id="sliderTime" min="1" max="48" step="1" onchange="updateSliderInput('displaySliderTime', 'sliderTime')">
-            	<output for="time" onforminput="value = range.valueAsNumber;"></output>
-            	<!--<input id="textTime" type="text" size="2"/>-->
-            </form>
-            
-            <!--
-            <script type="text/javascript">
-            function updateTextInput(val) {
-               document.getElementById('textInput').value=val; 
-            }
-            </script>
-            -->
-            
-         </div>
+      function slideTime(event, ui){
+        var val = $("#time-slider").slider("value"),
+        startTime = getTime(0);
+        endTime = getTime(parseInt(val, 10));
+        $("#time").text(startTime + ' - ' + endTime);
+      }
+
+      function getTime(plus_min) {
+        var time = null;
+            currDate = new Date();
+            hours = currDate.getHours();
+            minutes = Math.floor(currDate.getMinutes()/15)*15;
+        minutes = minutes + plus_min;
+        if (minutes >= 60) {
+          hours = hours + Math.floor(minutes/60);
+          minutes = minutes % 60;
+        }
+        minutes = minutes + "";
+        if (hours >= 24) { hours = hours - 24; }
+        if (hours < 12) { time = "AM"; }
+        else {  time = "PM"; }
+        if (hours == 0) { hours = 12; }
+        if (hours > 12) { hours = hours - 12; }
+        if (minutes.length == 1) { minutes = "0" + minutes; }
+        return hours + ":" + minutes + " " + time;
+      }
+
+      $("#scheduleSubmit").on('click', function(){
+        console.log(startTime);
+        console.log(endTime);
+        $('#Schedule tbody').append('<tr>' +
+            '<td>' + startTime + '</td>' +
+            '<td>' + endTime + '</td>' +
+            '</tr>');
+      });
+      slideTime();
+    </script>
+
+  </div>
+
+  <div id="content_wrapper">
+
+    <div id="list_content" class="hidden">
+      <div id="list_inner_wrapper">
       </div>
     </div>
 
-    <div id="content_wrapper">
-
-      <div id="list_content" class="hidden">
-       <div id="list_inner_wrapper">
-                </div>
-            </div>
-
-      <div id="make_content" class="hidden">
-        {%ifnotequal user.username "" %}
-        <h3>Make Event</h3>
-        {{form.media}}
-        <form action="/add/" method="post" id="eventform" class="form-horizontal">{% csrf_token %}
-            {{ form.non_field_errors }}
-            <div id="ajaxwrapper">
-            <div class="control-group {% if form.name.errors %}error{% endif %}">
-                <label class="control-label" for="id_name">Name:</label>
-                <div class="controls">
-                {{ form.name }}
-                <span class="help-block">{{ form.name.errors }}</span>
-                </div>
-            </div>
+    <div id="make_content" class="hidden">
+      {%ifnotequal user.username "" %}
+      <h3>Make Event</h3>
+      {{form.media}}
+      <form action="/add/" method="post" id="eventform" class="form-horizontal">{% csrf_token %}
+      {{ form.non_field_errors }}
+      <div id="ajaxwrapper">
+      <div class="control-group {% if form.name.errors %}error{% endif %}">
+        <label class="control-label" for="id_name">Name:</label>
+        <div class="controls">
+        {{ form.name }}
+        <span class="help-block">{{ form.name.errors }}</span>
+      </div>
+    </div>
 
         <div class="control-group ">
                 <label class="control-label" for="id_startTime">Start:</label>
