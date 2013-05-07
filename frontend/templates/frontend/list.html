@@ -4,6 +4,16 @@
                prev_markers[j].setMap(null);
             }
 
+
+            {% for event in events_list %}
+              rsvp_list['{{event.id}}'] = false;
+            {% endfor %}
+
+            {% for e in rsvped %}
+              rsvp_list['{{e.id}}'] = true;
+            {% endfor %}
+
+
             var i = 0; 
             {% for event in events_list %} 
             {% if event.lat %}
@@ -16,11 +26,26 @@
                icon: single_pin
             });
 
+            var rsvped = rsvp_list['{{event.id}}'];
+
+            var rsvp_text;
+            if (rsvped == false) {
+              rsvp_text = "RSVP"
+            } else {
+              rsvp_text = "un RSVP";
+            }
+            if (rsvped) {
+              rsvp_class = "rsvp"
+            } else {
+              rsvp_class = ""
+          }
+
             var contentString = '<div class="infoWindow_content">' +
                '<h3 class="infoWindow_heading">{{event.name}}</h3>' +
                '<div id="infoWindow_body">' +
                '<p>Time: {{event.startTime|date:"D d M Y H:i"}}</p>' +
                '<p>Location: {{event.location}}</p>' +
+               '<a href="#" class="'+rsvp_class+'" onclick="rsvp({{event.id}}, '+rsvped+')" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
                '</div>' +
                '</div>';
 
@@ -95,6 +120,11 @@
          }
 
          function init() {
+            var view = scheduler.getState().mode;
+            var current_date = scheduler.getState().date;
+
+           // scheduler.init('scheduler_here', new Date(), "week");
+
             scheduler.clearAll();
             scheduler.config.CSRF_Token = "{{ csrf_token }}";
 
@@ -103,7 +133,7 @@
 
             scheduler.config.xml_date = "%Y-%m-%d %H:%i";
             scheduler.config.readonly = true;
-            scheduler.init('scheduler_here', new Date(), "week");
+            scheduler.init('scheduler_here', current_date, view);
 
             scheduler.templates.event_class = function (start, end, event) {
                if (start < (new Date())) //if date in past
@@ -111,7 +141,13 @@
             }
 
             scheduler.parse({{cal_events|safe}}, "json"); 
+        
+            scheduler.templates.tooltip_text = function(start,end,event) {
+              var text = '<h3>'+event.text+'</h3>';
+              return text;
+            }
 
+          
             //== ===========================
             // Events handling
             //=============================

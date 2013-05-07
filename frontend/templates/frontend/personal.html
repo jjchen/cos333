@@ -13,7 +13,7 @@
     <link href="{% static "frontend/jquery.tagit.css" %}" rel="stylesheet" type="text/css">
     <script src="{% static "frontend/tag-it.min.js" %}" type="text/javascript" charset="utf-8"></script>
 
-  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 
     <!--<link href="{% static "frontend/jquery.tagit.css" %}" rel="stylesheet" type="text/css">-->
     <link href="{% static "frontend/ui-autocomplete-tag-it.css" %}" rel="stylesheet" type="text/css">
@@ -112,6 +112,7 @@
               {% for e in recommended %}
                 <div class="events_item" id="{{e.id}}">
                 <p> {{ e.name }}</p>
+                <a href="#" class="'+rsvp_class+'" onclick="rsvp({{e.id}})" id="rsvp_{{e.id}}">RSVP</a>
               </div>
               {% endfor %}
           </div>
@@ -145,8 +146,7 @@
         <div id="right">
           <div id="more">
           </div>
-          <div id="edit_groups_form">
-          </div>
+
           <div id="friends_form">
             <form action="/addfriend/" method="post">{% csrf_token %}
             <p><b> Add friend: </b> </p>
@@ -161,6 +161,14 @@
             <input type="submit" value="Submit" />
             </form>
           </div>
+	  <div id="import_groups_form">
+              {% for g in fb_groups %}
+	      <p>{{g.name}} 
+		<a href="{% url 'frontend:importgroup' g.id %}">Import</a>
+		
+	      </p>
+              {% endfor %}
+	    </div>
         </div>
       </div>
     </div>
@@ -201,14 +209,14 @@
 
         {% for g in groups_list %}
           if (id == {{g.id}}) {
-                var parent = document.getElementById("edit_groups_form");
+                var parent = document.getElementById("more");
                 html = "{{g.name}} :";
                 {% for u in g.users.all %}
                   html += " {{u.first_name}}"
                 {% endfor %}
-                html += "<form action='/addgroup/' method='post' id='edit_group_form'>{% csrf_token %}"
+                html += "<div id='edit_groups_form'><form action='/addgroup/' method='post' id='edit_group_form'>{% csrf_token %}"
                       + "<p><b> Add user to group: </b></p>"+'{{form.group_name}} {{form.member_names}}'+ "<input type='submit' value='Submit' />"
-                      + "</form>"
+                      + "</form></div>"
                 parent.innerHTML = html;
                 $("#edit_groups_form #id_group_name").attr({type:"hidden", value:'{{g.name}}'})
 
@@ -238,6 +246,18 @@
             parent.innerHTML = htmlResponse;
         });
       }
+
+         function rsvp(id) {
+            alert("HI");
+            var parent = document.getElementById("rsvp_"+id);
+            $.post('{% url "frontend:addrsvp" %}', {'rsvp_id':id, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(json) {
+                var json_parsed = $.parseJSON(json);
+                if(json_parsed.success == 'true') {
+                  alert("sc")
+                }
+            });
+         }
+
 
     </script>   
 </body>

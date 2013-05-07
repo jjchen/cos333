@@ -28,9 +28,6 @@ from django.http import Http404
 from django.shortcuts import render_to_response
 from django.shortcuts import redirect, render
 from django.template import RequestContext
-from social_auth.models import UserSocialAuth
-from facepy import GraphAPI
-from facepy import SignedRequest
 from fields import JqSplitDateTimeField
 from widgets import JqSplitDateTimeWidget
 from django.core.serializers.json import DjangoJSONEncoder
@@ -38,6 +35,7 @@ import json
 import operator
 import django.contrib.auth
 import unicodedata
+import facebook 
 
 MAX_LEN = 50
 class SignupForm(forms.Form):
@@ -66,6 +64,11 @@ class NewEventForm(forms.Form):
 						required=False)
 	tags = forms.CharField(max_length=200, required=False, widget=forms.HiddenInput())
 	#tags = TagField(widget=TagAutocompleteTagIt(max_tags=False))
+
+def accessible(event, user):
+	groups = MyGroup.objects.filter(users = user)
+	print event.groups.all()
+	return (event.private == False) or (groups & event.groups.all()).count != 0
 
 # testing JSON autocomplete
 def get_names(request):
@@ -160,8 +163,8 @@ def signup(request):
 		if form.is_valid():
 			data = form.cleaned_data
 			user = MyUser(first_name = data['first_name'],
-								last_name = data['last_name'],
-								user_id = request.user.username)
+				      last_name = data['last_name'],
+				      user_id = request.user.username)
 			user.save()
 			return HttpResponseRedirect('/') # Redirect after POST
 	else:
@@ -285,9 +288,9 @@ def rmfriend(request, user):
 	friend_obj.friends.remove(remove_obj)
 	friend_obj.save()
 	return HttpResponseRedirect('/frontend/personal')
+	
 
 def rmgroup(request, group):
-	print group
 	try:
 		group_obj = MyGroup.objects.get(id = group)
 	except ObjectDoesNotExist:
@@ -312,68 +315,34 @@ def rmevent(request, event):
 	event_obj.delete()
 	return HttpResponseRedirect('/frontend/personal')	
 
-# export event to Facebook
-def process_export(user, event_obj):
-	#user and event_obj are MyUser and NewEvent type, respectively. Returns
-	#True on success, False on failure
-        instance = UserSocialAuth.objects.get(
-		user=user, provider='facebook')        
-        token = instance.tokens['access_token']
-        graph = GraphAPI(token)
-        if event_obj.private:
-		privacy_type = "SECRET"
-	else:
-		privacy_type = "OPEN"
-        event_path = str(instance.uid) + "/events"
-        event_data = {
-            'name' : event_obj.name,
-            'start_time' : event_obj.startTime.isoformat(),
-	    'end_time': event_obj.endTime.isoformat(),
-            'location' : event_obj.location,
-            'privacy_type' : privacy_type
-            }
-	print event_data
-        result = graph.post(path=event_path, **event_data)
-        print "Result: " + str(result)
-        if result.get('id', False):
-		return True
-	else:
-		return False
-
-def exportevent(request, event):
-	try:
-		event_obj = NewEvent.objects.get(id = event)
-	except ObjectDoesNotExist:
-		return HttpResponse('Tried exporting non-existent event!', 
-				    status=401)
-	this_user = MyUser.objects.get(user_id = request.user.username)
-	if event_obj.creator != this_user:
-		return HttpResponse('Unauthorized access', status=401)
-	success = process_export(this_user, event_obj)
-	if success:
-		return HttpResponseRedirect('/frontend/personal')
-	return HttpResponse('Export failed!', status=401)
-
-
 def addrsvp(request):
+	print "in rsvp"
 	if request.method == 'POST':
 		this_user = MyUser.objects.get(user_id = request.user.username)
 		try:
 			id = request.POST.get('rsvp_id')
 
 			event_obj = NewEvent.objects.get(id = id)
+			if (not accessible(event_obj, this_user)):
+				return HttpResponse('You dont have access to this event!', status=401)
 		except ObjectDoesNotExist:
 			return HttpResponse('Tried rspving to non-existent group!', status=401)
 		event_obj.rsvp.add(this_user)
 		event_obj.save()
-		return HttpResponse('{"success":"true"}');
+		if request.POST.get('personal') == None:
+			return HttpResponse('{"success":"true"}');
+		else:
+			return HttpResponseRedirect('/frontend/personal')
 	else:
 		raise Http404('Unauthorized access');
 
 def personal_ajax(request, event):
 	if request.method == 'POST':
 		try:
+			this_user = MyUser.objects.get(user_id = request.user.username)
 			event_obj = NewEvent.objects.get(id = event)
+			if (not accessible(event_obj, this_user)):
+				return HttpResponse('You dont have access to this event!', status=401)
 		except ObjectDoesNotExist:
 			return HttpResponse('event does not exist!', status=401)
 		return render_to_response('frontend/showevent.html', {'event' : event_obj}, context_instance=RequestContext(request))
@@ -383,12 +352,7 @@ def editevent(request, event):
 		try:
 			event_obj = NewEvent.objects.get(id = event)
 			dictionary = model_to_dict(event_obj)
-			print dictionary
-	
-			print dictionary['startTime']
-
 			form = NewEventForm(initial=dictionary) # A form bound to data
-			print form['startTime'] 
 		except ObjectDoesNotExist:
 			return HttpResponse('Event does not exist!', status=401)
 		return render_to_response('frontend/editevent.html',
@@ -421,6 +385,8 @@ def rmrsvp(request, id=None):
 			if (id == None):
 				id = request.POST.get('rsvp_id')
 			event_obj = NewEvent.objects.get(id = id)
+			if (not accessible(event_obj, this_user)):
+				return HttpResponse('You dont have access to this event!', status=401)
 		except ObjectDoesNotExist:
 			return HttpResponse('Tried rspving to non-existent event!', status=401)
 		event_obj.rsvp.remove(this_user)
@@ -431,6 +397,8 @@ def rmrsvp(request, id=None):
 		print id
 		try:
 			event_obj = NewEvent.objects.get(id = id)
+			if (not accessible(event_obj, this_user)):
+				return HttpResponse('You dont have access to this event!', status=401)
 		except ObjectDoesNotExist:
 			return HttpResponse('Tried rspving to non-existent event!', status=401)
 		event_obj.rsvp.remove(this_user)
@@ -449,7 +417,7 @@ def personal(request):
 #	groups = MyGroup.objects.filter(creator = request.user.username)
 	#groups = this_user.users_set.all()
 	groups = MyGroup.objects.filter(users = this_user)
-	my_events = NewEvent.objects.filter(creator = this_user)
+	my_events = NewEvent.objects.filter(Q(creator = this_user), (Q(private = False) | Q(groups__in=groups)))
 	rsvped = NewEvent.objects.filter(rsvp = this_user)
 	recommended = []
 
@@ -460,11 +428,11 @@ def personal(request):
 		friends_obj = Friends.objects.get(name = this_user)
 		friends = friends_obj.friends.all()
 		if (len(friends) != 0 and len(groups) != 0):
-			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))) | (reduce(operator.or_, (Q(groups=x) for x in groups))))
+			recommended = NewEvent.objects.filter(((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))) | (reduce(operator.or_, (Q(groups=x) for x in groups)))), (Q(private = False) | Q(groups__in=groups)))
 		elif (len(friends) != 0): 
-			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))))
+			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))), (Q(private = False) | Q(groups__in=groups)))
 		elif (len(groups) != 0):
-			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))))
+			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))), (Q(private = False) | Q(groups__in=groups)))
 		other_users = all_users_obj.exclude(pk__in = friends)
 	except ObjectDoesNotExist:
 		friends_obj = Friends()
@@ -477,9 +445,10 @@ def personal(request):
 	events_list.extend(recommended);
 	form = AddgroupForm() # An unbound form
 	form2 = AddfriendsForm()
+	fb_groups = facebook.get_fb_groups(this_user)
 	return render(request, 'frontend/personal.html', {
         'form': form, 'form2':form2, 'groups_list': groups, 'my_events': my_events, 'rsvped': rsvped, 
-        'events_list': events_list, 'recommended':recommended, "friends":friends, 'other_users': other_users, 'all_users': all_users 
+        'events_list': events_list, 'recommended':recommended, "friends":friends, 'other_users': other_users, 'all_users': all_users, 'fb_groups': fb_groups
     })	
 
 def filter(request):
@@ -499,7 +468,8 @@ def filter(request):
 			print user
 			lat = user.latitude
 			lon = user.longitude
-			context['rsvped'] = NewEvent.objects.filter(rsvp = user)
+			groups = MyGroup.objects.filter(users = user)
+			context['rsvped'] = NewEvent.objects.filter(Q(rsvp = user), (Q(private = False) | Q(groups__in=groups)))
 		except MyUser.DoesNotExist:
 			user = None
 			latitude = MyUser._meta.get_field_by_name('latitude')
@@ -515,18 +485,24 @@ def filter(request):
 		if form.is_valid():
 			print "valid"
 			query = form.cleaned_data['search_query']
-			events_list = NewEvent.objects.filter(
-				Q(name__icontains=query) | 
-				Q(location__icontains=query)).order_by("startTime")
-			print events_list
+			try:
+				user = MyUser.objects.get(user_id=username)
+
+				events_list = NewEvent.objects.filter(
+					(Q(name__icontains=query) | 
+					Q(location__icontains=query)), (Q(private = False) | Q(groups__in=groups))).order_by("startTime") 
+			except ObjectDoesNotExist: 
+				events_list = NewEvent.objects.filter(
+					Q(name__icontains=query) | 
+					Q(location__icontains=query)).order_by("startTime")
 			show_list = True
 	elif tags != None and len(tags) != 0:
-		events_list = NewEvent.objects.filter(reduce(operator.or_, (Q(tags__icontains=x) for x in tags)))
+		events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(tags__icontains=x) for x in tags))), (Q(private = False) | Q(groups__in=groups)))
 		show_list = False
 	elif personal_type != None:
 		if personal_type == 'recommended':
 			if user == None:
-				events_list = NewEvent.objects.all()
+				events_list = NewEvent.objects.filter(Q(private = False) | Q(groups__in=groups))
 			else: 
 				try: 
 					friends_obj = Friends.objects.get(name = user)
@@ -534,11 +510,11 @@ def filter(request):
 					groups = MyGroup.objects.filter(users = user)
 
 					if (len(friends) != 0 and len(groups) != 0):
-						events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))) | (reduce(operator.or_, (Q(groups=x) for x in groups))))
+						events_list = NewEvent.objects.filter(((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))) | (reduce(operator.or_, (Q(groups=x) for x in groups)))), (Q(private = False) | Q(groups__in=groups)))
 					elif (len(friends) != 0): 
-						events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))))
+						events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))), (Q(private = False) | Q(groups__in=groups)))
 					elif (len(groups) != 0):
-						events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))))					
+						events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))), (Q(private = False) | Q(groups__in=groups)))
 				except ObjectDoesNotExist:
 					friends_obj = Friends()
 					friends_obj.name = this_user
@@ -549,7 +525,13 @@ def filter(request):
 			else:
 				events_list = NewEvent.objects.filter(Q(creator = user) | Q(rsvp = user))
 	else:
-		events_list = NewEvent.objects.filter(startTime__gt=time_threshold).order_by("startTime")
+		try:
+			user = MyUser.objects.get(user_id=username)
+			groups = MyGroup.objects.filter(users = user)
+			events_list = NewEvent.objects.filter(Q(startTime__gt=time_threshold),(Q(private = False) | Q(groups__in=groups))).order_by("startTime")
+		except ObjectDoesNotExist:
+			events_list = NewEvent.objects.filter(Q(startTime__gt=time_threshold)).order_by("startTime")
+		
 		show_list = False	
 
 	context['events_list'] = events_list
@@ -568,6 +550,9 @@ def filter(request):
 
 # Create your views here.  index is called on page load.
 def index(request, add_form=None):
+	all_buildings = Building.objects.all()
+	location = [unicodedata.normalize('NFKD', building.name).encode('ascii', 'ignore') for building in all_buildings]
+
 	events_list = []
 	show_list = False
 	if request.method =='POST' and add_form==None:
@@ -588,7 +573,7 @@ def index(request, add_form=None):
 	tags = Tag.objects.all()
 
 	context = {'events_list': events_list, 'user': request.user, 
-		   'show_list': show_list, 'search_form': form, 'rsvped': [],'tags': tags, 'cal_events': []}
+		   'show_list': show_list, 'search_form': form, 'rsvped': [],'tags': tags, 'cal_events': [], 'locations': location}
 	if add_form == None: 
 		context['form'] = NewEventForm()
 		context['make_visible'] = False
@@ -753,7 +738,6 @@ def refresh(request):
    context = {'events_list': events_list, 'user': request.user, 
 		   'show_list': show_list, 'search_form': form, 'tags': tags}
    return render(request, 'frontend/map.html', context)
-
 
 def eventsXML(request):
     """

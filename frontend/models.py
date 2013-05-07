@@ -14,10 +14,12 @@ class Tag(models.Model):
 class MyUser(models.Model):
     first_name = models.CharField(max_length=NAME_MAXLEN)
     last_name = models.CharField(max_length=NAME_MAXLEN)
-    user_id = models.CharField(max_length=20)
+    user_id = models.CharField(max_length=NAME_MAXLEN)
     latitude = models.FloatField(default=40.344725)
     longitude = models.FloatField(default=-74.6556)
     # friends = models.ForeignKey('self', null=True) #recursive relation
+    def __unicode__(self):
+        return self.first_name + " " + self.last_name
 
 class MyGroup(models.Model):
     users = models.ManyToManyField(MyUser, related_name="users")
@@ -32,12 +34,12 @@ class NewEvent(models.Model):
     name = models.CharField(max_length=200)
     startTime = models.DateTimeField(default=datetime.date.today())
     endTime = models.DateTimeField(default=datetime.date.today())
-    location = models.CharField(max_length=200)
+    location = models.CharField(max_length=200, null=True, default="Princeton University")
     private = models.BooleanField(default=False)
     description = models.TextField(blank=True, null=True)
     lat = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
     lon = models.DecimalField(max_digits=15, decimal_places=10, blank=True, null=True)
-    tags = models.CharField(max_length=200, blank = True, null=True, default="all")
+    tags = models.CharField(max_length=200, blank=True, null=True, default="all")
     #tags = models.ManyToManyField(Tag)
     #tags = TagAutocompleteTagItField(max_tags=False)
     creator = models.ForeignKey(MyUser, related_name="creator", blank=True, null=True)

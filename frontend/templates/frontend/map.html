@@ -19,7 +19,7 @@
     <script src="{% static "frontend/dhtmlxscheduler.js" %}"></script>
     <script src="{% static "frontend/ext/dhtmlxscheduler_readonly.js"%}" type="text/javascript" charset="utf-8"></script>
     <script src="{% static "frontend/ext/dhtmlxscheduler_dhx_terrace.js"%}" type="text/javascript" charset="utf-8"></script>
-
+    <script src="{% static "frontend/ext/dhtmlxscheduler_tooltip.js"%}" type="text/javascript" charset="utf-8"></script>
     <script src="{% static "frontend/bootstrap-datepicker.js" %}"></script>
 
 <!-- bootstrap stuff that doesn't work -->
@@ -87,6 +87,14 @@
   });
 
     </script>-->
+    
+   <!-- This is for the updating of slider time -->
+    <script type="text/javascript">
+    function updateSliderInput(field, val) {
+      document.getElementById(field).innerHTML=val; 
+    }
+    //document.getElementById("p1").innerHTML="New text!";
+  </script>
 
     <!--<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>-->
     <script type="text/javascript" src="{% static "frontend/oms.min.js" %}">
@@ -266,6 +274,16 @@
       <script type="text/javascript" id="fill_in">
       </script>
       <script type="text/javascript">
+        $(function() {
+          names = {{locations|safe}}
+
+          {% for u in other_users %}
+            names.push("{{u.user_id}}");
+          {% endfor %}
+          $("#id_location").autocomplete({
+            source: names
+          });
+        })
 
          var map;
          var idled = false;
@@ -434,7 +452,6 @@
           }
       
 
-          setInterval( "reloadEvents()", 60000);
           
           function reloadEvents()
           {
@@ -526,9 +543,21 @@
 
 
          <div id="time_slider">
-             Time
-
-            <input type="range">
+         	<p id="displaySliderTime"> 3 hours </p>
+         	<form id ="slider" method="post">{% csrf_token %}
+            	<input type="range" required name="time" id="sliderTime" min="1" max="48" step="1" onchange="updateSliderInput('displaySliderTime', 'sliderTime')">
+            	<output for="time" onforminput="value = range.valueAsNumber;"></output>
+            	<!--<input id="textTime" type="text" size="2"/>-->
+            </form>
+            
+            <!--
+            <script type="text/javascript">
+            function updateTextInput(val) {
+               document.getElementById('textInput').value=val; 
+            }
+            </script>
+            -->
+            
          </div>
       </div>
     </div>
