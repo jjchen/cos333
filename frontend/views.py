@@ -12,8 +12,8 @@ from frontend.models import Tag
 from django.forms.models import model_to_dict
 
 # tagging things
-from tagging.forms import TagField
-from tagging.models import Tag
+#from tagging.forms import TagField
+#from tagging.models import Tag
 #from tagging_autocomplete_tagit.widgets import TagAutocompleteTagIt
 
 from django import forms

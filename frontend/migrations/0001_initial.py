@@ -19,7 +19,7 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('first_name', self.gf('django.db.models.fields.CharField')(max_length=50)),
             ('last_name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('user_id', self.gf('django.db.models.fields.CharField')(max_length=20)),
+            ('user_id', self.gf('django.db.models.fields.CharField')(max_length=50)),
             ('latitude', self.gf('django.db.models.fields.FloatField')(default=40.344725)),
             ('longitude', self.gf('django.db.models.fields.FloatField')(default=-74.6556)),
         ))
@@ -45,8 +45,8 @@ class Migration(SchemaMigration):
         db.create_table(u'frontend_newevent', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=200)),
-            ('startTime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 5, 6, 0, 0))),
-            ('endTime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 5, 6, 0, 0))),
+            ('startTime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 5, 7, 0, 0))),
+            ('endTime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 5, 7, 0, 0))),
             ('location', self.gf('django.db.models.fields.CharField')(default='Princeton University', max_length=200, null=True)),
             ('private', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('description', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
@@ -196,13 +196,13 @@ class Migration(SchemaMigration):
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'latitude': ('django.db.models.fields.FloatField', [], {'default': '40.344725'}),
             'longitude': ('django.db.models.fields.FloatField', [], {'default': '-74.6556'}),
-            'user_id': ('django.db.models.fields.CharField', [], {'max_length': '20'})
+            'user_id': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
         u'frontend.newevent': {
             'Meta': {'object_name': 'NewEvent'},
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'creator'", 'null': 'True', 'to': u"orm['frontend.MyUser']"}),
             'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'endTime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 5, 6, 0, 0)'}),
+            'endTime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 5, 7, 0, 0)'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'groups'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['frontend.MyGroup']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'lat': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '15', 'decimal_places': '10', 'blank': 'True'}),
@@ -211,7 +211,7 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'private': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'rsvp': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'rsvp'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['frontend.MyUser']"}),
-            'startTime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 5, 6, 0, 0)'}),
+            'startTime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 5, 7, 0, 0)'}),
             'tags': ('django.db.models.fields.CharField', [], {'default': "'all'", 'max_length': '200', 'null': 'True', 'blank': 'True'})
         },
         u'frontend.tag': {

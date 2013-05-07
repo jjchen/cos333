@@ -1,0 +1,23 @@
+        <p>
+          <label for="time">Time range:</label>
+          <input type="text" id="time" style="border: 0; color: #000000;" />
+        </p>
+        
+        <div id="time_slider">
+
+            <p id="displaySliderTime"> 3 hours </p>
+            <form id ="slider" method="post">{% csrf_token %}
+                <input type="range" required name="time" id="sliderTime" min="1" max="48" step="1" onchange="updateSliderInput('displaySliderTime', 'sliderTime')">
+                <output for="time" onforminput="value = range.valueAsNumber;"></output>
+                <!--<input id="textTime" type="text" size="2"/>-->
+            </form>
+            
+            <!--
+            <script type="text/javascript">
+            function updateTextInput(val) {
+               document.getElementById('textInput').value=val; 
+            }
+            </script>
+            -->
+            
+         </div>

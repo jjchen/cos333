@@ -450,11 +450,8 @@
                     cal.className = 'hidden';
               });                
           }
-      
-
           
-          function reloadEvents()
-          {
+          function reloadEvents() {
             filter("reload");
           }
     
@@ -521,7 +518,6 @@
     
   <div id="side_panel">
     <h3>Filter</h3>
-
     <br/>
     <form id ="search_form2" method="post">{% csrf_token %}
       <input type="text" id="search_query" placeholder="Search..." name="search_query" class="input-medium search-query">
@@ -545,22 +541,7 @@
 
     <div id="time-slider"></div>
     <span id="SlideMax"></span>
-    <br/>
-    <span id="time"></span>
-    </br>
-    <input type="submit" name="scheduleSubmit" value="Submit" id="scheduleSubmit" class="ui-button ui-state-default ui-corner-all"/> 
-    <table id="Schedule">
-      <thead>
-        <tr>
-          <th>Start Time</th>
-          <th>End Time</th>
-          </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    <br/>
-
+    <br/><span id="time"></span></br>
     <script>
       var startTime;
       var endTime;
@@ -609,9 +590,9 @@
             '<td>' + endTime + '</td>' +
             '</tr>');
       });
-      slideTime();
+      
     </script>
-
+    <br/> <a href="#" onclick="filter2('my_events')">Filter Time</a>
   </div>
 
   <div id="content_wrapper">
@@ -722,9 +703,8 @@
                 </div>
             </div>
         </div>
-         <div id="settings_content" class="hidden">
+        <div id="settings_content" class="hidden">
              <h3>Settings</h3>
-
          </div>
       </div>
       <div id="make_button" class="button" onclick="showContent('make_content');">
@@ -732,7 +712,6 @@
       </div>
 
     <div id="calendar_button" class="button" onclick="showContent('calendar_content');">
-
       <h3>Calendar</h3>
     </div>
     
