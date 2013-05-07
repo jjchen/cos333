@@ -652,7 +652,8 @@ def add(request):
 			event.save() #must save before adding groups
 			# new tagging method
 			tag_list = [Tag.objects.get_or_create(name=tag)[0] for tag in data['tags'].split()],
-			#for tag in tag_list:
+			for tag in tag_list:
+				event.tags.add(*tag)
 			#	event.tags.add(tag)
 			# group stuff
 			for group in data['groups']:

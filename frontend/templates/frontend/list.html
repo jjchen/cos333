@@ -110,7 +110,7 @@
               + '<div style="float:right">'
             html += '<a href="#" onclick="showMore({{event.id}})"> Show More </a>'
               +'<a href="#" class="'+rsvp_class+'" onclick="rsvp({{event.id}}, '+rsvped+')" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
-              + ' </td></tr>' + '<tr id = "list_item_{{event.id}}"" class="' + row_class + '"><td> <small>{{event.tags}}</small></td></tr>' 
+              + ' </td></tr>' + '<tr id = "list_item_{{event.id}}"" class="' + row_class + '"><td> <small>tag {{event.tags}}</small></td></tr>' 
             {% endfor %}
             html += "</table>"; 
             {% else %}
