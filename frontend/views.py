@@ -64,7 +64,7 @@ class NewEventForm(forms.Form):
 	private = forms.BooleanField(required=False)
 	groups = forms.ModelMultipleChoiceField(queryset=MyGroup.objects.all(),
 						required=False)
-	tags = forms.CharField(max_length=200, required=False)
+	tags = forms.CharField(max_length=200, required=False, widget=forms.HiddenInput())
 	#tags = TagField(widget=TagAutocompleteTagIt(max_tags=False))
 
 # testing JSON autocomplete
