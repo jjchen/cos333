@@ -484,9 +484,9 @@
     <link rel="stylesheet" href="{% static "frontend/jquery.ui.1.9.2.ie.css" %}" type="text/css">
     <link rel="stylesheet" href="{% static "frontend/jquery.ui.1.10.0.ie.css" %}" type="text/css">
 
-   </head>
+  </head>
    
-   <body onload="filter('init')">
+  <body onload="filter('init')">
   <div class="navbar navbar-fixed-top">  
     <div class="navbar-inner">  
       <div class="container">  
@@ -546,14 +546,13 @@
           $( "#slider-range" ).slider({
             range: true,
             min: 0,
-            max: 500,
+            max: 50,
             values: [ 75, 300 ],
             slide: function( event, ui ) {
-              $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+              $( "#amount" ).val( ui.values[ 0 ] + ui.values[ 1 ] );
             }
           });
-          $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
-            " - $" + $( "#slider-range" ).slider( "values", 1 ) );
+          $( "#amount" ).val( $( "#slider-range" ).slider( "values", 0 ) + $( "#slider-range" ).slider( "values", 1 ) );
         });
         </script>
 
@@ -561,7 +560,7 @@
           <label for="amount">Price range:</label>
           <input type="text" id="amount" style="border: 0; color: #f6931f; font-weight: bold;" />
         </p>
-        <div id="slider-rage"></div>
+        <div id="slider-range"></div>
 
          <div id="time_slider">
          	<p id="displaySliderTime"> 3 hours </p>
