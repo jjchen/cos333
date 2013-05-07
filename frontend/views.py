@@ -68,7 +68,7 @@ class NewEventForm(forms.Form):
 def accessible(event, user):
 	groups = MyGroup.objects.filter(users = user)
 	print event.groups.all()
-	return (event.private == False) or (groups & event.groups.all()).count != 0
+	return (event.private == False) #or len(groups & event.groups.all()) != 0
 
 # testing JSON autocomplete
 def get_names(request):
@@ -329,6 +329,7 @@ def addrsvp(request):
 			return HttpResponse('Tried rspving to non-existent group!', status=401)
 		event_obj.rsvp.add(this_user)
 		event_obj.save()
+		print "saved"
 		if request.POST.get('personal') == None:
 			return HttpResponse('{"success":"true"}');
 		else:
@@ -433,6 +434,8 @@ def personal(request):
 			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))), (Q(private = False) | Q(groups__in=groups)))
 		elif (len(groups) != 0):
 			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))), (Q(private = False) | Q(groups__in=groups)))
+		recommended = recommended.filter(~Q(rsvp=this_user))
+
 		other_users = all_users_obj.exclude(pk__in = friends)
 	except ObjectDoesNotExist:
 		friends_obj = Friends()
@@ -490,11 +493,11 @@ def filter(request):
 
 				events_list = NewEvent.objects.filter(
 					(Q(name__icontains=query) | 
-					Q(location__icontains=query)), (Q(private = False) | Q(groups__in=groups))).order_by("startTime") 
+					Q(location__icontains=query) | Q(tags__icontains=query)), (Q(private = False) | Q(groups__in=groups))).order_by("startTime") 
 			except ObjectDoesNotExist: 
 				events_list = NewEvent.objects.filter(
 					Q(name__icontains=query) | 
-					Q(location__icontains=query)).order_by("startTime")
+					Q(location__icontains=query) | Q(tags__icontains=query)).order_by("startTime")
 			show_list = True
 	elif tags != None and len(tags) != 0:
 		events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(tags__icontains=x) for x in tags))), (Q(private = False) | Q(groups__in=groups)))

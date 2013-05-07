@@ -78,24 +78,24 @@
       <div class="clear"></div>
       <div id="personal_content">
         <div id="left">
-         <div id="my_events">
-              <div class="events_header"><p><b> Your Events: </b></p></div>
-              <div class="list_group">
+         <div class="personal_headings" id="my_events">
+              <div class="events_header">Your Events:</div>
+              <div class="list_group hidden">
 
                 {% for e in my_events %}
                 <div class="events_item" id="{{e.id}}">
                   <p> {{ e.name }}
                         <a href="#" onclick="edit_form({{e.id}})"> Edit </a>
                         <a href="{% url 'frontend:rmevent' e.id %}">Remove</a>
-		  <a href="{% url 'frontend:exportevent' e.id %}"> Export </a>
-		  </p>
+		                    <a href="{% url 'frontend:exportevent' e.id %}"> Export </a>
+		              </p>
                 </div>
               {% endfor %}
               </div>
           </div>
-          <div id="rsvped">
-            <div class="events_header"><p><b> Rsvped Events: </b></p></div>
-            <div class="list_group">
+          <div class="personal_headings" id="rsvped">
+            <div class="events_header">Rsvped Events:</div>
+            <div class="list_group hidden">
 
               {% for e in rsvped %}
 
@@ -105,9 +105,9 @@
               {% endfor %}
             </div>
           </div>
-          <div id="recommended">
-            <div class="events_header"><p><b> Recommended Events (Friends/Groups): </b></p></div>
-            <div class="list_group">
+          <div class="personal_headings" id="recommended">
+            <div class="events_header">Recommended Events (Friends/Groups): </div>
+            <div class="list_group hidden">
 
               {% for e in recommended %}
                 <div class="events_item" id="{{e.id}}">
@@ -118,57 +118,59 @@
           </div>
           </div>
 
-          <div id="friends">
-            <div class="friends_header"><p> <b>Friends:</b> </p></div>
-             <div class="list_group">
+          <div class="personal_headings" id="friends">
+            <div class="events_header">Friends:</div>
+             <div class="list_group hidden">
 
               {% for f in friends %}
               <div class="friends_item">
                 <p> {{ f.first_name }} <a href="{% url 'frontend:rmfriend' f.id %}">Remove</a></p>
               </div>
               {% endfor %}
+            <div id="friends_form">
+              <form action="/addfriend/" method="post">{% csrf_token %}
+                Add friend: 
+                {{ form2.name }}
+              <button class="btn" type="submit">Add</button>
+
+              </form>
             </div>
+          </div>
 
           </div>
 
-          <div id="groups">
-            <div class="groups_header"><p><b>Your existing groups:</b></p></div>
-            <div class="list_group">
+          <div class="personal_headings" id="groups">
+            <div class="events_header">Your existing groups:</div>
+            <div class="list_group hidden">
 
               {% for g in groups_list %}
               <div class="groups_item" id="{{g.id}}">
                 <p> {{ g.name }} <a href="{% url 'frontend:rmgroup' g.id %}">Leave</a></p>
               </div>
               {% endfor %}
+            <div id="groups_form">
+              <form action="/addgroup/" method="post">{% csrf_token %}
+               Add group: 
+              {{ form.as_p }}
+              <button class="btn" type="submit">Add</button>
+              </form>
             </div>
+
+            <div id="import_groups_form">
+                      {% for g in fb_groups %}
+                <p>{{g.name}} 
+            <a href="{% url 'frontend:importgroup' g.id %}">Import</a>
+            
+                </p>
+                      {% endfor %}
+              </div>
+            </div>
+
           </div>
         </div>
         <div id="right">
           <div id="more">
           </div>
-
-          <div id="friends_form">
-            <form action="/addfriend/" method="post">{% csrf_token %}
-            <p><b> Add friend: </b> </p>
-            {{ form2.name }}
-            <input type="submit" value="Submit" />
-            </form>
-          </div>
-          <div id="groups_form">
-            <form action="/addgroup/" method="post">{% csrf_token %}
-            <p><b> Add group: </b> </p>
-            {{ form.as_p }}
-            <input type="submit" value="Submit" />
-            </form>
-          </div>
-	  <div id="import_groups_form">
-              {% for g in fb_groups %}
-	      <p>{{g.name}} 
-		<a href="{% url 'frontend:importgroup' g.id %}">Import</a>
-		
-	      </p>
-              {% endfor %}
-	    </div>
         </div>
       </div>
     </div>
@@ -199,6 +201,17 @@
             });
           }
         {% endfor %}
+      });
+
+      $(".personal_headings").click(function(e) {
+        if(e.target != this && e.target.className != "events_header") return;
+        if ($(this).hasClass("active")) {
+          $(this).removeClass("active");
+          $(this).find(".list_group").addClass("hidden");
+        } else {
+          $(this).addClass("active");
+          $(this).find(".list_group").removeClass("hidden");
+        }
       });
 
       $(".groups_item").click(function() {
@@ -248,12 +261,11 @@
       }
 
          function rsvp(id) {
-            alert("HI");
             var parent = document.getElementById("rsvp_"+id);
             $.post('{% url "frontend:addrsvp" %}', {'rsvp_id':id, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(json) {
                 var json_parsed = $.parseJSON(json);
                 if(json_parsed.success == 'true') {
-                  alert("sc")
+                  location.reload();
                 }
             });
          }

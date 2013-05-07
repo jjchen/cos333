@@ -1,28 +1,29 @@
-    <div class="fieldWrapper">
-        <label for="id_name">Name:</label>
-        {{ event.name }}
+    <h4> {{ event.name }} </h4>
+    <div class="show_event_item">
+        <b>Start date & time: </b>
+        <span> {{ event.startTime }} </span>
     </div>
-    <div class="fieldWrapper">
-        <label for="id_startTime">Start date & time: </label>
-        {{ event.startTime }}
+    <div class="show_event_item">
+        <b>End date & time: </b>
+        <span> {{ event.endTime }} </span>
     </div>
-    <div class="fieldWrapper">
-        <label for="id_endTime">End date & time: </label>
-        {{ event.endTime }}
+    <div class="show_event_item">
+        <b>Location: </b>
+        <span> {{ event.location }} </span>
     </div>
-    <div class="fieldWrapper">
-        <label for="id_location">Location: </label>
-        {{ event.location }}
+    <div class="show_event_item">
+        <b>Description: </b>
+        <span> {{ event.descriptoin }} </span>
     </div>
-    <div class="fieldWrapper">
-        <label for="id_private">Private: </label>
-        {{ event.private }}
+    <div class="show_event_item">
+        <b>Private: </b>
+        <span> {{ event.private }} </span>
     </div>
-    <div class="fieldWrapper">
-        <label for="id_groups">Groups: </label>
-        {{ event.groups }}
+    <div class="show_event_item">
+        <b>Groups: </b>
+        <span> {{ event.groups.name }} </span>
     </div>
-    <div class="fieldWrapper">
-        <label for="id_tags">Tags: </label>
-        {{ event.tags }}
+    <div class="show_event_item">
+        <b>Tags: </b>
+        <span> {{ event.tags }} </span>
     </div>
