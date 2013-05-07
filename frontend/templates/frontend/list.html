@@ -104,13 +104,18 @@
             } else {
               rsvp_class = ""
           }
+
             html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"><div class="list_row"> '
               +' {{event.startTime|date:"H:i"}} - {{event.endTime|date:"H:i"}}</div></td>' 
               + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
               + '<div style="float:right">'
             html += '<a href="#" onclick="showMore({{event.id}})"> Show More </a>'
               +'<a href="#" class="'+rsvp_class+'" onclick="rsvp({{event.id}}, '+rsvped+')" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
-              + ' </td></tr>' + '<tr id = "list_item_{{event.id}}"" class="' + row_class + '"><td> <small>tag {{event.tags}}</small></td></tr>' 
+              + ' </td></tr>' + '<tr id = "list_item_{{event.id}}" class="' + row_class + '"><td> <small>';
+            {% for tag in event.tags.all %}
+              html += '{{tag.name}} ';
+            {% endfor %}
+            html += '</small></td></tr>' 
             {% endfor %}
             html += "</table>"; 
             {% else %}
@@ -120,6 +125,7 @@
          }
 
          function init() {
+
             var view = scheduler.getState().mode;
             var current_date = scheduler.getState().date;
 

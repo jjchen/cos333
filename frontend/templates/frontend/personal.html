@@ -27,6 +27,33 @@
     <link rel="stylesheet" href="{% static "frontend/jquery.ui.1.10.0.ie.css" %}" type="text/css">
 
     <script type="text/javascript">
+
+  jQuery(function() {
+      var form = jQuery("#eventform");
+      var tags = jQuery("#singleFieldTags");
+      form.submit(function(e) {
+          jQuery("#sendbutton").attr('disabled', true)
+          jQuery("#sendwrapper").prepend('<span>Submitting event, please wait... </span>')
+          jQuery("#ajaxwrapper").load(
+              form.attr('action') + ' #ajaxwrapper',
+              form.serializeArray(),
+              function(responseText, responseStatus) {
+                  jQuery("#sendbutton").attr('disabled', false)
+                  jQuery("#eventform").trigger("aCustomEvent")
+              }
+          );
+          e.preventDefault(); 
+      });
+
+     jQuery('#search_form2').submit(function(event){
+            filter('search');
+            event.preventDefault(); 
+     });
+  });
+
+  </script>
+
+    <script type="text/javascript">
       $(document).ready(function() {
         var availableTags = {{all_users|safe}}
         $("#groups_form #id_member_names").tagit({
