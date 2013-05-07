@@ -102,7 +102,6 @@ class Command(BaseCommand):
             new_event.save()
 
     def handle(self, *args, **options):
-
         feeds = ["http://etcweb.princeton.edu/webfeeds/events/?fmt=xml",
                  "http://etcweb.princeton.edu/webfeeds/events/roxen/?fmt=xml",
                  "http://etcweb.princeton.edu/webfeeds/events/usg/?fmt=xml"]
