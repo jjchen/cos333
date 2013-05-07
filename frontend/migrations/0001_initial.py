@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding model 'Tag'
         db.create_table(u'frontend_tag', (
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=20, primary_key=True)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=50, primary_key=True)),
         ))
         db.send_create_signal(u'frontend', ['Tag'])
 
@@ -52,10 +52,17 @@ class Migration(SchemaMigration):
             ('description', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
             ('lat', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=15, decimal_places=10, blank=True)),
             ('lon', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=15, decimal_places=10, blank=True)),
-            ('tags', self.gf('django.db.models.fields.CharField')(default='all', max_length=200, null=True, blank=True)),
             ('creator', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='creator', null=True, to=orm['frontend.MyUser'])),
         ))
         db.send_create_signal(u'frontend', ['NewEvent'])
+
+        # Adding M2M table for field tags on 'NewEvent'
+        db.create_table(u'frontend_newevent_tags', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('newevent', models.ForeignKey(orm[u'frontend.newevent'], null=False)),
+            ('tag', models.ForeignKey(orm[u'frontend.tag'], null=False))
+        ))
+        db.create_unique(u'frontend_newevent_tags', ['newevent_id', 'tag_id'])
 
         # Adding M2M table for field groups on 'NewEvent'
         db.create_table(u'frontend_newevent_groups', (
@@ -131,6 +138,9 @@ class Migration(SchemaMigration):
 
         # Deleting model 'NewEvent'
         db.delete_table(u'frontend_newevent')
+
+        # Removing M2M table for field tags on 'NewEvent'
+        db.delete_table('frontend_newevent_tags')
 
         # Removing M2M table for field groups on 'NewEvent'
         db.delete_table('frontend_newevent_groups')
@@ -212,11 +222,11 @@ class Migration(SchemaMigration):
             'private': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'rsvp': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'rsvp'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['frontend.MyUser']"}),
             'startTime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 5, 7, 0, 0)'}),
-            'tags': ('django.db.models.fields.CharField', [], {'default': "'all'", 'max_length': '200', 'null': 'True', 'blank': 'True'})
+            'tags': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['frontend.Tag']", 'symmetrical': 'False'})
         },
         u'frontend.tag': {
             'Meta': {'object_name': 'Tag'},
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '20', 'primary_key': 'True'})
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50', 'primary_key': 'True'})
         }
     }
 
