@@ -462,6 +462,7 @@ def filter(request):
 	events_list = []
 	context = {'events_list': events_list, 'user': request.user, 'rsvped': [],'tags': tags, 'cal_events': []}
 	username = request.user.username
+	groups = []
 	print username
 	if username != "" and\
 	 len(MyUser.objects.filter(user_id = username)) == 0:
@@ -501,7 +502,13 @@ def filter(request):
 					Q(location__icontains=query) | Q(tags__icontains=query)).order_by("startTime")
 			show_list = True
 	elif tags != None and len(tags) != 0:
-		events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(tags__icontains=x) for x in tags))), (Q(private = False) | Q(groups__in=groups)))
+		tags_list = []
+		for tag in tags:
+			try:
+				tags_list += [Tag.objects.get(name = tag)]
+			except ObjectDoesNotExist:
+				continue
+		events_list = NewEvent.objects.filter((reduce(operator.or_, [Q(tags__in=tags_list)])), (Q(private = False) | Q(groups__in=groups)))
 		show_list = False
 	elif personal_type != None:
 		if personal_type == 'recommended':
