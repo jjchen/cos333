@@ -49,7 +49,7 @@
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
-  <script>
+  <!--<script>
   $(function() {
   var availableTags = [
       "ActionScript",
@@ -75,12 +75,18 @@
       "Scala",
       "Scheme"
     ];
-  $( "#testAutocomplete" ).autocomplete({
-    source: "/api/get_names/"
+   names = []
+
+  {% for tag in tags %}
+     names.push("{{tag}}");
+  {% endfor %}
+
+  $( "#id_tags" ).autocomplete({
+    source: names
   });
   });
 
-    </script>
+    </script>-->
     
    <!-- This is for the updating of slider time -->
     <script type="text/javascript">
@@ -89,7 +95,6 @@
     }
     //document.getElementById("p1").innerHTML="New text!";
   </script>
-
 
     <!--<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>-->
     <script type="text/javascript" src="{% static "frontend/oms.min.js" %}">
@@ -146,11 +151,125 @@
 
     <!-- jQuery and jQuery UI are required dependencies. -->
     <!-- Although we use jQuery 1.4 here, it's tested with the latest too (1.8.3 as of writing this.) -->
-    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
 
     <!-- The real deal -->
-    <!--<script src="https://raw.github.com/aehlke/tag-it/master/js/tag-it.js" type="text/javascript" charset="utf-8"></script>-->
+     <script src="{% static "frontend/tag-it.min.js" %}" type="text/javascript" charset="utf-8"></script>
+ 
+ <script>
+        $("#eventform").live("aCustomEvent",function(){
+            var sampleTags = ['cos', '333', 'music', 'needs', 'database', 'integration'];
+
+            names = []
+
+            {% for tag in tags %}
+               names.push("{{tag}}");
+            {% endfor %}
+
+            //-------------------------------
+            // Minimal
+            //-------------------------------
+            $('#myTags').tagit();
+
+            //-------------------------------
+            // Single field
+            //-------------------------------
+            $('#singleFieldTags').tagit({
+                availableTags: names,
+                // This will make Tag-it submit a single form value, as a comma-delimited field.
+                singleField: true,
+                singleFieldDelimiter: " ",
+                singleFieldNode: $('#id_tags')
+            });
+
+            // singleFieldTags2 is an INPUT element, rather than a UL as in the other 
+            // examples, so it automatically defaults to singleField.
+            $('#singleFieldTags2').tagit({
+                availableTags: sampleTags
+            });
+
+            //-------------------------------
+            // Preloading data in markup
+            //-------------------------------
+            $('#myULTags').tagit({
+                availableTags: sampleTags, // this param is of course optional. it's for autocomplete.
+                // configure the name of the input field (will be submitted with form), default: item[tags]
+                itemName: 'item',
+                fieldName: 'tags'
+            });
+
+            //-------------------------------
+            // Tag events
+            //-------------------------------
+            var eventTags = $('#eventTags');
+
+            var addEvent = function(text) {
+                $('#events_container').append(text + '<br>');
+            };
+
+            eventTags.tagit({
+                availableTags: sampleTags,
+                beforeTagAdded: function(evt, ui) {
+                    if (!ui.duringInitialization) {
+                        addEvent('beforeTagAdded: ' + eventTags.tagit('tagLabel', ui.tag));
+                    }
+                },
+                afterTagAdded: function(evt, ui) {
+                    if (!ui.duringInitialization) {
+                        addEvent('afterTagAdded: ' + eventTags.tagit('tagLabel', ui.tag));
+                    }
+                },
+                beforeTagRemoved: function(evt, ui) {
+                    addEvent('beforeTagRemoved: ' + eventTags.tagit('tagLabel', ui.tag));
+                },
+                afterTagRemoved: function(evt, ui) {
+                    addEvent('afterTagRemoved: ' + eventTags.tagit('tagLabel', ui.tag));
+                },
+                onTagClicked: function(evt, ui) {
+                    addEvent('onTagClicked: ' + eventTags.tagit('tagLabel', ui.tag));
+                },
+                onTagExists: function(evt, ui) {
+                    addEvent('onTagExists: ' + eventTags.tagit('tagLabel', ui.existingTag));
+                }
+            });
+
+            //-------------------------------
+            // Read-only
+            //-------------------------------
+            $('#readOnlyTags').tagit({
+                readOnly: true
+            });
+
+            //-------------------------------
+            // Tag-it methods
+            //-------------------------------
+            $('#methodTags').tagit({
+                availableTags: sampleTags
+            });
+
+            //-------------------------------
+            // Allow spaces without quotes.
+            //-------------------------------
+            $('#allowSpacesTags').tagit({
+                availableTags: sampleTags,
+                allowSpaces: true
+            });
+
+            //-------------------------------
+            // Remove confirmation
+            //-------------------------------
+            $('#removeConfirmationTags').tagit({
+                availableTags: sampleTags,
+                removeConfirmation: true
+            });
+
+            alwaysOn();
+            
+        });
+        
+    </script>
+
 
       <script type="text/javascript" id="fill_in">
       </script>
@@ -409,11 +528,6 @@
             <button type="submit" class="btn">Search</button>
           </form>
 
-   <div class="ui-widget">
-      <label for="testAutocomplete">Names: </label>
-      <input id="testAutocomplete" />
-    </div>
-
          <br/>
          <div style='width:100%; height:150px; overflow:scroll;'>
          <form id="tags_form" method="post">{% csrf_token %}
@@ -544,6 +658,9 @@
                 <label class="control-label" for="id_tags">Tags:</label>
                 <div class="controls">
                 {{ form.tags }}
+                <ul id="singleFieldTags">
+                <script> jQuery("#eventform").trigger("aCustomEvent") </script>
+                </ul>
                 <span class="help-block">{{ form.tags.errors }}</span>
                 </div>
             </div>
