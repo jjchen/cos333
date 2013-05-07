@@ -12,8 +12,8 @@ from frontend.models import Tag
 from django.forms.models import model_to_dict
 
 # tagging things
-from tagging.forms import TagField
-from tagging.models import Tag
+#from tagging.forms import TagField
+#from tagging.models import Tag
 #from tagging_autocomplete_tagit.widgets import TagAutocompleteTagIt
 
 from django import forms
@@ -574,6 +574,8 @@ def index(request, add_form=None):
 		show_list = False
 	#tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	tags = Tag.objects.all()
+	tags = [unicodedata.normalize('NFKD', tag.name).encode('ascii', 'ignore') for tag in tags]
+
 
 	context = {'events_list': events_list, 'user': request.user, 
 		   'show_list': show_list, 'search_form': form, 'rsvped': [],'tags': tags, 'cal_events': [], 'locations': location}
