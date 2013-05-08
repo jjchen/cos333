@@ -117,10 +117,9 @@ div#side_panel{
 	position: absolute;
 	top: 100px;
 	right: 25px;
-	min-width: 15%;
-	min-height: 75%;
+	height: 75%;
 	float: right;
-	background: #f9f9f9;
+	background-color: rgba(255,255,255,0.9);
 	border: 1px solid #eee;
 	padding: 10px;
 	border-radius: 5px;
@@ -148,6 +147,28 @@ div#settings_button{
 }
 div#minus_button{
 	left: 390px;	
+}
+
+div#hide_button{
+	bottom: 550px;
+	right: 228px;	
+	padding: 5px;
+	background-color: rgba(255,255,255,0.8);
+}
+
+div#expand_button{
+	bottom: 550px;
+	right: 20px;	
+	padding: 5px;
+	background-color: rgba(255,255,255,0.8);
+}
+
+div#expand_button:hover{
+	background-color: rgba(255,255,255,1);
+}
+
+div#hide_button:hover{
+	background-color: rgba(255,255,255,1);
 }
 
 .button {

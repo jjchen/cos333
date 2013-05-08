@@ -494,14 +494,18 @@ def filter(request):
 			query = form.cleaned_data['search_query']
 			try:
 				user = MyUser.objects.get(user_id=username)
-
+				try: 
+					tags_list = [Tag.objects.get(name = query)]
+					print "YESSS"
+				except ObjectDoesNotExist:
+					tags_list = []
 				events_list = NewEvent.objects.filter(
 					(Q(name__icontains=query) | 
-					Q(location__icontains=query) | Q(tags__icontains=query)), (Q(private = False) | Q(groups__in=groups))).order_by("startTime") 
+					Q(location__icontains=query) | Q(tags__in=tags_list)), (Q(private = False) | Q(groups__in=groups))).order_by("startTime") 
 			except ObjectDoesNotExist: 
 				events_list = NewEvent.objects.filter(
 					Q(name__icontains=query) | 
-					Q(location__icontains=query) | Q(tags__icontains=query)).order_by("startTime")
+					Q(location__icontains=query) | Q(tags__in=query)).order_by("startTime")
 			show_list = True
 	elif tags != None and len(tags) != 0:
 		tags_list = []

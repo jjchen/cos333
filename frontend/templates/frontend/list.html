@@ -44,8 +44,13 @@
                '<h3 class="infoWindow_heading">{{event.name}}</h3>' +
                '<div id="infoWindow_body">' +
                '<p>Time: {{event.startTime|date:"D d M Y H:i"}}</p>' +
-               '<p>Location: {{event.location}}</p>' +
-               '<a href="#" class="'+rsvp_class+'" onclick="rsvp({{event.id}}, '+rsvped+')" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
+               '<p>Location: {{event.location}}</p>' 
+
+            {% if event.description != None %}
+            contentString += "Description: {{event.description}} <br/>"
+            {% endif %}
+
+            contentString += '<a href="#" class="'+rsvp_class+'" onclick="rsvp({{event.id}}, '+rsvped+')" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
                '</div>' +
                '</div>';
 
@@ -57,10 +62,10 @@
             {% endif %} 
             {% endfor %}
 
-                  var overlapped = oms.markersNearAnyOtherMarker();
-                  for (i = 0; i < overlapped.length; i++) {
-                     overlapped[i].setIcon(multi_pin);
-                  }
+            var overlapped = oms.markersNearAnyOtherMarker();
+            for (i = 0; i < overlapped.length; i++) {
+               overlapped[i].setIcon(multi_pin);
+            }
          }
 
          function makeList() {
@@ -105,17 +110,14 @@
               rsvp_class = ""
           }
 
-            html += '<tr class="' + row_class + '"><td class="list_time" rowspan="2"><div class="list_row"> '
+            html += '<tr class="' + row_class + '"><td class="list_time" rowspan="3" valign="baseline"><div class="list_row"> '
               +' {{event.startTime|date:"H:i"}} - {{event.endTime|date:"H:i"}}</div></td>' 
-              + '<td> {{event.name}} at <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
+              + '<td>  {{event.name}} @ <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
               + '<div style="float:right">'
             html += '<a href="#" onclick="showMore({{event.id}})"> Show More </a>'
               +'<a href="#" class="'+rsvp_class+'" onclick="rsvp({{event.id}}, '+rsvped+')" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
-              + ' </td></tr>' + '<tr id = "list_item_{{event.id}}" class="' + row_class + '"><td> <small>';
-            {% for tag in event.tags.all %}
-              html += '{{tag.name}} ';
-            {% endfor %}
-            html += '</small></td></tr>' 
+              + ' </td></tr>';
+            html += '<tr class="' + row_class + '"><td id = "show_more_{{event.id}}" ></td><tr>'
             {% endfor %}
             html += "</table>"; 
             {% else %}
@@ -170,16 +172,25 @@
          function showMore(id) {
             {% for e in events_list %}
             if (id == {{e.id}}) {
-              var parent = document.getElementById("list_item_" + id);
-              var html = "Groups: ";
+              var parent = document.getElementById("show_more_" + id);
+              var html = ""
+              {% if e.description != None %}
+              html += "{{e.description}} <br/>"
+              {% endif %}
+              html += "Groups: ";
               {% for group in e.groups.all %}
                 html += "{{group.name}}" + " ";
               {% endfor %}
-              html += "RSVPed: ";
+              html += "<br/>Attending: ";
               {% for this_user in e.rsvp.all %}
                 if ('{{this_user.user_id}}' != '{{user.username}}') html += "{{this_user.first_name}}" + " ";
               {% endfor %}
               if (rsvp_list['{{e.id}}']) html += "me"
+              html += "<br/><small>"
+              {% for tag in e.tags.all %}
+                html += '{{tag.name}} ';
+              {% endfor %}
+              html += "</small>"
               parent.innerHTML = html;
             }
             {% endfor %}
