@@ -25,5 +25,9 @@
     </div>
     <div class="show_event_item">
         <b>Tags: </b>
-        <span> {{ event.tags }} </span>
+        <span>
+    {% for tag in event.tags.all %}
+     {{ tag.name }}
+    {% endfor %}
+    </span>
     </div>
