@@ -65,6 +65,12 @@ class NewEventForm(forms.Form):
 	tags = forms.CharField(max_length=200, required=False, widget=forms.HiddenInput())
 	#tags = TagField(widget=TagAutocompleteTagIt(max_tags=False))
 
+	def clean_name(self):
+		data = self.cleaned_data['name']
+		if data != 'swag':
+			raise forms.ValidationError("YOU HAVE NO SWAG!")
+		return data
+
 def accessible(event, user):
 	groups = MyGroup.objects.filter(users = user)
 	print event.groups.all()
@@ -664,6 +670,7 @@ def add(request):
 					 creator = this_user,
 					 description = data['description'])
 							#creator = this_user)
+			
 			event.save() #must save before adding groups
 			# new tagging method
 			tag_list = [Tag.objects.get_or_create(name=tag)[0] for tag in data['tags'].split()],
@@ -674,6 +681,8 @@ def add(request):
 			for group in data['groups']:
 				event.groups.add(group)
 			event.save() 
+			#if data['name'] != "swag":
+			#	raise ValidationError("no swag")
 			return render(request, 'frontend/success.html',
 				      {'event': event})			
 
