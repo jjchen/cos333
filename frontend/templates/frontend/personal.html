@@ -58,11 +58,11 @@
         var availableTags = {{all_users|safe}}
         $("#groups_form #id_member_names").tagit({
           availableTags: availableTags,
-         beforeTagAdded: function(event, ui) { 
-           // only allow existing values
-           if($.inArray(ui.tagLabel, availableTags)==-1) {
+          beforeTagAdded: function(event, ui) { 
+          // only allow existing values
+          if($.inArray(ui.tagLabel, availableTags)==-1) {
             return false;
-           }
+          }
         }
         });
 
@@ -147,7 +147,7 @@
 
           <div class="personal_headings" id="friends">
             <div class="events_header">Friends:</div>
-             <div class="list_group hidden">
+            <div class="list_group hidden">
 
               {% for f in friends %}
               <div class="friends_item">
@@ -159,8 +159,14 @@
                 Add friend: 
                 {{ form2.name }}
               <button class="btn" type="submit">Add</button>
-
               </form>
+            </div>
+            <div id="facebook_friends">
+              {% for f in fb_friends %}
+              <div class="fb_friend" id="{{g.id}}">
+                <p> {{ f.name }} </p>
+              </div>
+              {% endfor %}
             </div>
           </div>
 
@@ -184,8 +190,8 @@
             </div>
 
             <div id="import_groups_form">
-                      {% for g in fb_groups %}
-                <p>{{g.name}} 
+              {% for g in fb_groups %}
+            <p>{{g.name}} 
             <a href="{% url 'frontend:importgroup' g.id %}">Import</a>
             
                 </p>
@@ -287,15 +293,15 @@
         });
       }
 
-         function rsvp(id) {
-            var parent = document.getElementById("rsvp_"+id);
-            $.post('{% url "frontend:addrsvp" %}', {'rsvp_id':id, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(json) {
-                var json_parsed = $.parseJSON(json);
-                if(json_parsed.success == 'true') {
-                  location.reload();
-                }
-            });
-         }
+      function rsvp(id) {
+        var parent = document.getElementById("rsvp_"+id);
+        $.post('{% url "frontend:addrsvp" %}', {'rsvp_id':id, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(json) {
+            var json_parsed = $.parseJSON(json);
+            if(json_parsed.success == 'true') {
+              location.reload();
+            }
+        });
+      }
 
 
     </script>   
