@@ -50,7 +50,7 @@
             contentString += "Description: {{event.description}} <br/>"
             {% endif %}
 
-            contentString += '<a href="#" class="'+rsvp_class+'" onclick="rsvp({{event.id}}, '+rsvped+')" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
+            contentString += '<a class="link_button_list" href="#" class="'+rsvp_class+'" onclick="rsvp({{event.id}}, '+rsvped+')" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
                '</div>' +
                '</div>';
 
@@ -114,8 +114,8 @@
               +' {{event.startTime|date:"H:i"}} - {{event.endTime|date:"H:i"}}</div></td>' 
               + '<td>  {{event.name}} @ <FONT COLOR="006633"><b> {{event.location}}</b></FONT>'
               + '<div style="float:right">'
-            html += '<a href="#" onclick="showMore({{event.id}})"> Show More </a>'
-              +'<a href="#" class="'+rsvp_class+'" onclick="rsvp({{event.id}}, '+rsvped+')" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
+            html += '<a class="link_button_list" href="#" onclick="showMore({{event.id}})"> Show More </a>'
+              +'<a class="link_button_list" href="#" class="'+rsvp_class+'" onclick="rsvp({{event.id}}, '+rsvped+')" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
               + ' </td></tr>';
             html += '<tr class="' + row_class + '"><td id = "show_more_{{event.id}}" ></td><tr>'
             {% endfor %}

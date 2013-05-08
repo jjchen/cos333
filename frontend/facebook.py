@@ -97,6 +97,7 @@ def exportevent(request, event):
     return HttpResponse('Export failed!', status=401)
 
 def get_fb_groups(user):
+    print "HI!! " + str(user)
     instance = UserSocialAuth.objects.get(user=user, provider='facebook')        
     token = instance.tokens['access_token']
     graph = GraphAPI(token)

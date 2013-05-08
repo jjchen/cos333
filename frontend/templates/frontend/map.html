@@ -546,14 +546,17 @@
     <div style='width:100%; height:150px; overflow:scroll;'>
     <form id="tags_form" method="post">{% csrf_token %}
       {% for tag in tags %}
-      <input type="checkbox" onclick="filter('tags')" name="tags" value="{{tag}}">{{tag}}</br> 
+      <div class="link_button_checkbox">
+      <input type="checkbox" onclick="filter('tags')" name="tags" value="{{tag}}"><span>&nbsp{{tag}} </span></br> 
+      </div>
       {% endfor %}
     </form>
     </div>
-    <br/> <a href="{% url 'frontend:index' %}"> All </a>
+    <br/> <a class="link_button_main" href="{% url 'frontend:index' %}"> All </a>
 
-    <br/> <a href="#" onclick="filter('recommended')"> Recommended </a>
-    <br/> <a href="#" onclick="filter('my_events')"> My Events </a>
+    <br/> <a class="link_button_main" href="#" onclick="filter('recommended')"> Recommended </a>
+    <br/> <a class="link_button_main" href="#" onclick="filter('my_events')"> My Events </a>
+    <br/>
     <br/>
 
     <div id="time-slider"></div>
@@ -609,7 +612,7 @@
       });
       
     </script>
-    <br/> <a href="#" onclick="filter2('my_events')">Filter Time</a>
+    <a class="link_button_main" href="#" onclick="filter2('my_events')">Filter Time</a>
   </div>
 
   <div id="content_wrapper">

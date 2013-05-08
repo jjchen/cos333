@@ -562,6 +562,7 @@ def filter(request):
 
 # Create your views here.  index is called on page load.
 def index(request, add_form=None):
+	print request.user
 	all_buildings = Building.objects.all()
 	location = [unicodedata.normalize('NFKD', building.name).encode('ascii', 'ignore') for building in all_buildings]
 

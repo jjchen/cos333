@@ -198,52 +198,52 @@
       <div id="personal_content">
         <div id="left">
          <div class="personal_headings active" id="my_events">
-              <div class="events_header">Your Events:</div>
+              <div class="events_header"><span class="toggle_button">-</span> Your Events:</div>
               <div class="list_group">
 
                 {% for e in my_events %}
                 <div class="events_item" id="{{e.id}}">
                   <p> {{ e.name }}
-                        <a id="edit_link" href="#" onclick="edit_form({{e.id}})"> Edit </a>
-                        <a href="{% url 'frontend:rmevent' e.id %}">Remove</a>
-		                    <a href="{% url 'frontend:exportevent' e.id %}"> Export </a>
+                        <a class="link_button" id="edit_link" href="#" onclick="edit_form({{e.id}})"> Edit </a>
+                        <a class="link_button" href="{% url 'frontend:rmevent' e.id %}">Remove</a>
+		                    <a class="link_button" href="{% url 'frontend:exportevent' e.id %}"> Export </a>
 		              </p>
                 </div>
               {% endfor %}
               </div>
           </div>
           <div class="personal_headings active" id="rsvped">
-            <div class="events_header">Rsvped Events:</div>
+            <div class="events_header"><span class="toggle_button">-</span> Rsvped Events:</div>
             <div class="list_group">
 
               {% for e in rsvped %}
 
                 <div class="events_item" id="{{e.id}}">
-                <p> {{ e.name }}<a href="{% url 'frontend:rmrsvp' e.id %}">Remove</a></p>
+                <p> {{ e.name }}<a class="link_button" href="{% url 'frontend:rmrsvp' e.id %}">Remove</a></p>
               </div>
               {% endfor %}
             </div>
           </div>
           <div class="personal_headings active" id="recommended">
-            <div class="events_header">Recommended Events (Friends/Groups): </div>
+            <div class="events_header"><span class="toggle_button">-</span> Recommended Events (Friends/Groups): </div>
             <div class="list_group">
 
               {% for e in recommended %}
                 <div class="events_item" id="{{e.id}}">
                 <p> {{ e.name }}</p>
-                <a href="#" class="'+rsvp_class+'" onclick="rsvp({{e.id}})" id="rsvp_{{e.id}}">RSVP</a>
+                <a class="link_button" href="#" class="'+rsvp_class+'" onclick="rsvp({{e.id}})" id="rsvp_{{e.id}}">RSVP</a>
               </div>
               {% endfor %}
           </div>
           </div>
 
           <div class="personal_headings" id="friends">
-            <div class="events_header">Friends:</div>
+            <div class="events_header"><span class="toggle_button">+</span> Friends:</div>
             <div class="list_group hidden">
 
               {% for f in friends %}
               <div class="friends_item">
-                <p> {{ f.first_name }} <a href="{% url 'frontend:rmfriend' f.id %}">Remove</a></p>
+                <p> {{ f.first_name }} <a class="link_button" href="{% url 'frontend:rmfriend' f.id %}">Remove</a></p>
               </div>
               {% endfor %}
             <div id="friends_form">
@@ -265,12 +265,12 @@
           </div>
 
           <div class="personal_headings" id="groups">
-            <div class="events_header">Your existing groups:</div>
+            <div class="events_header"><span class="toggle_button">+</span> Your existing groups:</div>
             <div class="list_group hidden">
 
               {% for g in groups_list %}
               <div class="groups_item" id="{{g.id}}">
-                <p> {{ g.name }} <a href="{% url 'frontend:rmgroup' g.id %}">Leave</a></p>
+                <p> {{ g.name }} <a class="link_button" href="{% url 'frontend:rmgroup' g.id %}">Leave</a></p>
               </div>
               {% endfor %}
             <div id="groups_form">
@@ -284,7 +284,7 @@
             <div id="import_groups_form">
               {% for g in fb_groups %}
             <p>{{g.name}} 
-            <a href="{% url 'frontend:importgroup' g.id %}">Import</a>
+            <a class="link_button" href="{% url 'frontend:importgroup' g.id %}">Import</a>
             
                 </p>
                       {% endfor %}
@@ -333,13 +333,15 @@
       });
 
       $(".personal_headings").click(function(e) {
-        if(e.target != this && e.target.className != "events_header") return;
+        if(e.target != this && e.target.className != "events_header" && e.target.className != "toggle_button") return;
         if ($(this).hasClass("active")) {
           $(this).removeClass("active");
+          $(this).find(".events_header").find(".toggle_button").html("+");
           $(this).find(".list_group").addClass("hidden");
         } else {
           $(this).addClass("active");
           $(this).find(".list_group").removeClass("hidden");
+          $(this).find(".events_header").find(".toggle_button").html("-");
         }
       });
 
