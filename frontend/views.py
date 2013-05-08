@@ -38,6 +38,10 @@ import unicodedata
 import facebook 
 
 MAX_LEN = 50
+class SignupForm(forms.Form):
+	first_name = forms.CharField(max_length = MAX_LEN)
+	last_name = forms.CharField(max_length = MAX_LEN)
+
 class SettingsForm(forms.Form):
 	first_name = forms.CharField()
 	last_name = forms.CharField()
@@ -110,7 +114,8 @@ def locdemo(request):
 			return HttpResponseRedirect('/') # Redirect after POST
 	else:
 		form = SettingsForm()
-	return render(request, 'frontend/demo.html', {'form': form})
+	return render(request, 'frontend/demo.html', {'default_lat': 40.35,
+						      'default_lon': -74.656})
 
 # needs fixin'
 def get_tags(request):
@@ -167,6 +172,22 @@ def settings(request):
 	return render(request, 'frontend/settings.html', {
         'form': form, 'group_info': group_info
 	})
+
+def signup(request):
+	if request.method == 'POST':
+		form = SignupForm(request.POST) # A form bound to the POST data
+		if form.is_valid():
+			data = form.cleaned_data
+			user = MyUser(first_name = data['first_name'],
+				      last_name = data['last_name'],
+				      user_id = request.user.username)
+			user.save()
+			return HttpResponseRedirect('/') # Redirect after POST
+	else:
+		form = SignupForm() # An unbound form
+	return render(request, 'frontend/signup.html', {
+			'form': form,
+			})
 
 class MultiNameField(forms.CharField):
 	def __init__(self):
@@ -463,7 +484,7 @@ def filter(request):
 	print username
 	if username != "" and\
 	 len(MyUser.objects.filter(user_id = username)) == 0:
-		return HttpResponseRedirect('/')
+		return HttpResponseRedirect('/signup')
 	else:
 		try:
 			user = MyUser.objects.get(user_id=username)
@@ -562,6 +583,7 @@ def filter(request):
 
 # Create your views here.  index is called on page load.
 def index(request, add_form=None):
+
 	all_buildings = Building.objects.all()
 	location = [unicodedata.normalize('NFKD', building.name).encode('ascii', 'ignore') for building in all_buildings]
 
@@ -585,7 +607,6 @@ def index(request, add_form=None):
 	tags = Tag.objects.all()
 	tags = [unicodedata.normalize('NFKD', tag.name).encode('ascii', 'ignore') for tag in tags]
 
-
 	context = {'events_list': events_list, 'user': request.user, 
 		   'show_list': show_list, 'search_form': form, 'rsvped': [],'tags': tags, 'cal_events': [], 'locations': location}
 	if add_form == None: 
@@ -607,7 +628,9 @@ def index(request, add_form=None):
 
 	if username != "" and\
 	 len(MyUser.objects.filter(user_id = username)) == 0:
-		return HttpResponseRedirect('/')
+#		new_user = MyUser(user_id = username)
+#		new_user.save()
+		return HttpResponseRedirect('/signup')
 	else:
 		try:
 			#User exists

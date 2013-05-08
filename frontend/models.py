@@ -45,7 +45,7 @@ class NewEvent(models.Model):
     creator = models.ForeignKey(MyUser, related_name="creator", blank=True, null=True)
     groups = models.ManyToManyField(MyGroup, related_name="groups", blank=True, null=True)
     rsvp = models.ManyToManyField(MyUser, related_name="rsvp", blank=True, null=True)
-
+    exported = models.NullBooleanField(default=False, null=True)
     def __unicode__(self):
         return self.name
 

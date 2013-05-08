@@ -60,7 +60,7 @@ def process_export(user, event_obj):
     #helper function to export event to Facebook
     #user and event_obj are MyUser and NewEvent type, respectively. Returns
     #True on success, False on failure
-    instance = UserSocialAuth.objects.get(user=user, provider='facebook')        
+    instance = UserSocialAuth.objects.get(user=user, provider='facebook')       
     token = instance.tokens['access_token']
     graph = GraphAPI(token)
     if event_obj.private:
@@ -93,13 +93,18 @@ def exportevent(request, event):
         return HttpResponse('Unauthorized access', status=401)
     success = process_export(this_user, event_obj)
     if success:
+        event_obj.exported = True
+        event_obj.save()
         return HttpResponseRedirect('/frontend/personal')
     return HttpResponse('Export failed!', status=401)
 
 def get_fb_groups(user):
-    instance = UserSocialAuth.objects.get(user=user, provider='facebook')        
+    instance = UserSocialAuth.objects.get(user=user, provider='facebook') 
     token = instance.tokens['access_token']
     graph = GraphAPI(token)
+
+    print "Facebook instance: " + str(instance)
+
     user_path = str(instance.uid) + "/groups"
     groups = graph.get(user_path).get('data')
     return groups
@@ -110,11 +115,6 @@ def get_friends(user):
     graph = GraphAPI(token)
     user_path = str(instance.uid) + "/friends"
     friends = graph.get(user_path).get('data')
-
-    for f in friends:
-        print f
-        #print f['name']
-        print f['id']
 
     return friends
 
