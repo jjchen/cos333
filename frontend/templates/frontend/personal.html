@@ -204,7 +204,7 @@
                 {% for e in my_events %}
                 <div class="events_item" id="{{e.id}}">
                   <p> {{ e.name }}
-                        <a href="#" onclick="edit_form({{e.id}})"> Edit </a>
+                        <a id="edit_link" href="#" onclick="edit_form({{e.id}})"> Edit </a>
                         <a href="{% url 'frontend:rmevent' e.id %}">Remove</a>
 		                    <a href="{% url 'frontend:exportevent' e.id %}"> Export </a>
 		              </p>
@@ -328,7 +328,7 @@
             });
           }
         {% endfor %}
-      }).children().children('a').click(function(){
+      }).find("#edit_link").click(function(e){
         return false;
       });
 
@@ -390,6 +390,7 @@
 
             htmlResponse = htmlResponse.replace('/change_event_id/', '/'+id+'/');
             parent.innerHTML = htmlResponse;
+            $(".datepicker").datepicker({ dateFormat: 'yy-mm-dd' });
         });
       }
 
