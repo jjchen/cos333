@@ -294,7 +294,7 @@
           </div>
         </div>
         <div id="right">
-          <div id="more">
+          <div id="more" class="hidden">
           </div>
         </div>
       </div>
@@ -322,6 +322,8 @@
           if (id == {{e.id}}) {
             $.post('{% url "frontend:personal_ajax" e.id %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(htmlResponse) {
                 var parent = document.getElementById("more");
+                $("#more").removeClass("hidden");
+
                 parent.innerHTML = htmlResponse;
             });
           }
@@ -350,6 +352,8 @@
         {% for g in groups_list %}
           if (id == {{g.id}}) {
                 var parent = document.getElementById("more");
+                $("#more").removeClass("hidden");
+
                 html = "{{g.name}} :";
                 {% for u in g.users.all %}
                   html += " {{u.first_name}}"
@@ -382,6 +386,8 @@
 
         $.post(url, {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(htmlResponse) {
             var parent = document.getElementById("more");
+            $("#more").removeClass("hidden");
+
             htmlResponse = htmlResponse.replace('/change_event_id/', '/'+id+'/');
             parent.innerHTML = htmlResponse;
         });

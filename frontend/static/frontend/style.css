@@ -30,7 +30,7 @@
 body{
 	padding-top: 40px;
 	background-color: rgba(0,102,51,0.1);
-	background: url('http://files.myopera.com/Magik83/albums/10524992/Citys%20Wallp%20(19).jpg');
+	background: url('http://www.commentnation.com/hotlinks/gray_paper_texture_background_seamless_pattern.jpg');
 }
 
 #container { 
@@ -62,6 +62,11 @@ body{
 
 .list_row_active {
 	height: 500px;
+}
+
+div#more h4{
+    font-family: 'PT Sans', Helvetica, Arial, sans-serif;
+    color: #777;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -308,7 +313,7 @@ div#left {
 }
 
 div#right {
-	width: 300px;
+	width: 350px;
 	float: right;
 }
 
@@ -377,6 +382,16 @@ div#right {
 	background: rgba(255,255,255, 0.9);
 }
 
+div#more{
+	padding: 10px;
+	background: rgba(255, 255, 255, 0.7);
+	box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+	border-bottom: 1px solid #ddd;
+	margin-bottom: 8px;
+	width: 100%;
+    font-family: 'PT Sans', Helvetica, Arial, sans-serif;
+    color: #777;
+}
 
 .show_event_item b{
 	width: 120px;
