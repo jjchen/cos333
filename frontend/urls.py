@@ -5,12 +5,10 @@ from frontend import facebook
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
-<<<<<<< HEAD
 
-=======
->>>>>>> bf78a94f1a22770c845f372944dfa3147e2bdd4e
     url(r'^settings/', views.settings, name='settings'),
     url(r'', include('social_auth.urls')),
+    
     url(r'^locdemo/', views.locdemo),
     url(r'^add/', views.add, name='add'),
     url(r'^addgroup/', views.addgroup, name='addgroup'),
