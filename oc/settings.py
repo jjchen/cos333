@@ -148,7 +148,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 CAS_SERVER_URL = 'https://fed.princeton.edu/cas/'
-CAS_REDIRECT_URL = '/frontend/cas'
+CAS_REDIRECT_URL = '/frontend/'
 ROOT_URLCONF = 'oc.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
