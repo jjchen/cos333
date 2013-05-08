@@ -520,9 +520,10 @@
     <h3>Filter</h3>
     <br/>
     <form id ="search_form2" method="post">{% csrf_token %}
-      <input type="text" id="search_query" placeholder="Search..." name="search_query" class="input-medium search-query">
-      <div class="clearfix"> <br />  </div>
-      <button type="submit" class="btn">Search</button>
+      <div class="input-append">
+      <input type="text" id="search_query" placeholder="Search..." name="search_query" class="span2">
+      <button type="submit" class="btn">Go</button>
+    </div>
     </form>
 
     <br/>
@@ -609,6 +610,8 @@
       <form action="/add/" method="post" id="eventform" class="form-horizontal">{% csrf_token %}
       {{ form.non_field_errors }}
       <div id="ajaxwrapper">
+      <div class="row show-grid">
+      <div class="span4">
       <div class="control-group {% if form.name.errors %}error{% endif %}">
         <label class="control-label" for="id_name">Name:</label>
         <div class="controls">
@@ -645,6 +648,10 @@
                 <span class="help-block">{{ form.location.errors }}</span>
                 </div>
             </div>
+
+          </div>
+
+            <div class="span4">
             <div class="control-group {% if form.description.errors %}error{% endif %}">
                 <label class="control-label" for="id_description">Description:</label>
                 <div class="controls">
@@ -678,6 +685,8 @@
             </div>
             <p><button class="btn btn-primary" type="submit">Save</button></p>
           </div>
+          </div>
+        </div>
         </form>
         {% else %}
           You have to sign in.
