@@ -369,25 +369,26 @@
                   html += " {{u.first_name}}"
                 {% endfor %}
                 html += "<div id='edit_groups_form'><form action='/addgroup/' method='post' id='edit_group_form'>{% csrf_token %}"
-                      + "<p><b> Add user to group: </b></p>"+'{{form.group_name}} {{form.member_names}}'+ "<input type='submit' value='Submit' />"
+                      + "<p><b> Add user to group: </b></p><div class='hidden'>"+'{{form.group_name}}</div>{{form.member_names}}'+ "<button type='submit' value='Submit' class='btn' style='vertical-align:top'>Add</button>"
                       + "</form></div>"
                 parent.innerHTML = html;
-                $("#edit_groups_form #id_group_name").attr({type:"hidden", value:'{{g.name}}'})
+                $("#edit_groups_form #id_group_name").attr('value','{{g.name}}')
+                var availableTags = {{all_users|safe}}
+
+
+                $("#edit_groups_form #id_member_names").tagit({
+                  availableTags: availableTags,
+                 beforeTagAdded: function(event, ui) { 
+                   // only allow existing values
+                   if($.inArray(ui.tagLabel, availableTags)==-1) {
+                    return false;
+                   }
+                }
+                });
 
           }
         {% endfor %}
-        var availableTags = {{all_users|safe}}
 
-
-        $("#edit_groups_form #id_member_names").tagit({
-          availableTags: availableTags,
-         beforeTagAdded: function(event, ui) { 
-           // only allow existing values
-           if($.inArray(ui.tagLabel, availableTags)==-1) {
-            return false;
-           }
-        }
-        });
       });
 
       function edit_form(id) {

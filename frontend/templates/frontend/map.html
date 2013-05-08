@@ -355,7 +355,7 @@
          }
          google.maps.event.addDomListener(window, 'load', initialize);
 
-         function codeAddress(buildingName) {
+         function codeAddress(buildingName, name, time, description) {
             geocoder.geocode({
                'address': buildingName
             }, function (results, status) {
@@ -365,11 +365,14 @@
                      map: map,
                      position: results[0].geometry.location
                   });
+
+                  marker.setIcon(single_pin);
                   var contentString = '<div class="infoWindow_content">' +
-                     '<h3 class="infoWindow_heading">{{event.name}}</h3>' +
+                     '<h3 class="infoWindow_heading">'+name+'</h3>' +
                      '<div id="infoWindow_body">' +
-                     '<p>Time: {{event.startTime|date:"D d M Y H:i"}}</p>' +
-                     '<p>Location: {{event.location}}</p>' +
+                     '<p>Time: ' + time +
+                     '<p>Location: '+buildingName+'</p>' +
+                     "Description: {{event.description}} <br/>" +
                      '</div>' +
                      '</div>';
 
