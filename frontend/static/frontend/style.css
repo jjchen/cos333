@@ -156,14 +156,14 @@ div#minus_button{
 }
 
 div#hide_button{
-	bottom: 550px;
+	bottom: 540px;
 	right: 226px;	
 	padding: 5px;
 	background-color: rgba(255,255,255,0.8);
 }
 
 div#expand_button{
-	bottom: 550px;
+	bottom: 540px;
 	right: 20px;	
 	padding: 5px;
 	background-color: rgba(255,255,255,0.8);
@@ -193,8 +193,8 @@ div#hide_button:hover{
 
 .toggle_button{
 	border-radius: 5px;
-	background-color: #fdd;
-	border: 1px solid #fdd;
+	background-color: rgba(100,202,151,0.5);
+	border: 1px solid rgba(0,102,51,0.1);
 	box-sizing: border-box;
 	cursor: pointer;
 	color: #777;
@@ -220,7 +220,7 @@ div#hide_button:hover{
 
 .link_button_checkbox{
 	border-radius: 5px;
-	background-color: #fdd;
+	background-color: rgba(100,202,151,0.5);
 	border: 1px solid #eee;
 	box-sizing: border-box;
 	cursor: pointer;
@@ -254,12 +254,12 @@ div#hide_button:hover{
 .link_button_checkbox:hover{
 	text-decoration: none;
 	color: #777;
-	background-color: #fcc;	
+	background-color: rgba(50,152,101,0.5);	
 }
 
 .link_button_list{
 	border-radius: 5px;
-	background-color: #fdd;
+	background-color: rgba(100,202,151,0.5);
 	border: 1px solid #eee;
 	box-sizing: border-box;
 	cursor: pointer;
@@ -271,7 +271,8 @@ div#hide_button:hover{
 
 .link_button_list:hover{
 	text-decoration: none;
-	color: white;
+	color: #777;
+	background-color: rgba(50,152,101,0.5);
 }
 
 .link_button_main{
@@ -444,7 +445,7 @@ div#right {
 }
 
 .events_item:hover{
-	background: rgba(235,235,235, 0.9);
+	background: rgba(255,255,255, 0.1);
 }
 
 .events_header {
@@ -480,7 +481,7 @@ div#right {
 }
 
 .friends_item:hover{
-	background: rgba(235,235,235, 0.9);
+	background: rgba(255,255,255, 0.1);
 }
 
 
@@ -539,5 +540,5 @@ div#more{
 }
 
 .groups_item:hover{
-	background: rgba(235,235,235, 0.9);
+	background: rgba(255,255,255, 0.1);
 }

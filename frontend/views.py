@@ -434,8 +434,8 @@ def personal(request):
 #	groups = MyGroup.objects.filter(creator = request.user.username)
 	#groups = this_user.users_set.all()
 	groups = MyGroup.objects.filter(users = this_user)
-	my_events = NewEvent.objects.filter(Q(creator = this_user), (Q(private = False) | Q(groups__in=groups)))
-	rsvped = NewEvent.objects.filter(rsvp = this_user)
+	my_events = NewEvent.objects.filter(Q(creator = this_user), (Q(private = False) | Q(groups__in=groups))).order_by("startTime")
+	rsvped = NewEvent.objects.filter(rsvp = this_user).order_by("startTime")
 	recommended = []
 
 	all_users_obj =  MyUser.objects.all()
@@ -445,13 +445,18 @@ def personal(request):
 		friends_obj = Friends.objects.get(name = this_user)
 		friends = friends_obj.friends.all()
 		if (len(friends) != 0 and len(groups) != 0):
-			recommended = NewEvent.objects.filter(((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))) | (reduce(operator.or_, (Q(groups=x) for x in groups)))), (Q(private = False) | Q(groups__in=groups)))
+			recommended = NewEvent.objects.filter(((reduce(operator.or_, (Q(rsvp=x) 
+				| Q(creator=x) for x in friends))) | (reduce(operator.or_, (Q(groups=x) for x in groups)))), (Q(private = False) 
+				| Q(groups__in=groups)))
 		elif (len(friends) != 0): 
-			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))), (Q(private = False) | Q(groups__in=groups)))
+			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) 
+				| Q(creator=x) for x in friends))), (Q(private = False) 
+				| Q(groups__in=groups)))
 		elif (len(groups) != 0):
-			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))), (Q(private = False) | Q(groups__in=groups)))
+			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))), (Q(private = False) 
+				| Q(groups__in=groups)))
 		if len(recommended) != 0:
-			recommended = recommended.filter(~Q(rsvp=this_user))
+			recommended = recommended.filter(~Q(rsvp=this_user)).order_by("startTime")
 
 		other_users = all_users_obj.exclude(pk__in = friends)
 	except ObjectDoesNotExist:
@@ -543,11 +548,16 @@ def filter(request):
 					groups = MyGroup.objects.filter(users = user)
 
 					if (len(friends) != 0 and len(groups) != 0):
-						events_list = NewEvent.objects.filter(((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))) | (reduce(operator.or_, (Q(groups=x) for x in groups)))), (Q(private = False) | Q(groups__in=groups)))
+						events_list = NewEvent.objects.filter(((reduce(operator.or_, (Q(rsvp=x) 
+							| Q(creator=x) for x in friends))) | (reduce(operator.or_, (Q(groups=x) for x in groups)))), (Q(private = False) 
+							| Q(groups__in=groups)))
 					elif (len(friends) != 0): 
-						events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) | Q(creator=x) for x in friends))), (Q(private = False) | Q(groups__in=groups)))
+						events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) 
+							| Q(creator=x) for x in friends))), (Q(private = False) | Q(groups__in=groups)))
 					elif (len(groups) != 0):
-						events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))), (Q(private = False) | Q(groups__in=groups)))
+						events_list = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))), (Q(private = False) 
+							| Q(groups__in=groups)))
+
 				except ObjectDoesNotExist:
 					friends_obj = Friends()
 					friends_obj.name = this_user
@@ -566,7 +576,8 @@ def filter(request):
 			events_list = NewEvent.objects.filter(Q(startTime__gt=time_threshold)).order_by("startTime")
 		
 		show_list = False	
-
+	if len(events_list) != 0:
+		events_list = events_list.order_by("startTime")
 	context['events_list'] = events_list
 
 	tags = ['cos', '333', 'music', 'needs', 'database', 'integration']

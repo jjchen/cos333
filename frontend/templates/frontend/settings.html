@@ -7,18 +7,16 @@
     <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
     <script src="{% static "frontend/bootstrap.js" %}"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+  <!-- CSS and JS for our code -->
+  <link rel="stylesheet" type="text/css" href="{% static 'frontend/jquery-gmaps-latlon-picker.css' %}"/>
+  <script src="{% static 'frontend/jquery-gmaps-latlon-picker.js' %}"></script>
 
     <link rel="stylesheet" href="{% static "frontend/bootstrap.min.css" %}" type="text/css"> 
     <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
 </head>
 <body>
-
-<fieldset class="gllpLatlonPicker">
-  <div class="gllpMap">Google Maps</div>
-  <input type="hidden" class="gllpLatitude"/>
-  <input type="hidden" class="gllpLongitude"/>
-  <input type="hidden" class="gllpZoom"/>
-</fieldset>
 
   <div class="navbar navbar-fixed-top">  
     <div class="navbar-inner">  
@@ -45,7 +43,12 @@
       </div>
     </div>
   </div>
-<div id="container"; height: 250px>
+
+  <div id="personal_container">
+      <div class="clear"></div>
+      <div id="personal_content">
+
+<div id="container">
 <form action="/settings/" method="post">{% csrf_token %}
     {{ form.non_field_errors }}
     <div class="fieldWrapper">
@@ -68,8 +71,31 @@
         <label for="id_longitude">Default longitude:</label>
         {{ form.longitude }}
     </div>
-    <p><input type="submit" value="Save" /></p>
+
+<fieldset class="gllpLatlonPicker">
+  <div class="gllpMap">Google Maps</div>
+  <input type="hidden" class="gllpLatitude" value="{{form.latitude.value}}"/>
+  <input type="hidden" class="gllpLongitude" value="{{form.longitude.value}}"/>
+  <input type="hidden" class="gllpZoom" value="12"/>
+</fieldset>
+
+
+<br/><button class="btn" type="submit" value="Save">Save</button>
 </form>
 </div>
+
+      </div>
+  </div>
+
+<script type="text/javascript">
+ $(".gllpLatitude").change(function(){
+    $("#id_latitude").val($(".gllpLatitude").val());
+ });
+
+ $(".gllpLongitude").change(function(){
+    $("#id_longitude").val($(".gllpLongitude").val());
+ });
+</script>
+
 </body>
 </head>
