@@ -198,79 +198,85 @@
       <div id="personal_content">
         <div id="left">
          <div class="personal_headings active" id="my_events">
-              <div class="events_header">Your Events:</div>
+              <div class="events_header"><span class="toggle_button">-</span> Your Events:</div>
               <div class="list_group">
 
                 {% for e in my_events %}
                 <div class="events_item" id="{{e.id}}">
                   <p> {{ e.name }}
-                        <a href="#" onclick="edit_form({{e.id}})"> Edit </a>
-                        <a href="{% url 'frontend:rmevent' e.id %}">Remove</a>
-		                    <a href="{% url 'frontend:exportevent' e.id %}"> Export </a>
+
+                        <a class="link_button" id="edit_link" href="#" onclick="edit_form({{e.id}})"> Edit </a>
+                        <a class="link_button" href="{% url 'frontend:rmevent' e.id %}">Remove</a>
+			{% if e.exported %}
+			<span class="link_button"> Exported! </span>
+			{% else %}
+		        <a class="link_button" href="{% url 'frontend:exportevent' e.id %}"> Export </a>
+			{% endif %}
 		              </p>
                 </div>
               {% endfor %}
               </div>
           </div>
           <div class="personal_headings active" id="rsvped">
-            <div class="events_header">Rsvped Events:</div>
+            <div class="events_header"><span class="toggle_button">-</span> Attending:</div>
             <div class="list_group">
 
               {% for e in rsvped %}
 
                 <div class="events_item" id="{{e.id}}">
-                <p> {{ e.name }}<a href="{% url 'frontend:rmrsvp' e.id %}">Remove</a></p>
+                <p> {{ e.name }}<a class="link_button" href="{% url 'frontend:rmrsvp' e.id %}">Leave</a></p>
               </div>
               {% endfor %}
             </div>
           </div>
           <div class="personal_headings active" id="recommended">
-            <div class="events_header">Recommended Events (Friends/Groups): </div>
+            <div class="events_header"><span class="toggle_button">-</span> Recommended Events (Friends/Groups): </div>
             <div class="list_group">
 
               {% for e in recommended %}
                 <div class="events_item" id="{{e.id}}">
                 <p> {{ e.name }}</p>
-                <a href="#" class="'+rsvp_class+'" onclick="rsvp({{e.id}})" id="rsvp_{{e.id}}">RSVP</a>
+                <a class="link_button" href="#" class="'+rsvp_class+'" onclick="rsvp({{e.id}})" id="rsvp_{{e.id}}">RSVP</a>
               </div>
               {% endfor %}
           </div>
           </div>
 
           <div class="personal_headings" id="friends">
-            <div class="events_header">Friends:</div>
+            <div class="events_header"><span class="toggle_button">+</span> Friends:</div>
             <div class="list_group hidden">
 
               {% for f in friends %}
               <div class="friends_item">
-                <p> {{ f.first_name }} <a href="{% url 'frontend:rmfriend' f.id %}">Remove</a></p>
+                <p> {{ f.first_name }} <a class="link_button" href="{% url 'frontend:rmfriend' f.id %}">Remove</a></p>
               </div>
               {% endfor %}
             <div id="friends_form">
               <form action="/addfriend/" method="post">{% csrf_token %}
                 Add friend: 
                 {{ form2.name }}
-              <button class="btn" type="submit">Add</button>
+              <button class="btn" type="submit" style="vertical-align:top">Add</button>
               </form>
             </div>
-            <div id="facebook_friends">
+            Import from Facebook:
+            <select multiple="multiple" id="facebook_friends">
               {% for f in fb_friends %}
-              <div class="fb_friend" id="{{f.id}}">
+              <option class="fb_friend" value="{{f.id}}">
                 <p> {{ f.name }} </p>
-              </div>
+              </option>
               {% endfor %}
-            </div>
+            </select>
           </div>
 
           </div>
 
           <div class="personal_headings" id="groups">
-            <div class="events_header">Your existing groups:</div>
+            <div class="events_header"><span class="toggle_button">+</span> Your existing groups:</div>
             <div class="list_group hidden">
 
               {% for g in groups_list %}
               <div class="groups_item" id="{{g.id}}">
-                <p> {{ g.name }} <a href="{% url 'frontend:rmgroup' g.id %}">Leave</a></p>
+                <p> {{ g.name }} <a class="link_button" href="{% url 'frontend:rmgroup' g.id %}">Leave</a></p>
               </div>
               {% endfor %}
             <div id="groups_form">
@@ -282,12 +288,14 @@
             </div>
 
             <div id="import_groups_form">
+            Import from Facebook:
+            <div style="width:75%; height:50px; overflow:scroll; background-color: white; padding:5px; border-radius:3px; border: 1px solid #ccc;">
               {% for g in fb_groups %}
             <p>{{g.name}} 
-            <a href="{% url 'frontend:importgroup' g.id %}">Import</a>
-            
-                </p>
-                      {% endfor %}
+            <a class="link_button" href="{% url 'frontend:importgroup' g.id %}">Import</a>
+            </p>
+              {% endfor %}
+            </div>
               </div>
             </div>
 
@@ -328,18 +336,20 @@
             });
           }
         {% endfor %}
-      }).children().children('a').click(function(){
+      }).find("#edit_link").click(function(e){
         return false;
       });
 
       $(".personal_headings").click(function(e) {
-        if(e.target != this && e.target.className != "events_header") return;
+        if(e.target != this && e.target.className != "events_header" && e.target.className != "toggle_button") return;
         if ($(this).hasClass("active")) {
           $(this).removeClass("active");
+          $(this).find(".events_header").find(".toggle_button").html("+");
           $(this).find(".list_group").addClass("hidden");
         } else {
           $(this).addClass("active");
           $(this).find(".list_group").removeClass("hidden");
+          $(this).find(".events_header").find(".toggle_button").html("-");
         }
       });
 
@@ -359,25 +369,26 @@
                   html += " {{u.first_name}}"
                 {% endfor %}
                 html += "<div id='edit_groups_form'><form action='/addgroup/' method='post' id='edit_group_form'>{% csrf_token %}"
-                      + "<p><b> Add user to group: </b></p>"+'{{form.group_name}} {{form.member_names}}'+ "<input type='submit' value='Submit' />"
+                      + "<p><b> Add user to group: </b></p><div class='hidden'>"+'{{form.group_name}}</div>{{form.member_names}}'+ "<button type='submit' value='Submit' class='btn' style='vertical-align:top'>Add</button>"
                       + "</form></div>"
                 parent.innerHTML = html;
-                $("#edit_groups_form #id_group_name").attr({type:"hidden", value:'{{g.name}}'})
+                $("#edit_groups_form #id_group_name").attr('value','{{g.name}}')
+                var availableTags = {{all_users|safe}}
+
+
+                $("#edit_groups_form #id_member_names").tagit({
+                  availableTags: availableTags,
+                 beforeTagAdded: function(event, ui) { 
+                   // only allow existing values
+                   if($.inArray(ui.tagLabel, availableTags)==-1) {
+                    return false;
+                   }
+                }
+                });
 
           }
         {% endfor %}
-        var availableTags = {{all_users|safe}}
 
-
-        $("#edit_groups_form #id_member_names").tagit({
-          availableTags: availableTags,
-         beforeTagAdded: function(event, ui) { 
-           // only allow existing values
-           if($.inArray(ui.tagLabel, availableTags)==-1) {
-            return false;
-           }
-        }
-        });
       });
 
       function edit_form(id) {
@@ -390,6 +401,7 @@
 
             htmlResponse = htmlResponse.replace('/change_event_id/', '/'+id+'/');
             parent.innerHTML = htmlResponse;
+            $(".datepicker").datepicker({ dateFormat: 'yy-mm-dd' });
         });
       }
 

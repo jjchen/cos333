@@ -1,0 +1,37 @@
+<html>
+<head>
+	<title>Google Maps Latitude and Longitude Picker jQuery plugin</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>{% load staticfiles %}
+	<link rel="stylesheet" type="text/css" href="{% static 'frontend/demo.css' %}"/>
+	<!-- Dependencies: JQuery and GMaps API should be loaded first -->
+	<script src="{% static 'frontend/jquery-1.7.2.min.js' %}"></script>
+	<script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+	<!-- CSS and JS for our code -->
+	<link rel="stylesheet" type="text/css" href="{% static 'frontend/jquery-gmaps-latlon-picker.css' %}"/>
+	<script src="{% static 'frontend/jquery-gmaps-latlon-picker.js' %}"></script>
+</head>
+<body>
+
+<form action="/locdemo/" method="post">{% csrf_token %}
+
+Move the marker, or double click on the map. Search for cities, countries or landmark names.
+	<fieldset class="gllpLatlonPicker" id="custom_id">
+		<input type="text" class="gllpSearchField">
+		<input type="button" class="gllpSearchButton" value="search">
+		<br/><br/>
+		<div class="gllpMap">Google Maps</div>
+		<p>Latitude: </p>
+		<input name="latitude" class="gllpLatitude" 
+		       value="{{default_lat}}" readonly/>
+		<p>Longitude: </p>
+		<input name="longitude" class="gllpLongitude" 
+		       value="{{default_lon}}" readonly/>
+		<input type="hidden" class="gllpZoom" value="12"/>
+	</fieldset>
+
+    <INPUT TYPE="submit" VALUE="Submit order">
+</form>
+	
+</body>
+</html>

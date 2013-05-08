@@ -355,7 +355,7 @@
          }
          google.maps.event.addDomListener(window, 'load', initialize);
 
-         function codeAddress(buildingName) {
+         function codeAddress(buildingName, name, time, description) {
             geocoder.geocode({
                'address': buildingName
             }, function (results, status) {
@@ -365,11 +365,14 @@
                      map: map,
                      position: results[0].geometry.location
                   });
+
+                  marker.setIcon(single_pin);
                   var contentString = '<div class="infoWindow_content">' +
-                     '<h3 class="infoWindow_heading">{{event.name}}</h3>' +
+                     '<h3 class="infoWindow_heading">'+name+'</h3>' +
                      '<div id="infoWindow_body">' +
-                     '<p>Time: {{event.startTime|date:"D d M Y H:i"}}</p>' +
-                     '<p>Location: {{event.location}}</p>' +
+                     '<p>Time: ' + time +
+                     '<p>Location: '+buildingName+'</p>' +
+                     "Description: {{event.description}} <br/>" +
                      '</div>' +
                      '</div>';
 
@@ -404,7 +407,7 @@
                       var json_parsed = $.parseJSON(json);
                       if(json_parsed.success == 'true') {
                         $("rsvp_"+id).addClass('rsvp');
-                        var html = 'un RSVP'
+                        var html = 'Leave'
                         parent.innerHTML = html;
                         rsvp_list[id] = true;
                       }
@@ -416,7 +419,7 @@
 
                 if(json_parsed.success == 'true') {
                     $("rsvp_"+id).removeClass('rsvp');
-                    var html = 'RSVP'
+                    var html = 'Attend'
                     parent.innerHTML = html;
                     rsvp_list[id] = false;
                 } 
@@ -518,7 +521,7 @@
             </ul>
           </li>
           <li class=""><a href="{% url 'frontend:personal' %}">{{user}}</a></li>  
-          <li><a href="{% url 'frontend:settings' %}">Settings</a></li>  
+          <li><a href="{% url 'frontend:settings' %}">Settings</a></li>
           <li>
 	    {% if logged_in %}
 	    <a href="{% url 'frontend:logout' %}">Logout</a>
@@ -542,17 +545,27 @@
     </form>
 
     <br/>
-    <div style='width:100%; height:150px; overflow:scroll;'>
+    <div style='width:100%; height:100px; overflow:scroll;'>
     <form id="tags_form" method="post">{% csrf_token %}
       {% for tag in tags %}
-      <input type="checkbox" onclick="filter('tags')" name="tags" value="{{tag}}">{{tag}}</br> 
+      <div class="link_button_checkbox">
+      <input type="checkbox" onclick="filter('tags')" name="tags" value="{{tag}}"><span>&nbsp{{tag}} </span></br> 
+      </div>
       {% endfor %}
+
+      {% for group in groups %}
+      <div class="link_button_checkbox red">
+      <input type="checkbox" onclick="filter('tags')" name="tags" value="{{group}}"><span>&nbsp{{group}} </span></br> 
+      </div>
+      {% endfor %}
+
     </form>
     </div>
-    <br/> <a href="{% url 'frontend:index' %}"> All </a>
+    <br/> <a class="link_button_main" href="{% url 'frontend:index' %}"> All </a>
 
-    <br/> <a href="#" onclick="filter('recommended')"> Recommended </a>
-    <br/> <a href="#" onclick="filter('my_events')"> My Events </a>
+    <br/> <a class="link_button_main" href="#" onclick="filter('recommended')"> Recommended </a>
+    <br/> <a class="link_button_main" href="#" onclick="filter('my_events')"> My Events </a>
+    <br/>
     <br/>
 
     <div id="time-slider"></div>
@@ -608,7 +621,7 @@
       });
       
     </script>
-    <br/> <a href="#" onclick="filter2('my_events')">Filter Time</a>
+    <a class="link_button_main" href="#" onclick="filter2('my_events')">Filter Time</a>
   </div>
 
   <div id="content_wrapper">
@@ -756,7 +769,6 @@
     </div>
 
     <div id="map-canvas" style="width:100%;height:100%;"></div>
-
 
     <script type="text/javascript">
         $("#expand_button").click(function(){

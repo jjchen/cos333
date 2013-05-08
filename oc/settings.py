@@ -7,20 +7,21 @@ TEMPLATE_DEBUG = DEBUG
 #FACEBOOK_APP_ID = '431733443585073'
 #FACEBOOK_API_SECRET = 'bee41bd237e61feb159d64f99e7db996'
 
-# Private: 127.0.0.1:8000
+# Private: localhost:8000
 FACEBOOK_APP_ID =  '125667410957888'
-FACEBOOK_API_SECRET = 'db68bafe52ea7a11b7081e539f2a4191'
+FACEBOOK_API_SECRET = '1d71ff77879df12aa55ba2307523ab04'
 
 FACEBOOK_EXTENDED_PERMISSIONS = ['user_events', 'friends_events',
                                  'create_event', 'rsvp_event', 'user_groups',
                                  'read_friendlists']
 
-LOGIN_URL = '/login/'
+LOGIN_URL = '/frontend/login/facebook'
 LOGIN_REDIRECT_URL = '/'
-LOGIN_ERROR_URL = '/login/'
+LOGIN_ERROR_URL = '/error/'
 
 SOCIAL_AUTH_COMPLETE_URL_NAME = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
+SOCIAL_AUTH_USER_MODEL = 'frontend.MyUser'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -148,7 +149,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 CAS_SERVER_URL = 'https://fed.princeton.edu/cas/'
-CAS_REDIRECT_URL = '/frontend'
+CAS_REDIRECT_URL = '/frontend/'
 ROOT_URLCONF = 'oc.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
@@ -218,3 +219,4 @@ AUTHENTICATION_BACKENDS = (
     'django_cas.backends.CASBackend',
     'django.contrib.auth.backends.ModelBackend'
 )
+
