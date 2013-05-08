@@ -124,6 +124,7 @@ div#side_panel{
 	top: 100px;
 	right: 25px;
 	height: 75%;
+	width: 200px;
 	float: right;
 	background-color: rgba(255,255,255,0.9);
 	border: 1px solid #eee;
@@ -131,7 +132,6 @@ div#side_panel{
 	border-radius: 5px;
 	box-sizing: border-box;
 	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
-	box-sizing: border-box;
 	z-index: 1;
 	overflow:scroll;
 }
@@ -156,14 +156,14 @@ div#minus_button{
 }
 
 div#hide_button{
-	bottom: 550px;
-	right: 228px;	
+	bottom: 540px;
+	right: 226px;	
 	padding: 5px;
 	background-color: rgba(255,255,255,0.8);
 }
 
 div#expand_button{
-	bottom: 550px;
+	bottom: 540px;
 	right: 20px;	
 	padding: 5px;
 	background-color: rgba(255,255,255,0.8);
@@ -187,9 +187,119 @@ div#hide_button:hover{
 	border-radius: 5px;
 	box-sizing: border-box;
 	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
-	box-sizing: border-box;
 	z-index: 1;
 	cursor: pointer;
+}
+
+.toggle_button{
+	border-radius: 5px;
+	background-color: rgba(100,202,151,0.5);
+	border: 1px solid rgba(0,102,51,0.1);
+	box-sizing: border-box;
+	cursor: pointer;
+	color: #777;
+    overflow:none;
+    margin: 5px;
+    display:inline-block;
+    width: 25px;
+    text-align: center;
+	box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+
+.link_button{
+	border-radius: 5px;
+	background-color: #ddd;
+	border: 1px solid #eee;
+	box-sizing: border-box;
+	cursor: pointer;
+	color: gray;
+	padding: 2px;
+	float: right;
+	margin: 2px;
+}
+
+.link_button_checkbox{
+	border-radius: 5px;
+	background-color: rgba(100,202,151,0.5);
+	border: 1px solid #eee;
+	box-sizing: border-box;
+	cursor: pointer;
+	color: #777;
+    overflow:none;
+    margin: 2px;
+    float:left;
+    position: relative;
+}
+
+.red {
+	background-color: pink;	
+}
+
+.link_button_checkbox input:checked ~ span{
+	color: white;
+}
+
+.link_button_checkbox input {
+    /* First, we make it as wide as the container */
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    /* Then, we put it on top of everything else */
+    z-index: 100;
+    /* Last, we make it invisible */
+    opacity: 0;
+    /* This one is just for ergonomy */
+    cursor: pointer;
+}
+
+.link_button_checkbox:hover{
+	text-decoration: none;
+	color: #777;
+	background-color: rgba(50,152,101,0.5);	
+}
+
+.red:hover {
+	background-color: rgba(255,101,101,0.5);
+}
+
+.link_button_list{
+	border-radius: 5px;
+	background-color: rgba(100,202,151,0.5);
+	border: 1px solid #eee;
+	box-sizing: border-box;
+	cursor: pointer;
+	color: #777;
+	padding: 2px;
+	margin: 2px;
+	line-height: 25px;
+}
+
+.link_button_list:hover{
+	text-decoration: none;
+	color: #777;
+	background-color: rgba(50,152,101,0.5);
+}
+
+.link_button_main{
+	border-radius: 5px;
+	background-color: #ddd;
+	border: 1px solid #eee;
+	box-sizing: border-box;
+	cursor: pointer;
+	color: gray;
+	padding: 2px;
+	margin: 2px;
+	line-height: 25px;
+}
+
+.link_button_main:hover{
+	text-decoration: none;
+	color: black;
+}
+.link_button:hover{
+	text-decoration: none;
+	color: black;
 }
 
 .button h3{
@@ -326,12 +436,12 @@ div#right {
 
 	padding: 10px;
 	background: rgba(255, 255, 255, 0.7);
-	box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 	border-bottom: 1px solid #ddd;
 	margin-bottom: 8px;
 	cursor: pointer;
 	width: 450px;
-
+	border-radius: 5px;
 	-webkit-transition: 0.1s background, 0.3s padding;
 }
 
@@ -341,8 +451,7 @@ div#right {
 }
 
 .events_item:hover{
-	padding-left: 30px;
-	background: rgba(255,255,255, 0.9);
+	background: rgba(255,255,255, 0.1);
 }
 
 .events_header {
@@ -363,7 +472,7 @@ div#right {
 .friends_item {
 	padding: 10px;
 	background: rgba(255, 255, 255, 0.7);
-	box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 	border-bottom: 1px solid #ddd;
 	margin-bottom: 8px;
 	cursor: pointer;
@@ -378,19 +487,20 @@ div#right {
 }
 
 .friends_item:hover{
-	padding-left: 30px;
-	background: rgba(255,255,255, 0.9);
+	background: rgba(255,255,255, 0.1);
 }
+
 
 div#more{
 	padding: 10px;
 	background: rgba(255, 255, 255, 0.7);
-	box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 	border-bottom: 1px solid #ddd;
 	margin-bottom: 8px;
 	width: 100%;
     font-family: 'PT Sans', Helvetica, Arial, sans-serif;
     color: #777;
+	border-radius: 5px;
 }
 
 .show_event_item b{
@@ -401,13 +511,16 @@ div#more{
 
 .personal_headings {
 	padding: 10px;
+	border: 1px solid #eee;
+
 	background: rgba(255, 255, 255, 0.7);
-	box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 	border-bottom: 1px solid #ddd;
 	margin-bottom: 8px;
 	cursor: pointer;
 	width: 500px;
-	height: 20px;
+	height: 30px;
+	border-radius: 5px;
 	-webkit-transition: 0.1s background, 0.3s padding;
 }
 
@@ -418,7 +531,7 @@ div#more{
 .groups_item {
 	padding: 10px;
 	background: rgba(255, 255, 255, 0.7);
-	box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 	border-bottom: 1px solid #ddd;
 	margin-bottom: 8px;
 	cursor: pointer;
@@ -433,6 +546,5 @@ div#more{
 }
 
 .groups_item:hover{
-	padding-left: 30px;
-	background: rgba(255,255,255, 0.9);
+	background: rgba(255,255,255, 0.1);
 }
