@@ -121,6 +121,7 @@
               function(responseText, responseStatus) {
                   jQuery("#sendbutton").attr('disabled', false)
                   jQuery("#eventform").trigger("aCustomEvent")
+
               }
           );
           e.preventDefault(); 
@@ -159,6 +160,13 @@
  
  <script>
         $("#eventform").live("aCustomEvent",function(){
+          names = {{locations|safe}}
+
+          $("#id_location").autocomplete({
+            source: names
+          });
+
+
             var sampleTags = ['cos', '333', 'music', 'needs', 'database', 'integration'];
 
             names = []
@@ -284,6 +292,8 @@
             source: names
           });
         })
+
+
 
          var map;
          var idled = false;
@@ -456,6 +466,8 @@
             filter("reload");
           }
     
+
+
       </script>
 
       <style type="text/css" media="screen">
@@ -733,6 +745,28 @@
       <h3>-</h3>
     </div>
 
+    <div id="expand_button" class="button hidden" onclick="">
+      <h3><small><<</small></h3>
+    </div>
+
+    <div id="hide_button" class="button" onclick="">
+      <h3><small>>></small></h3>
+    </div>
+
     <div id="map-canvas" style="width:100%;height:100%;"></div>
+
+
+    <script type="text/javascript">
+        $("#expand_button").click(function(){
+          $(this).addClass("hidden");
+          $("#hide_button").removeClass("hidden");
+          $("#side_panel").removeClass("hidden");
+        });
+        $("#hide_button").click(function(){
+          $(this).addClass("hidden");
+          $("#expand_button").removeClass("hidden");
+          $("#side_panel").addClass("hidden");
+        });
+    </script>
   </body>
 </html>
