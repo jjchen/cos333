@@ -38,10 +38,6 @@ import unicodedata
 import facebook 
 
 MAX_LEN = 50
-class SignupForm(forms.Form):
-	first_name = forms.CharField(max_length = MAX_LEN)
-	last_name = forms.CharField(max_length = MAX_LEN)
-
 class SettingsForm(forms.Form):
 	first_name = forms.CharField()
 	last_name = forms.CharField()
@@ -101,6 +97,21 @@ def get_memnames(request):
 	mimetype = 'application/json'
 	return HttpResponse(data, mimetype)
 
+def locdemo(request):
+	print "in locdemo"
+	if request.method == 'POST':
+		print "posting"
+		print request.POST
+
+		form = SettingsForm(request.POST)
+		if form.is_valid():
+			data = form.cleaned_data
+			print data
+			return HttpResponseRedirect('/') # Redirect after POST
+	else:
+		form = SettingsForm()
+	return render(request, 'frontend/demo.html', {'form': form})
+
 # needs fixin'
 def get_tags(request):
 	if request.is_ajax():
@@ -156,22 +167,6 @@ def settings(request):
 	return render(request, 'frontend/settings.html', {
         'form': form, 'group_info': group_info
 	})
-
-def signup(request):
-	if request.method == 'POST':
-		form = SignupForm(request.POST) # A form bound to the POST data
-		if form.is_valid():
-			data = form.cleaned_data
-			user = MyUser(first_name = data['first_name'],
-				      last_name = data['last_name'],
-				      user_id = request.user.username)
-			user.save()
-			return HttpResponseRedirect('/') # Redirect after POST
-	else:
-		form = SignupForm() # An unbound form
-	return render(request, 'frontend/signup.html', {
-        'form': form,
-    })
 
 class MultiNameField(forms.CharField):
 	def __init__(self):
@@ -273,7 +268,7 @@ def addfriend(request):
 #	return render(request, 'frontend/personal.html', {
  #       'form': form,
   #  })	
-	return HttpResponseRedirect('/signup')	
+	return HttpResponseRedirect('/')	
 
 def rmfriend(request, user):
 	try:
@@ -468,7 +463,7 @@ def filter(request):
 	print username
 	if username != "" and\
 	 len(MyUser.objects.filter(user_id = username)) == 0:
-		return HttpResponseRedirect('/signup')
+		return HttpResponseRedirect('/')
 	else:
 		try:
 			user = MyUser.objects.get(user_id=username)
@@ -608,7 +603,7 @@ def index(request, add_form=None):
 
 	if username != "" and\
 	 len(MyUser.objects.filter(user_id = username)) == 0:
-		return HttpResponseRedirect('/signup')
+		return HttpResponseRedirect('/')
 	else:
 		try:
 			#User exists
