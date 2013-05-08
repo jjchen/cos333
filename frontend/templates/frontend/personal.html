@@ -217,6 +217,20 @@
               {% endfor %}
               </div>
           </div>
+
+          <div class="personal_headings active" id="invites">
+            <div class="events_header"><span class="toggle_button">-</span> Invitations:</div>
+            <div class="list_group">
+
+              {% for i in invites %}
+                <div class="events_item" id="{{e.id}}">
+                <p> {{ i.event.name }}</p>
+                <a class="link_button" href="#" class="'+rsvp_class+'" onclick="rsvp({{e.id}})" id="rsvp_{{e.id}}">RSVP</a>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
           <div class="personal_headings active" id="rsvped">
             <div class="events_header"><span class="toggle_button">-</span> Attending:</div>
             <div class="list_group">
@@ -369,7 +383,7 @@
                   html += " {{u.first_name}}"
                 {% endfor %}
                 html += "<div id='edit_groups_form'><form action='/addgroup/' method='post' id='edit_group_form'>{% csrf_token %}"
-                      + "<p><b> Add user to group: </b></p><div class='hidden'>"+'{{form.group_name}}</div>{{form.member_names}}'+ "<button type='submit' value='Submit' class='btn' style='vertical-align:top'>Add</button>"
+                      + "<p> Add user: </p><div class='hidden'>"+'{{form.group_name}}</div>{{form.member_names}}'+ "<button type='submit' value='Submit' class='btn' style='vertical-align:top'>Add</button>"
                       + "</form></div>"
                 parent.innerHTML = html;
                 $("#edit_groups_form #id_group_name").attr('value','{{g.name}}')

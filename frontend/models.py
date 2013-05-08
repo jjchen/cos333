@@ -58,6 +58,11 @@ class NewEvent(models.Model):
     def __unicode__(self):
         return self.name
 
+class Invite(models.Model):
+    event = models.ForeignKey(NewEvent)
+    inviter = models.ForeignKey(MyUser, related_name="inviter")
+    invitee = models.ForeignKey(MyUser, related_name="invitee")
+
 class Building(models.Model):
     name = models.CharField(max_length=200)
     lat = models.DecimalField(max_digits=15, decimal_places=10)
