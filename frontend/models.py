@@ -11,13 +11,22 @@ NAME_MAXLEN=50
 class Tag(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
+class CustomUserManager(models.Manager):
+    def create_user(self, username, email):
+        return self.model._default_manager.create(username=username)
+
 class MyUser(models.Model):
     first_name = models.CharField(max_length=NAME_MAXLEN)
     last_name = models.CharField(max_length=NAME_MAXLEN)
-    user_id = models.CharField(max_length=NAME_MAXLEN)
     latitude = models.FloatField(default=40.344725)
     longitude = models.FloatField(default=-74.6556)
-    # friends = models.ForeignKey('self', null=True) #recursive relation
+    
+    username = models.CharField(max_length=128)
+    last_login = models.DateTimeField(blank=True, null=True)
+    objects = CustomUserManager()
+
+    def is_authenticated(self):
+        return True
     def __unicode__(self):
         return self.first_name + " " + self.last_name
 

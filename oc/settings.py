@@ -21,6 +21,7 @@ LOGIN_ERROR_URL = '/error/'
 
 SOCIAL_AUTH_COMPLETE_URL_NAME = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
+SOCIAL_AUTH_USER_MODEL = 'frontend.MyUser'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -218,3 +219,4 @@ AUTHENTICATION_BACKENDS = (
     'django_cas.backends.CASBackend',
     'django.contrib.auth.backends.ModelBackend'
 )
+

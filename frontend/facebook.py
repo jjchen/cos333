@@ -14,11 +14,11 @@ def importgroup(request, group):
        	#missing information on them; otherwise, return MyUser object
         try:
             result = MyUser.objects.filter(
-                user_id = user_info['username'])
+                username = user_info['username'])
             if len(result) != 0:
                 assert(len(result) == 1)
                 return result[0]
-            new_user = MyUser(user_id = user_info['username'],
+            new_user = MyUser(username = user_info['username'],
                               first_name = user_info['first_name'],
                               last_name = user_info['last_name'])
         except KeyError:
@@ -28,7 +28,7 @@ def importgroup(request, group):
 
     if request.user.username == "":
         return HttpResponse('Unauthorized access', status=401)
-    this_user = MyUser.objects.get(user_id = request.user.username)	
+    this_user = MyUser.objects.get(username = request.user.username)	
     instance = UserSocialAuth.objects.get(user=this_user, provider='facebook')        
     token = instance.tokens['access_token']
     graph = GraphAPI(token)	
@@ -88,7 +88,7 @@ def exportevent(request, event):
     except ObjectDoesNotExist:
         return HttpResponse('Tried exporting non-existent event!', 
                             status=401)
-    this_user = MyUser.objects.get(user_id = request.user.username)
+    this_user = MyUser.objects.get(username = request.user.username)
     if event_obj.creator != this_user:
         return HttpResponse('Unauthorized access', status=401)
     success = process_export(this_user, event_obj)
@@ -102,7 +102,9 @@ def get_fb_groups(user):
     instance = UserSocialAuth.objects.get(user=user, provider='facebook') 
     token = instance.tokens['access_token']
     graph = GraphAPI(token)
-
+    testall = UserSocialAuth.objects.all()
+    print testall
+    print testall[0].__dict__
     print "Facebook instance: " + str(instance)
 
     user_path = str(instance.uid) + "/groups"
