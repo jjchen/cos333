@@ -137,7 +137,7 @@ def settings(request):
 	if request.user.username == "":
 		return HttpResponse('Unauthorized access--you must sign in!', 
 						status=401)
-	this_user = MyUser.objects.get(user_id = request.user.username)
+	this_user = MyUser.objects.get(username = request.user.username)
 	#if len(MyGroup.objects.all()) > 0:
 	groups = MyGroup.objects.filter(creator = request.user.username)
 	#groups = []
@@ -146,7 +146,7 @@ def settings(request):
 		all_users = group.users.all()
 		info = group.name + ": "
 		for user in all_users:
-			info += user.user_id + " "
+			info += user.username + " "
 		group_info.append((group.name, info))
 
 	if request.method == 'POST':
@@ -160,7 +160,7 @@ def settings(request):
 			this_user.longitude = data['longitude']
 			this_user.save()
 			this_user = MyUser.objects.get(
-				user_id = request.user.username)
+				username = request.user.username)
 			print this_user.latitude
 			return HttpResponseRedirect('/') # Redirect after POST
 	else:
@@ -180,7 +180,7 @@ def signup(request):
 			data = form.cleaned_data
 			user = MyUser(first_name = data['first_name'],
 				      last_name = data['last_name'],
-				      user_id = request.user.username)
+				      username = request.user.username)
 			user.save()
 			return HttpResponseRedirect('/') # Redirect after POST
 	else:
@@ -198,7 +198,7 @@ class MultiNameField(forms.CharField):
 
 	def validate(self, value):
 		for name in value:
-			if len(MyUser.objects.filter(user_id = name)) == 0:
+			if len(MyUser.objects.filter(username = name)) == 0:
 				raise ValidationError("User " + name + " doesn't exist!")
 
 def check_group_name(name):
@@ -221,7 +221,6 @@ class SearchForm(forms.Form):
 
 def addgroup(request):
 	#print request.user.username
-	#print MyUser.objects.get(user_id="foo")
 	print "addgroup is " + request.user.username
 	if request.user.username == "":
 		return HttpResponse('Unauthorized access', status=401)
@@ -233,22 +232,22 @@ def addgroup(request):
 				old_group = MyGroup.objects.get(name=form.cleaned_data['group_name'])
 				print "old group"
 				for name in form.cleaned_data['member_names']:
-					user = MyUser.objects.get(user_id = name)
+					user = MyUser.objects.get(username = name)
 					old_group.users.add(user)
 				old_group.save()
 				return HttpResponseRedirect('/frontend/personal')				
 			except ObjectDoesNotExist:
 				print "new group"
 
-				this_user = MyUser.objects.get(user_id = 
+				this_user = MyUser.objects.get(username = 
 							       request.user.username)
 				new_group = MyGroup()
-				new_group.creator = this_user.user_id
+				new_group.creator = this_user.username
 				new_group.name = form.cleaned_data['group_name']
 				new_group.save()
 				print form.cleaned_data
 				for name in form.cleaned_data['member_names']:
-					user = MyUser.objects.get(user_id = name)
+					user = MyUser.objects.get(username = name)
 					new_group.users.add(user)
 				new_group.users.add(this_user)
 				new_group.save()
@@ -259,7 +258,6 @@ def addgroup(request):
 
 def addfriend(request):
 	#print request.user.username
-	#print MyUser.objects.get(user_id="foo")
 	print "Request is " + request.user.username
 	if request.user.username == "":
 		return HttpResponse('Unauthorized access', status=401)
@@ -267,7 +265,7 @@ def addfriend(request):
 		form = AddfriendsForm(request.POST) # A form bound to the POST data
 		if form.is_valid():
 			print form.cleaned_data['name']
-			this_user = MyUser.objects.get(user_id = request.user.username)
+			this_user = MyUser.objects.get(username = request.user.username)
 			try: 
 				friends_obj = Friends.objects.get(name = this_user)
 			except ObjectDoesNotExist:
@@ -276,7 +274,7 @@ def addfriend(request):
 				friends_obj.save()
 			name = form.cleaned_data['name']
 			try: 
-				user = MyUser.objects.get(user_id = name)
+				user = MyUser.objects.get(username = name)
 				friends_obj.friends.add(user)
 			except ObjectDoesNotExist:
 				# error!!
@@ -296,7 +294,7 @@ def rmfriend(request, user):
 		remove_obj = MyUser.objects.get(id = user)
 	except ObjectDoesNotExist:
 		return HttpResponse('Tried removing non-existent friend!', status=401) 
-	this_user = MyUser.objects.get(user_id = request.user.username)
+	this_user = MyUser.objects.get(username = request.user.username)
 	try: 
 		friend_obj = Friends.objects.get(name = this_user)
 	except ObjectDoesNotExist:
@@ -314,7 +312,7 @@ def rmgroup(request, group):
 	#if group_obj.creator != request.user.username:
 	#	return HttpResponse('Unauthorized access', status=401)
 	#group_obj.delete()
-	this_user = MyUser.objects.get(user_id = request.user.username)
+	this_user = MyUser.objects.get(username = request.user.username)
 	group_obj.users.remove(this_user)
 	group_obj.save()
 	return HttpResponseRedirect('/frontend/personal')
@@ -325,7 +323,7 @@ def rmevent(request, event):
 	except ObjectDoesNotExist:
 		return HttpResponse('Tried removing non-existent event!', 
 				    status=401)
-	this_user = MyUser.objects.get(user_id = request.user.username)
+	this_user = MyUser.objects.get(username = request.user.username)
 	if event_obj.creator != this_user:
 		return HttpResponse('Unauthorized access', status=401)
 	event_obj.delete()
@@ -334,7 +332,7 @@ def rmevent(request, event):
 def addrsvp(request):
 	print "in rsvp"
 	if request.method == 'POST':
-		this_user = MyUser.objects.get(user_id = request.user.username)
+		this_user = MyUser.objects.get(username = request.user.username)
 		try:
 			id = request.POST.get('rsvp_id')
 
@@ -356,7 +354,7 @@ def addrsvp(request):
 def personal_ajax(request, event):
 	if request.method == 'POST':
 		try:
-			this_user = MyUser.objects.get(user_id = request.user.username)
+			this_user = MyUser.objects.get(username = request.user.username)
 			event_obj = NewEvent.objects.get(id = event)
 			if (not accessible(event_obj, this_user)):
 				return HttpResponse('You dont have access to this event!', status=401)
@@ -378,14 +376,13 @@ def editevent(request, event):
 
 def editgroup(request, group):
 	#print request.user.username
-	#print MyUser.objects.get(user_id="foo")
 	if request.user.username == "":
 		return HttpResponse('Unauthorized access', status=401)
 	if request.method == 'POST':
 		try:
 			new_group = MyGroup.objects.get(id = group)
 			for name in form.cleaned_data['member_names']:
-				user = MyUser.objects.get(user_id = name)
+				user = MyUser.objects.get(username = name)
 				new_group.users.add(user)
 			new_group.users.add(this_user)
 			new_group.save()
@@ -397,7 +394,7 @@ def editgroup(request, group):
 
 def rmrsvp(request, id=None):
 	if request.method == 'POST':
-		this_user = MyUser.objects.get(user_id = request.user.username)
+		this_user = MyUser.objects.get(username = request.user.username)
 		try:
 			if (id == None):
 				id = request.POST.get('rsvp_id')
@@ -410,7 +407,7 @@ def rmrsvp(request, id=None):
 		event_obj.save()
 		return HttpResponse('{"success":"true"}');
 	else:
-		this_user = MyUser.objects.get(user_id = request.user.username)
+		this_user = MyUser.objects.get(username = request.user.username)
 		print id
 		try:
 			event_obj = NewEvent.objects.get(id = id)
@@ -430,7 +427,7 @@ def personal(request):
 	print "Request is " + request.user.username
 	if request.user.username == "":
 		return HttpResponse('Unauthorized access', status=401)
-	this_user = MyUser.objects.get(user_id = request.user.username)
+	this_user = MyUser.objects.get(username = request.user.username)
 #	groups = MyGroup.objects.filter(creator = request.user.username)
 	#groups = this_user.users_set.all()
 	groups = MyGroup.objects.filter(users = this_user)
@@ -439,7 +436,7 @@ def personal(request):
 	recommended = []
 
 	all_users_obj =  MyUser.objects.all()
-	all_users = [unicodedata.normalize('NFKD', user.user_id).encode('ascii', 'ignore') for user in all_users_obj]
+	all_users = [unicodedata.normalize('NFKD', user.username).encode('ascii', 'ignore') for user in all_users_obj]
 	friends = []
 	try: 
 		friends_obj = Friends.objects.get(name = this_user)
@@ -483,11 +480,11 @@ def filter(request):
 	groups = []
 	print username
 	if username != "" and\
-	 len(MyUser.objects.filter(user_id = username)) == 0:
+	 len(MyUser.objects.filter(username = username)) == 0:
 		return HttpResponseRedirect('/signup')
 	else:
 		try:
-			user = MyUser.objects.get(user_id=username)
+			user = MyUser.objects.get(username=username)
 			print user
 			lat = user.latitude
 			lon = user.longitude
@@ -509,7 +506,7 @@ def filter(request):
 			print "valid"
 			query = form.cleaned_data['search_query']
 			try:
-				user = MyUser.objects.get(user_id=username)
+				user = MyUser.objects.get(username=username)
 				try: 
 					tags_list = [Tag.objects.get(name = query)]
 					print "YESSS"
@@ -559,7 +556,7 @@ def filter(request):
 				events_list = NewEvent.objects.filter(Q(creator = user) | Q(rsvp = user))
 	else:
 		try:
-			user = MyUser.objects.get(user_id=username)
+			user = MyUser.objects.get(username=username)
 			groups = MyGroup.objects.filter(users = user)
 			events_list = NewEvent.objects.filter(Q(startTime__gt=time_threshold),(Q(private = False) | Q(groups__in=groups))).order_by("startTime")
 		except ObjectDoesNotExist:
@@ -583,12 +580,6 @@ def filter(request):
 
 # Create your views here.  index is called on page load.
 def index(request, add_form=None):
-	testu = MyUser.objects.filter(user_id='junjunc')
-	testu2 = MyUser.objects.filter(user_id='ideasrule')
-	
-	print "Testu is: " + str(testu)
-	print "Testu is: " + str(testu2)
-
 	all_buildings = Building.objects.all()
 	location = [unicodedata.normalize('NFKD', building.name).encode('ascii', 'ignore') for building in all_buildings]
 
@@ -632,14 +623,12 @@ def index(request, add_form=None):
 		context['cal_events'] = json.dumps(cal_events, cls=DjangoJSONEncoder);
 
 	if username != "" and\
-	 len(MyUser.objects.filter(user_id = username)) == 0:
-#		new_user = MyUser(user_id = username)
-#		new_user.save()
+	 len(MyUser.objects.filter(username = username)) == 0:
 		return HttpResponseRedirect('/signup')
 	else:
 		try:
 			#User exists
-			user = MyUser.objects.get(user_id=username)
+			user = MyUser.objects.get(username=username)
 			lat = user.latitude
 			lon = user.longitude
 			context['rsvped'] = NewEvent.objects.filter(rsvp = user)
@@ -661,7 +650,7 @@ def add(request):
 					status=401)		
 	if request.method == 'POST':
 		username = request.user.username
-		this_user = MyUser.objects.get(user_id = username)
+		this_user = MyUser.objects.get(username = username)
 		form = NewEventForm(request.POST) 
 		if form.is_valid():
 			data = form.cleaned_data
@@ -718,7 +707,7 @@ def edit(request, event):
 		try:
 			old_event = NewEvent.objects.get(id = event)
 			username = request.user.username
-			this_user = MyUser.objects.get(user_id = username)
+			this_user = MyUser.objects.get(username = username)
 			if old_event.creator != this_user:
 				return HttpResponse('Unauthorized access', status=401)
 

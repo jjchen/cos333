@@ -19,9 +19,10 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('first_name', self.gf('django.db.models.fields.CharField')(max_length=50)),
             ('last_name', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('user_id', self.gf('django.db.models.fields.CharField')(max_length=50)),
             ('latitude', self.gf('django.db.models.fields.FloatField')(default=40.344725)),
             ('longitude', self.gf('django.db.models.fields.FloatField')(default=-74.6556)),
+            ('username', self.gf('django.db.models.fields.CharField')(max_length=128)),
+            ('last_login', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
         ))
         db.send_create_signal(u'frontend', ['MyUser'])
 
@@ -204,10 +205,11 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'MyUser'},
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'last_login': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'latitude': ('django.db.models.fields.FloatField', [], {'default': '40.344725'}),
             'longitude': ('django.db.models.fields.FloatField', [], {'default': '-74.6556'}),
-            'user_id': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+            'username': ('django.db.models.fields.CharField', [], {'max_length': '128'})
         },
         u'frontend.newevent': {
             'Meta': {'object_name': 'NewEvent'},
