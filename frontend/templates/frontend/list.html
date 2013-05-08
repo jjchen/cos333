@@ -58,7 +58,7 @@
 
             oms.addMarker(marker); 
             {% else %}
-            codeAddress("{{event.location}}"); 
+            codeAddress("{{event.location}}", "{{event.name}}", "{{event.startTime|date:"D d M Y H:i"}}", "{{event.description}}"); 
             {% endif %} 
             {% endfor %}
 
