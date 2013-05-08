@@ -4,15 +4,15 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 # Public: www.cos333-oc.herokuapp.com/
-FACEBOOK_APP_ID = '431733443585073'
-FACEBOOK_API_SECRET = 'bee41bd237e61feb159d64f99e7db996'
+#FACEBOOK_APP_ID = '431733443585073'
+#FACEBOOK_API_SECRET = 'bee41bd237e61feb159d64f99e7db996'
 
 # Private: 127.0.0.1:8000
-#FACEBOOK_APP_ID =  '125667410957888'
-#FACEBOOK_API_SECRET = 'db68bafe52ea7a11b7081e539f2a4191'
+FACEBOOK_APP_ID =  '125667410957888'
+FACEBOOK_API_SECRET = 'db68bafe52ea7a11b7081e539f2a4191'
 
-FACEBOOK_EXTENDED_PERMISSIONS = ['user_groups', 'user_events', 'friends_events',
-                                 'create_event', 'rsvp_event', 
+FACEBOOK_EXTENDED_PERMISSIONS = ['user_events', 'friends_events',
+                                 'create_event', 'rsvp_event', 'user_groups',
                                  'read_friendlists']
 
 LOGIN_URL = '/login/'
@@ -48,7 +48,7 @@ ALLOWED_HOSTS = []
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'America/New_York'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html

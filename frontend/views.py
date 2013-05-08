@@ -450,9 +450,11 @@ def personal(request):
 	form = AddgroupForm() # An unbound form
 	form2 = AddfriendsForm()
 	fb_groups = facebook.get_fb_groups(this_user)
+	fb_friends = facebook.get_friends(this_user)
 	return render(request, 'frontend/personal.html', {
         'form': form, 'form2':form2, 'groups_list': groups, 'my_events': my_events, 'rsvped': rsvped, 
-        'events_list': events_list, 'recommended':recommended, "friends":friends, 'other_users': other_users, 'all_users': all_users, 'fb_groups': fb_groups
+        'events_list': events_list, 'recommended':recommended, "friends":friends, 
+        'other_users': other_users, 'all_users': all_users, 'fb_groups': fb_groups, 'fb_friends': fb_friends
     })	
 
 def filter(request):
