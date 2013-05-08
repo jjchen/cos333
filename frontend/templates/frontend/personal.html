@@ -204,9 +204,14 @@
                 {% for e in my_events %}
                 <div class="events_item" id="{{e.id}}">
                   <p> {{ e.name }}
+
                         <a class="link_button" id="edit_link" href="#" onclick="edit_form({{e.id}})"> Edit </a>
                         <a class="link_button" href="{% url 'frontend:rmevent' e.id %}">Remove</a>
-		                    <a class="link_button" href="{% url 'frontend:exportevent' e.id %}"> Export </a>
+			{% if e.exported %}
+			Exported!
+			{% else %}
+		        <a class="link_button" href="{% url 'frontend:exportevent' e.id %}"> Export </a>
+			{% endif %}
 		              </p>
                 </div>
               {% endfor %}

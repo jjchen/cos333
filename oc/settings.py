@@ -15,9 +15,9 @@ FACEBOOK_EXTENDED_PERMISSIONS = ['user_events', 'friends_events',
                                  'create_event', 'rsvp_event', 'user_groups',
                                  'read_friendlists']
 
-LOGIN_URL = '/login/'
+LOGIN_URL = '/frontend/login/facebook'
 LOGIN_REDIRECT_URL = '/'
-LOGIN_ERROR_URL = '/login/'
+LOGIN_ERROR_URL = '/error/'
 
 SOCIAL_AUTH_COMPLETE_URL_NAME = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
@@ -148,7 +148,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 CAS_SERVER_URL = 'https://fed.princeton.edu/cas/'
-CAS_REDIRECT_URL = '/frontend'
+CAS_REDIRECT_URL = '/frontend/'
 ROOT_URLCONF = 'oc.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
