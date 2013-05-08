@@ -46,7 +46,7 @@
                '<p>Time: {{event.startTime|date:"D d M Y H:i"}}</p>' +
                '<p>Location: {{event.location}}</p>' 
 
-            {% if event.description != None %}
+            {% if event.description != None and event.description != "" %}
             contentString += "Description: {{event.description}} <br/>"
             {% endif %}
 
@@ -174,7 +174,7 @@
             if (id == {{e.id}}) {
               var parent = document.getElementById("show_more_" + id);
               var html = ""
-              {% if e.description != None %}
+              {% if e.description != None and e.description != "" %}
               html += "{{e.description}} <br/>"
               {% endif %}
               html += "Groups: ";
