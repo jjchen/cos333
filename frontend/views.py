@@ -661,7 +661,8 @@ def add(request):
 					 lat = latitude,
 					 lon = longitude,
 					 private = data['private'],
-					 creator = this_user)
+					 creator = this_user,
+					 description = data['description'])
 							#creator = this_user)
 			event.save() #must save before adding groups
 			# new tagging method
