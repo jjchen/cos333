@@ -206,7 +206,11 @@
                   <p> {{ e.name }}
                         <a id="edit_link" href="#" onclick="edit_form({{e.id}})"> Edit </a>
                         <a href="{% url 'frontend:rmevent' e.id %}">Remove</a>
-		                    <a href="{% url 'frontend:exportevent' e.id %}"> Export </a>
+			{% if e.exported %}
+			Exported!
+			{% else %}
+		        <a href="{% url 'frontend:exportevent' e.id %}"> Export </a>
+			{% endif %}
 		              </p>
                 </div>
               {% endfor %}

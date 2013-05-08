@@ -93,6 +93,8 @@ def exportevent(request, event):
         return HttpResponse('Unauthorized access', status=401)
     success = process_export(this_user, event_obj)
     if success:
+        event_obj.exported = True
+        event_obj.save()
         return HttpResponseRedirect('/frontend/personal')
     return HttpResponse('Export failed!', status=401)
 
