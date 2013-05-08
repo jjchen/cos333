@@ -69,7 +69,6 @@ def facebook_decorator(func):
                 kwargs.update({'access_token': token})
                 graph = GraphAPI(token)
                 kwargs.update({'graph': graph})
-                
             else:
                 request.user = AnonymousUser()
 
@@ -83,7 +82,7 @@ def facebook_decorator(func):
     return wrapper
 
 @facebook_decorator
-def importgroup(request, group, *args, **kwargs):
+def importgroup(request, group, **kwargs):
     #import a group from Facebook
     def create_ret_user(user_info):
         #if user doesn't exist, create it. Return None if Facebook is
@@ -140,7 +139,7 @@ def process_export(user, event_obj, token, graph):
         privacy_type = "SECRET"
     else:
         privacy_type = "OPEN"
-    event_path = str(instance.uid) + "/events"
+    event_path = user.username + "/events"
     event_data = {
         'name' : event_obj.name,
         'start_time' : event_obj.startTime.isoformat(),
@@ -155,7 +154,7 @@ def process_export(user, event_obj, token, graph):
         return False
 
 @facebook_decorator
-def export_event(request, event, *args, **kwargs):
+def export_event(request, event, **kwargs):
     #export event to Facebook
     try:
         event_obj = NewEvent.objects.get(id = event)
@@ -174,21 +173,19 @@ def export_event(request, event, *args, **kwargs):
     return HttpResponse('Export failed!', status=401)
 
 @facebook_decorator
-def get_fb_groups(request, *args, **kwargs):
+def get_fb_groups(request, **kwargs):
     token = kwargs['access_token']
     graph = kwargs['graph']
-
     user_path = request.user.username + "/groups"
     groups = graph.get(user_path).get('data')
     return groups
 
 @facebook_decorator
-def get_friends(request, *args, **kwargs):
+def get_friends(request, **kwargs):
     token = kwargs['access_token']
     graph = kwargs['graph']
     user_path = request.user.username + "/friends"
     friends = graph.get(user_path).get('data')
-
     return friends
 
 
