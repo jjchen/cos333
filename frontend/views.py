@@ -497,8 +497,8 @@ def personal(request):
 	events_list.extend(recommended);
 	form = AddgroupForm() # An unbound form
 	form2 = AddfriendsForm()
-	fb_groups = facebook.get_fb_groups(this_user)
-	fb_friends = facebook.get_friends(this_user)
+	fb_groups = facebook.get_fb_groups(request)
+	fb_friends = facebook.get_friends(request)
 	return render(request, 'frontend/personal.html', {
         'form': form, 'form2':form2, 'groups_list': groups, 'my_events': my_events, 'rsvped': rsvped, 
         'events_list': events_list, 'recommended':recommended, "friends":friends, 
