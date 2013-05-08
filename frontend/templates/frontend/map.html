@@ -404,7 +404,7 @@
                       var json_parsed = $.parseJSON(json);
                       if(json_parsed.success == 'true') {
                         $("rsvp_"+id).addClass('rsvp');
-                        var html = 'un RSVP'
+                        var html = 'Leave'
                         parent.innerHTML = html;
                         rsvp_list[id] = true;
                       }
@@ -416,7 +416,7 @@
 
                 if(json_parsed.success == 'true') {
                     $("rsvp_"+id).removeClass('rsvp');
-                    var html = 'RSVP'
+                    var html = 'Attend'
                     parent.innerHTML = html;
                     rsvp_list[id] = false;
                 } 
@@ -549,6 +549,13 @@
       <input type="checkbox" onclick="filter('tags')" name="tags" value="{{tag}}"><span>&nbsp{{tag}} </span></br> 
       </div>
       {% endfor %}
+
+      {% for group in groups %}
+      <div class="link_button_checkbox red">
+      <input type="checkbox" onclick="filter('tags')" name="tags" value="{{group}}"><span>&nbsp{{group}} </span></br> 
+      </div>
+      {% endfor %}
+
     </form>
     </div>
     <br/> <a class="link_button_main" href="{% url 'frontend:index' %}"> All </a>

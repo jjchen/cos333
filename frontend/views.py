@@ -530,12 +530,16 @@ def filter(request):
 			show_list = True
 	elif tags != None and len(tags) != 0:
 		tags_list = []
+		groups_list = []
 		for tag in tags:
 			try:
 				tags_list += [Tag.objects.get(name = tag)]
 			except ObjectDoesNotExist:
-				continue
-		events_list = NewEvent.objects.filter((reduce(operator.or_, [Q(tags__in=tags_list)])), (Q(private = False) | Q(groups__in=groups)))
+				try:
+					groups_list += [MyGroup.objects.get(name=tag)]
+				except ObjectDoesNotExist:
+					continue
+		events_list = NewEvent.objects.filter((reduce(operator.or_, [Q(tags__in=tags_list) | Q(groups__in =groups_list)])), (Q(private = False) | Q(groups__in=groups)))
 		show_list = False
 	elif personal_type != None:
 		if personal_type == 'recommended':
@@ -649,12 +653,15 @@ def index(request, add_form=None):
 			lat = user.latitude
 			lon = user.longitude
 			context['rsvped'] = NewEvent.objects.filter(rsvp = user)
+			groups = MyGroup.objects.filter(users = user)
 		except MyUser.DoesNotExist:
 			#User doesn't exist
 			latitude = MyUser._meta.get_field_by_name('latitude')
 			longitude = MyUser._meta.get_field_by_name('longitude')
 			lat = latitude[0].default
 			lon = longitude[0].default
+			groups = []
+		context['groups'] = groups
 		context['center_lat'] = lat
 		context['center_lon'] = lon
 	context['logged_in'] = (username != "")
