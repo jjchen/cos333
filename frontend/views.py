@@ -110,7 +110,8 @@ def locdemo(request):
 			return HttpResponseRedirect('/') # Redirect after POST
 	else:
 		form = SettingsForm()
-	return render(request, 'frontend/demo.html', {'form': form})
+	return render(request, 'frontend/demo.html', {'default_lat': 40.35,
+						      'default_lon': -74.656})
 
 # needs fixin'
 def get_tags(request):

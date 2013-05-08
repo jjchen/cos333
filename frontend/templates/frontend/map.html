@@ -518,8 +518,7 @@
             </ul>
           </li>
           <li class=""><a href="{% url 'frontend:personal' %}">{{user}}</a></li>  
-    <!--      <li><a href="% url 'frontend:settings' %}">Settings</a></li> -->
-          <li><a href="/locdemo">Demo</a></li>  
+          <li><a href="{% url 'frontend:settings' %}">Settings</a></li>
           <li>
 	    {% if logged_in %}
 	    <a href="{% url 'frontend:logout' %}">Logout</a>

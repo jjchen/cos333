@@ -13,11 +13,23 @@
 </head>
 <body>
 
-<form id="target2" action="/locdemo/" method="post">{% csrf_token %}
-		Move the marker, double click on the map, search, or set new values to interact.
+<form action="/locdemo/" method="post">{% csrf_token %}
 
+Move the marker, or double click on the map. Search for cities, countries or landmark names.
+	<fieldset class="gllpLatlonPicker" id="custom_id">
+		<input type="text" class="gllpSearchField">
+		<input type="button" class="gllpSearchButton" value="search">
+		<br/><br/>
+		<div class="gllpMap">Google Maps</div>
+		<p>Latitude: </p>
+		<input name="latitude" class="gllpLatitude" 
+		       value="{{default_lat}}" readonly/>
+		<p>Longitude: </p>
+		<input name="longitude" class="gllpLongitude" 
+		       value="{{default_lon}}" readonly/>
+		<input type="hidden" class="gllpZoom" value="12"/>
+	</fieldset>
 
-	New input: <input id="testfield1" type="text" value="fwef"/>
     <INPUT TYPE="submit" VALUE="Submit order">
 </form>
 	
