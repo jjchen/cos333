@@ -723,7 +723,9 @@ def edit(request, event):
 						old_event.groups.add(group)
 				old_event.save() 
 
-				return HttpResponseRedirect('/frontend/personal')	
+				return HttpResponseRedirect('/frontend/personal')
+			else:
+				return HttpResponseRedirect('/frontend/personal')
 		except ObjectDoesNotExist:
 			return HttpResponse('Event does not exist', status=401)
 	else:
