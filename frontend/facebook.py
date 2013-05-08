@@ -113,7 +113,7 @@ def get_friends(user):
 
     for f in friends:
         print f
-        print f['name']
+        #print f['name']
         print f['id']
 
     return friends
