@@ -255,16 +255,17 @@
               <form action="/addfriend/" method="post">{% csrf_token %}
                 Add friend: 
                 {{ form2.name }}
-              <button class="btn" type="submit">Add</button>
+              <button class="btn" type="submit" style="vertical-align:top">Add</button>
               </form>
             </div>
-            <div id="facebook_friends">
+            Import from Facebook:
+            <select multiple="multiple" id="facebook_friends">
               {% for f in fb_friends %}
-              <div class="fb_friend" id="{{f.id}}">
+              <option class="fb_friend" value="{{f.id}}">
                 <p> {{ f.name }} </p>
-              </div>
+              </option>
               {% endfor %}
-            </div>
+            </select>
           </div>
 
           </div>
@@ -287,12 +288,14 @@
             </div>
 
             <div id="import_groups_form">
+            Import from Facebook:
+            <div style="width:75%; height:50px; overflow:scroll; background-color: white; padding:5px; border-radius:3px; border: 1px solid #ccc;">
               {% for g in fb_groups %}
             <p>{{g.name}} 
             <a class="link_button" href="{% url 'frontend:importgroup' g.id %}">Import</a>
-            
-                </p>
-                      {% endfor %}
+            </p>
+              {% endfor %}
+            </div>
               </div>
             </div>
 
