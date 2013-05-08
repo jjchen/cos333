@@ -218,13 +218,13 @@
               </div>
           </div>
           <div class="personal_headings active" id="rsvped">
-            <div class="events_header"><span class="toggle_button">-</span> Rsvped Events:</div>
+            <div class="events_header"><span class="toggle_button">-</span> Attending:</div>
             <div class="list_group">
 
               {% for e in rsvped %}
 
                 <div class="events_item" id="{{e.id}}">
-                <p> {{ e.name }}<a class="link_button" href="{% url 'frontend:rmrsvp' e.id %}">Remove</a></p>
+                <p> {{ e.name }}<a class="link_button" href="{% url 'frontend:rmrsvp' e.id %}">Leave</a></p>
               </div>
               {% endfor %}
             </div>
