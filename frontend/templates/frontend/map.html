@@ -349,7 +349,7 @@
 	    var center = new google.maps.LatLng({{center_lat}},{{center_lon}});
             geocoder.geocode({
                'address': buildingName,
-		'latLng': center
+		'latLng': map.getCenter()
             }, function (results, status) {
                if (status == google.maps.GeocoderStatus.OK) {
                   // map.setCenter(results[0].geometry.location);
