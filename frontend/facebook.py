@@ -7,6 +7,28 @@ from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from frontend.models import NewEvent
 
+def get_friends(user):
+    instance = UserSocialAuth.objects.get(user=user, provider='facebook')
+    token = instance.tokens['access_token']
+    graph = GraphAPI(token)
+    user_path = str(instance.uid) + "/friends"
+    friends = graph.get(user_path).get('data')
+
+    return friends
+
+def get_fb_groups(user):
+    instance = UserSocialAuth.objects.get(user=user, provider='facebook') 
+    token = instance.tokens['access_token']
+    graph = GraphAPI(token)
+    testall = UserSocialAuth.objects.all()
+    print testall
+    print testall[0].__dict__
+    print "Facebook instance: " + str(instance)
+
+    user_path = str(instance.uid) + "/groups"
+    groups = graph.get(user_path).get('data')
+    return groups
+
 def importgroup(request, group):
     #import a group from Facebook
     def create_ret_user(user_info):
@@ -56,6 +78,26 @@ def importgroup(request, group):
     new_group.save()
     return HttpResponseRedirect('/frontend/personal')
 
+def import_events(request):
+    # Import event from Facebook
+    user = request.user
+    instance = UserSocialAuth.objects.get(user=user, provider='facebook')
+    token = instance.tokens['access_token']
+    graph = GraphAPI(token)
+    user_path = str(instance.uid) + "/events"
+
+    fb_events = graph.get(user_path).get('data')
+
+    print "HELLO WORLD"
+
+    print user_path
+    print fb_events
+
+    for e in fb_events:
+        print e
+
+    return HttpResponseRedirect('/')
+
 def process_export(user, event_obj):
     #helper function to export event to Facebook
     #user and event_obj are MyUser and NewEvent type, respectively. Returns
@@ -97,29 +139,3 @@ def exportevent(request, event):
         event_obj.save()
         return HttpResponseRedirect('/frontend/personal')
     return HttpResponse('Export failed!', status=401)
-
-def get_fb_groups(user):
-    instance = UserSocialAuth.objects.get(user=user, provider='facebook') 
-    token = instance.tokens['access_token']
-    graph = GraphAPI(token)
-    testall = UserSocialAuth.objects.all()
-    print testall
-    print testall[0].__dict__
-    print "Facebook instance: " + str(instance)
-
-    user_path = str(instance.uid) + "/groups"
-    groups = graph.get(user_path).get('data')
-    return groups
-
-def get_friends(user):
-    instance = UserSocialAuth.objects.get(user=user, provider='facebook')
-    token = instance.tokens['access_token']
-    graph = GraphAPI(token)
-    user_path = str(instance.uid) + "/friends"
-    friends = graph.get(user_path).get('data')
-
-    return friends
-
-
-
-
