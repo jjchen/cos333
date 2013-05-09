@@ -463,7 +463,7 @@ def removenew(request):
 				invite.is_new = False;
 				invite.save();
 		except ObjectDoesNotExist:
-				return HttpResponse('Tried rspving to non-existent event!', status=401)		
+				return HttpResponse('No users!', status=401)		
 		return HttpResponse('{"success":"true"}');
 	else:
 		return HttpResponse('{"success":"true"}');
