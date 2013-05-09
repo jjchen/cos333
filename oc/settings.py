@@ -8,8 +8,8 @@ TEMPLATE_DEBUG = DEBUG
 #FACEBOOK_API_SECRET = 'bee41bd237e61feb159d64f99e7db996'
 
 # Private: localhost:8000
-#FACEBOOK_APP_ID =  '125667410957888'
-#FACEBOOK_API_SECRET = '1d71ff77879df12aa55ba2307523ab04'
+FACEBOOK_APP_ID =  '125667410957888'
+FACEBOOK_API_SECRET = '1d71ff77879df12aa55ba2307523ab04'
 
 FACEBOOK_EXTENDED_PERMISSIONS = ['user_events', 'friends_events',
                                  'create_event', 'rsvp_event', 'user_groups',
