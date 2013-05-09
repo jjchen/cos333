@@ -314,8 +314,8 @@ def addfriend(request):
 #	else:
 #		form = AddfriendForm() # An unbound form
 #	return render(request, 'frontend/personal.html', {
- #       'form': form,
-  #  })	
+#       'form': form,
+#  })	
 	return HttpResponseRedirect('/')	
 
 def rmfriend(request, user):
@@ -518,6 +518,7 @@ def personal(request):
         'events_list': events_list, 'recommended':recommended, "friends":friends, 
         'other_users': other_users, 'all_users': all_users, 'fb_groups': fb_groups, 'fb_friends': fb_friends, 'invites':invites
     })	
+
 
 def filter(request):
 	tags = request.POST.getlist('tags')

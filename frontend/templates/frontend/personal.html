@@ -205,11 +205,12 @@
 
                         <a class="link_button" id="edit_link" href="#" onclick="edit_form({{e.id}})"> Edit </a>
                         <a class="link_button" href="{% url 'frontend:rmevent' e.id %}">Remove</a>
-			{% if e.exported %}
-			<span class="link_button"> Exported! </span>
-			{% else %}
-		        <a class="link_button" href="{% url 'frontend:export_event' e.id %}"> Export </a>
-			{% endif %}
+            			{% if e.exported %}
+            			<span class="link_button"> Exported! </span>
+            			{% else %}
+            		        <a class="link_button" href="{% url 'frontend:export_event' e.id %}"> Export </a>
+            			{% endif %}
+
 		              </p>
                 </div>
               {% endfor %}

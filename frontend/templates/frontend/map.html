@@ -87,14 +87,6 @@
   });
 
     </script>-->
-    
-   <!-- This is for the updating of slider time -->
-    <script type="text/javascript">
-    function updateSliderInput(field, val) {
-      document.getElementById(field).innerHTML=val; 
-    }
-    //document.getElementById("p1").innerHTML="New text!";
-  </script>
 
     <!--<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>-->
     <script type="text/javascript" src="{% static "frontend/oms.min.js" %}">
@@ -135,8 +127,6 @@
 
   </script>
 
-
-
   <!--the older autocomplete-->
   <!-- INSTRUCTIONS -->
 
@@ -156,7 +146,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
 
     <!-- The real deal -->
-     <script src="{% static "frontend/tag-it.min.js" %}" type="text/javascript" charset="utf-8"></script>
+    <script src="{% static "frontend/tag-it.min.js" %}" type="text/javascript" charset="utf-8"></script>
  
  <script>
         $("#eventform").live("aCustomEvent",function(){
@@ -295,8 +285,6 @@
           });
         })
 
-
-
          var map;
          var idled = false;
          var oms;
@@ -356,8 +344,10 @@
          google.maps.event.addDomListener(window, 'load', initialize);
 
          function codeAddress(buildingName, name, time, description) {
+	    var center = new google.maps.LatLng({{center_lat}},{{center_lon}});
             geocoder.geocode({
-               'address': buildingName
+               'address': buildingName,
+		'latLng': center
             }, function (results, status) {
                if (status == google.maps.GeocoderStatus.OK) {
                   // map.setCenter(results[0].geometry.location);
@@ -731,26 +721,25 @@
         {% else %}
           You have to sign in.
         {% endifnotequal %}
-            <li>Import from Facebook</li>
-      <li><a rel="nofollow" href="{% url 'django_cas.views.login' %}">CAS</a> 
-            </li>
-         </div>
-         <div id="calendar_content" class="hidden">
-            <div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:100%;'>
-                <div class="dhx_cal_navline">
-                    <div class="dhx_cal_prev_button">&nbsp;</div>
-                    <div class="dhx_cal_next_button">&nbsp;</div>
-                    <div class="dhx_cal_today_button"></div>
-                    <div class="dhx_cal_date"></div>
-                    <div class="dhx_cal_tab dhx_cal_tab_first" name="day_tab" style="left:14px;"></div>
-                    <div class="dhx_cal_tab" name="week_tab" style="left:75px;"></div>
-                    <div class="dhx_cal_tab dhx_cal_tab_last" name="month_tab" style="left:136px;"></div>
-                </div>
-                <div class="dhx_cal_header">
-                </div>
-                <div class="dhx_cal_data">
-                </div>
+          <li class=""><a href="{% url 'frontend:import_events' %}">Import Events From Facebook</a></li>  
+          <!-- <li><a rel="nofollow" href="{% url 'django_cas.views.login' %}">CAS</a> </li> -->
+        </div>
+        <div id="calendar_content" class="hidden">
+          <div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:100%;'>
+            <div class="dhx_cal_navline">
+              <div class="dhx_cal_prev_button">&nbsp;</div>
+              <div class="dhx_cal_next_button">&nbsp;</div>
+              <div class="dhx_cal_today_button"></div>
+              <div class="dhx_cal_date"></div>
+              <div class="dhx_cal_tab dhx_cal_tab_first" name="day_tab" style="left:14px;"></div>
+              <div class="dhx_cal_tab" name="week_tab" style="left:75px;"></div>
+              <div class="dhx_cal_tab dhx_cal_tab_last" name="month_tab" style="left:136px;"></div>
             </div>
+            <div class="dhx_cal_header">
+            </div>
+            <div class="dhx_cal_data">
+            </div>
+          </div>
         </div>
         <div id="settings_content" class="hidden">
              <h3>Settings</h3>
@@ -766,10 +755,6 @@
     
     <div id="list_button" class="button" onclick="showContent('list_content');">
       <h3>List</h3>
-    </div>
-    
-    <div id="minus_button" class="button" onclick="showContent('none');">
-      <h3>-</h3>
     </div>
 
     <div id="expand_button" class="button hidden" onclick="">
