@@ -201,6 +201,7 @@
             var html = "";
             var has_new = false;
             {% for i in invites %}
+              alert('{{i.event.name}}');
             if ('{{i.is_new}}' == "True") {
               $(".dropdown-toggle").addClass("red");
             }

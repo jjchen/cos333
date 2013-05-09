@@ -451,7 +451,7 @@
         $.post('{% url "frontend:removenew" %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(html){
           var json_parsed = $.parseJSON(json);
           if(json_parsed.success == 'true') {
-            
+            alert("success");
           }
         });        
       });

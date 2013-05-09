@@ -631,6 +631,7 @@ def filter(request):
 
 	tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	cal_events = []
+	description = ""
 	for e in events_list:
 		startTime = e.startTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
 		if e.endTime != None: 
