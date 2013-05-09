@@ -196,4 +196,3 @@ def export_event(request, event, **kwargs):
         return HttpResponseRedirect('/frontend/personal')
     return HttpResponse('Export failed!', status=401)
 
-
