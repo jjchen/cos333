@@ -1,12 +1,50 @@
 <html>
   <head>
+<script language='JavaScript'>
+alert("here");
+var time = 15; //How long (in seconds) to countdown
+var page = "yourpage.htm"; //The page to redirect to
+var init = 0;
+
+function countDown(){
+
+time--;
+gett("container").innerHTML = time;
+if(time == -1){
+window.location = page;
+}
+}
+function gett(id){
+if(document.getElementById) return document.getElementById(id);
+if(document.all) return document.all.id;
+if(document.layers) return document.layers.id;
+if(window.opera) return window.opera.id;
+}
+function init(){
+alert("here");
+if(gett('container')){
+setInterval(countDown, 1000);
+gett("container").innerHTML = time;
+}
+else{
+setTimeout(init, 50);
+}
+}
+document.onload = init();
+</SCRIPT>
   </head>
   <body>
+    
     <!-- getting Ajax refresh to see new content -->
     <div id="ajaxwrapper">
+      <script>init();</script>
       <h2>Thank you for your submission!</h2>
       <a href="{% url 'frontend:export_event' event.id %}">Export to Facebook</a>
-      <meta HTTP-EQUIV="REFRESH" content="10; url=/">
+    <h2>You will be redirected in 10 seconds</h2>
+    <a href="/">Redirect now</a>
+    <meta HTTP-EQUIV="REFRESH" content="10; url=/">
+    
     </div>
+
   </body>
 </html>
