@@ -67,8 +67,8 @@ class NewEventForm(forms.Form):
 
 	def clean_name(self):
 		data = self.cleaned_data['name']
-		if data != 'swag':
-			raise forms.ValidationError("YOU HAVE NO SWAG!")
+		#if data != 'swag':
+		#	raise forms.ValidationError("YOU HAVE NO SWAG!")
 		return data
 
 def accessible(event, user):
