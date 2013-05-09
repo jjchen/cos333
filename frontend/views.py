@@ -270,8 +270,13 @@ class AddgroupForm(forms.Form):
 	member_names = MultiNameField()
 
 class AddfriendsForm(forms.Form):
-	#member_names = forms.CharField(widget=forms.Textarea(),
-	#							validators=[validate_names])
+	def validate_name(value):
+		print "In validate name " + value
+		users = MyUser.objects.filter(username=value)
+		if len(users) == 0:
+			print "invalid"
+			raise ValidationError("User doesn't exist!")
+#	name = forms.CharField(validators=[validate_name])
 	name = forms.CharField()
 
 class SearchForm(forms.Form):
@@ -332,11 +337,14 @@ def addfriend(request):
 				friends_obj.save()
 			name = form.cleaned_data['name']
 			try: 
+				print "Name is " + name
 				user = MyUser.objects.get(username = name)
 				friends_obj.friends.add(user)
 			except ObjectDoesNotExist:
 				# error!!
-				print "ERROR: FRIEND NOT FOUND"
+#				print "ERROR: FRIEND NOT FOUND"
+				return HttpResponse('User not found!', 
+						    status=401)
 			friends_obj.save()
 			return HttpResponseRedirect('/frontend/personal')
 	return HttpResponseRedirect('/frontend/personal')
@@ -387,10 +395,10 @@ def inviteall(request, event_id):
 	if event_obj.creator != this_user:
 		return HttpResponse('Unauthorized access', status=401)
 
-	friend_obs = Friends.objects.filter(name = this_user.username)
-	assert(len(friends_obs) <= 1)
-	if len(friends_obs) == 1:
-		for f in friends_obs[0]:
+	friend_obs = Friends.objects.filter(name = this_user)
+	assert(len(friend_obs) <= 1)
+	if len(friend_obs) == 1:
+		for f in friend_obs[0].friends.all():
 			#for every friend, send invite
 			invite = Invite()
 			invite.event = event_obj

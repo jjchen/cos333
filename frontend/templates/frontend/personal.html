@@ -272,6 +272,7 @@
               {% endfor %}
             <div id="friends_form">
               <form action="/addfriend/" method="post">{% csrf_token %}
+		{{ form2.name.errors }}
                 Add friend: 
                 {{ form2.name }}
               <button class="btn" type="submit" style="vertical-align:top">Add</button>

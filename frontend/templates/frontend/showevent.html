@@ -39,6 +39,6 @@
     {{invite_form.invitee}}
     <button class="btn" type="submit">Add</button>
     </form>
-    <form action="{% url 'frontend:inviteall' event.id %}" method="post">
+    <form action="{% url 'frontend:inviteall' event.id %}" method="post">{% csrf_token %}
     <button class="btn" type="submit">Invite all friends</button>
     </form>
