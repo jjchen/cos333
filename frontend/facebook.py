@@ -19,34 +19,6 @@ from social_auth.views import complete as social_complete
 from social_auth.utils import setting
 from social_auth.backends.facebook import load_signed_request, FacebookBackend
 
-#first few functions taken from django_social_auth example at
-#https://github.com/omab/django-social-auth/blob/master/example/app/facebook.py
-def is_complete_authentication(request):
-    return request.user.is_authenticated() and \
-        FacebookBackend.__name__ in request.session.get(BACKEND_SESSION_KEY, '')
-
-def get_access_token(user):
-    key = str(user.id)
-    access_token = cache.get(key)
-
-    # If cache is empty read the database
-    if access_token is None:
-        try:
-            social_user = user.social_user if hasattr(user, 'social_user') \
-                else UserSocialAuth.objects.get(user=user.id, 
-                                                provider=FacebookBackend.name)
-        except UserSocialAuth.DoesNotExist:
-            return None
-
-        if social_user.extra_data:
-            access_token = social_user.extra_data.get('access_token')
-            expires = social_user.extra_data.get('expires')
-
-            cache.set(key, access_token, 
-                      int(expires) if expires is not None else 0)
-
-    return access_token
-
 # Facebook decorator to setup environment
 def facebook_decorator(func):
     def wrapper(request, *args, **kwargs):
@@ -80,6 +52,50 @@ def facebook_decorator(func):
         return func(request, *args, **kwargs)
 
     return wrapper
+
+@facebook_decorator
+def get_friends(request, **kwargs):
+    token = kwargs['access_token']
+    graph = kwargs['graph']
+    user_path = request.user.username + "/friends"
+    friends = graph.get(user_path).get('data')
+    return friends
+
+@facebook_decorator
+def get_fb_groups(request, **kwargs):
+    token = kwargs['access_token']
+    graph = kwargs['graph']
+    user_path = request.user.username + "/groups"
+    groups = graph.get(user_path).get('data')
+    return groups
+
+#first few functions taken from django_social_auth example at
+#https://github.com/omab/django-social-auth/blob/master/example/app/facebook.py
+def is_complete_authentication(request):
+    return request.user.is_authenticated() and \
+        FacebookBackend.__name__ in request.session.get(BACKEND_SESSION_KEY, '')
+
+def get_access_token(user):
+    key = str(user.id)
+    access_token = cache.get(key)
+
+    # If cache is empty read the database
+    if access_token is None:
+        try:
+            social_user = user.social_user if hasattr(user, 'social_user') \
+                else UserSocialAuth.objects.get(user=user.id, 
+                                                provider=FacebookBackend.name)
+        except UserSocialAuth.DoesNotExist:
+            return None
+
+        if social_user.extra_data:
+            access_token = social_user.extra_data.get('access_token')
+            expires = social_user.extra_data.get('expires')
+
+            cache.set(key, access_token, 
+                      int(expires) if expires is not None else 0)
+
+    return access_token
 
 @facebook_decorator
 def importgroup(request, group, **kwargs):
@@ -131,6 +147,26 @@ def importgroup(request, group, **kwargs):
     new_group.save()
     return HttpResponseRedirect('/frontend/personal')
 
+def import_events(request):
+    # Import event from Facebook
+    user = request.user
+    instance = UserSocialAuth.objects.get(user=user, provider='facebook')
+    token = instance.tokens['access_token']
+    graph = GraphAPI(token)
+    user_path = str(instance.uid) + "/events"
+
+    fb_events = graph.get(user_path).get('data')
+
+    print "HELLO WORLD"
+
+    print user_path
+    print fb_events
+
+    for e in fb_events:
+        print e
+
+    return HttpResponseRedirect('/')
+
 def process_export(user, event_obj, token, graph):
     #helper function to export event to Facebook
     #user and event_obj are MyUser and NewEvent type, respectively. Returns
@@ -171,23 +207,4 @@ def export_event(request, event, **kwargs):
         event_obj.save()
         return HttpResponseRedirect('/frontend/personal')
     return HttpResponse('Export failed!', status=401)
-
-@facebook_decorator
-def get_fb_groups(request, **kwargs):
-    token = kwargs['access_token']
-    graph = kwargs['graph']
-    user_path = request.user.username + "/groups"
-    groups = graph.get(user_path).get('data')
-    return groups
-
-@facebook_decorator
-def get_friends(request, **kwargs):
-    token = kwargs['access_token']
-    graph = kwargs['graph']
-    user_path = request.user.username + "/friends"
-    friends = graph.get(user_path).get('data')
-    return friends
-
-
-
 

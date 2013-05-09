@@ -8,6 +8,7 @@ from frontend.models import MyUser
 from frontend.models import MyGroup
 from frontend.models import Friends
 from frontend.models import CalEvent
+from frontend.models import Invite
 from frontend.models import Tag
 from django.forms.models import model_to_dict
 
@@ -48,6 +49,12 @@ class SettingsForm(forms.Form):
 	latitude = forms.DecimalField()
 	longitude = forms.DecimalField()
 
+class InviteForm(forms.Form):
+	event = forms.CharField()
+	invitee = forms.CharField()
+	inviter = forms.CharField()
+
+
 # makes a Form class from the NewEvent model
 class NewEventForm(forms.Form):
 	name = forms.CharField(max_length=200)
@@ -75,6 +82,28 @@ def accessible(event, user):
 	groups = MyGroup.objects.filter(users = user)
 	print event.groups.all()
 	return (event.private == False) #or len(groups & event.groups.all()) != 0
+
+def invite(request):
+	if request.method == 'POST':
+		form = InviteForm(request.POST)
+		print form
+		if form.is_valid():
+			print "valid invite"
+			data = form.cleaned_data
+			invite = Invite()
+			try:
+				event = NewEvent.objects.get(id = data['event'])
+				invitee = MyUser.objects.get(username = data['invitee'])
+				inviter = MyUser.objects.get(id = data['inviter'])
+			except ObjectDoesNotExist:
+				return HttpResponse("Doesn't Exist!", 401)
+			invite.event = event
+			invite.invitee = invitee
+			invite.inviter = inviter
+			invite.save()
+		else: 
+			print "NOT valid"
+	return HttpResponseRedirect('/frontend/personal')
 
 # testing JSON autocomplete
 def get_names(request):
@@ -291,8 +320,8 @@ def addfriend(request):
 #	else:
 #		form = AddfriendForm() # An unbound form
 #	return render(request, 'frontend/personal.html', {
- #       'form': form,
-  #  })	
+#       'form': form,
+#  })	
 	return HttpResponseRedirect('/')	
 
 def rmfriend(request, user):
@@ -362,11 +391,12 @@ def personal_ajax(request, event):
 		try:
 			this_user = MyUser.objects.get(username = request.user.username)
 			event_obj = NewEvent.objects.get(id = event)
+			form = InviteForm(initial={'event': event, 'inviter': this_user.id})
 			if (not accessible(event_obj, this_user)):
 				return HttpResponse('You dont have access to this event!', status=401)
 		except ObjectDoesNotExist:
 			return HttpResponse('event does not exist!', status=401)
-		return render_to_response('frontend/showevent.html', {'event' : event_obj}, context_instance=RequestContext(request))
+		return render_to_response('frontend/showevent.html', {'event' : event_obj, 'invite_form': form}, context_instance=RequestContext(request))
 
 def editevent(request, event):
 	if request.method == 'POST':
@@ -429,6 +459,20 @@ def logout(request):
 	django.contrib.auth.logout(request)
 	return HttpResponseRedirect("/frontend")
 
+def removenew(request):
+	if request.method == 'POST':
+		try:
+			this_user = MyUser.objects.get(username = request.user.username)
+			invites = Invite.objects.filter(invitee = this_user)
+			for invite in invites:
+				invite.is_new = False;
+				invite.save();
+		except ObjectDoesNotExist:
+				return HttpResponse('Tried rspving to non-existent event!', status=401)		
+		return HttpResponse('{"success":"true"}');
+	else:
+		return HttpResponse('{"success":"true"}');
+
 def personal(request):
 	print "Request is " + request.user.username
 	if request.user.username == "":
@@ -437,10 +481,10 @@ def personal(request):
 #	groups = MyGroup.objects.filter(creator = request.user.username)
 	#groups = this_user.users_set.all()
 	groups = MyGroup.objects.filter(users = this_user)
+	invites = Invite.objects.filter(invitee = this_user)
 	my_events = NewEvent.objects.filter(Q(creator = this_user), (Q(private = False) | Q(groups__in=groups))).order_by("startTime")
 	rsvped = NewEvent.objects.filter(rsvp = this_user).order_by("startTime")
 	recommended = []
-
 	all_users_obj =  MyUser.objects.all()
 	all_users = [unicodedata.normalize('NFKD', user.username).encode('ascii', 'ignore') for user in all_users_obj]
 	friends = []
@@ -478,8 +522,9 @@ def personal(request):
 	return render(request, 'frontend/personal.html', {
         'form': form, 'form2':form2, 'groups_list': groups, 'my_events': my_events, 'rsvped': rsvped, 
         'events_list': events_list, 'recommended':recommended, "friends":friends, 
-        'other_users': other_users, 'all_users': all_users, 'fb_groups': fb_groups, 'fb_friends': fb_friends
+        'other_users': other_users, 'all_users': all_users, 'fb_groups': fb_groups, 'fb_friends': fb_friends, 'invites':invites
     })	
+
 
 def filter(request):
 	tags = request.POST.getlist('tags')
@@ -496,6 +541,7 @@ def filter(request):
 	else:
 		try:
 			user = MyUser.objects.get(username=username)
+			invites = Invite.objects.filter(invitee = user)
 			print user
 			lat = user.latitude
 			lon = user.longitude
@@ -507,6 +553,8 @@ def filter(request):
 			longitude = MyUser._meta.get_field_by_name('longitude')
 			lat = latitude[0].default
 			lon = longitude[0].default
+			invites = []
+		context['invites'] = invites
 		context['center_lat'] = lat
 		context['center_lon'] = lon
 	time_threshold = datetime.now() - timedelta(days = 1)

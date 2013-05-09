@@ -195,3 +195,16 @@
             }
             {% endfor %}
          }
+  
+          function updateNotifications(){
+            var parent = document.getElementById("notifications");
+            var html = "";
+            var has_new = false;
+            {% for i in invites %}
+            if ('{{i.is_new}}' == "True") {
+              $(".dropdown-toggle").addClass("red");
+            }
+            html +=  "<li> {{i.event.name}} </li>"
+            {% endfor %}
+            parent.innerHTML = html;
+         }
