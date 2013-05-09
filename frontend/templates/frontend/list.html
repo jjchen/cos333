@@ -212,7 +212,7 @@
             if ('{{i.is_new}}' == "True") {
               $(".dropdown-toggle").addClass("red");
             }
-            html +=  "<li> {{i.event.name}} </li>"
+            html +=  "<li class='notification_item'> {{i.event.name}} </li>"
             {% endfor %}
             parent.innerHTML = html;
          }

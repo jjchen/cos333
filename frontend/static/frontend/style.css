@@ -155,6 +155,15 @@ div#minus_button{
 	left: 390px;	
 }
 
+#notifications{
+	padding:10px;
+}
+
+.notification_item{
+	padding:5px;
+	color: #777;
+}
+
 div#hide_button{
 	top: 110px;
 	height: 40px;
