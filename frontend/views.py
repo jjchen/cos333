@@ -539,6 +539,9 @@ def personal(request):
 	invites = Invite.objects.filter(invitee = this_user)
 	my_events = NewEvent.objects.filter(Q(creator = this_user), (Q(private = False) | Q(groups__in=groups))).order_by("startTime")
 	rsvped = NewEvent.objects.filter(rsvp = this_user).order_by("startTime")
+	if len(invites) != 0 and len(rsvped) != 0:
+		invites = invites.filter(~Q(event__in = rsvped))
+
 	recommended = []
 	all_users_obj =  MyUser.objects.all()
 	all_users = [unicodedata.normalize('NFKD', user.username).encode('ascii', 'ignore') for user in all_users_obj]
