@@ -347,6 +347,30 @@ def rmgroup(request, group):
 	group_obj.save()
 	return HttpResponseRedirect('/frontend/personal')
 
+def inviteall(request, event_id):
+	if request.method != 'POST':
+		return HttpResponseRedirect('/frontend/personal')
+	try:
+		event_obj = NewEvent.objects.get(id = event_id)
+	except ObjectDoesNotExist:
+		return HttpResponse('Tried removing non-existent event!', 
+				    status=401)
+	this_user = MyUser.objects.get(username = request.user.username)
+	if event_obj.creator != this_user:
+		return HttpResponse('Unauthorized access', status=401)
+
+	friend_obs = Friends.objects.filter(name = this_user.username)
+	assert(len(friends_obs) <= 1)
+	if len(friends_obs) == 1:
+		for f in friends_obs[0]:
+			#for every friend, send invite
+			invite = Invite()
+			invite.event = event_obj
+			invite.invitee = f
+			invite.inviter = this_user
+			invite.save()
+	return HttpResponseRedirect('/frontend/personal')	
+
 def rmevent(request, event):
 	try:
 		event_obj = NewEvent.objects.get(id = event)
