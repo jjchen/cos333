@@ -626,12 +626,14 @@ def filter(request):
 		
 		show_list = False	
 	if len(events_list) != 0:
-		events_list = events_list.order_by("startTime")
+		events_list = events_list.order_by("startTime").distinct()
 	context['events_list'] = events_list
 
 	tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	cal_events = []
+	description = ""
 	for e in events_list:
+#		e.description = "a"
 		startTime = e.startTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
 		if e.endTime != None: 
 			endTime = e.endTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
@@ -678,6 +680,7 @@ def index(request, add_form=None):
 
 	cal_events = []
 	for e in events_list:
+#		e.description="a"
 		startTime = e.startTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
 		if e.endTime != None:
 			endTime = e.endTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));

@@ -228,7 +228,7 @@
 
                 <p> {{ i.event.name }} </p>
                 <p>
-                <small>{{i.invitee.first_name}} invited you. </small>
+                <small>{{i.inviter.first_name}} invited you. </small>
                 </p>
               </div>
               {% endfor %}
@@ -451,7 +451,7 @@
         $.post('{% url "frontend:removenew" %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(html){
           var json_parsed = $.parseJSON(json);
           if(json_parsed.success == 'true') {
-            
+            alert("success");
           }
         });        
       });
