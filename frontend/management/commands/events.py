@@ -102,7 +102,7 @@ class Command(BaseCommand):
                                  description = f_description)
             new_event.save()
             tag_list = Tag.objects.get_or_create(name=calendarName)[0]
-            new_event.tag.add(tag_list)
+            new_event.tags.add(tag_list)
             new_event.save()
 
     def handle(self, *args, **options):

@@ -177,7 +177,9 @@
             //-------------------------------
             $('#singleFieldTags').tagit({
                 availableTags: names,
+                maxLength: 15, //this doesn't work
                 // This will make Tag-it submit a single form value, as a comma-delimited field.
+                maxTags: 10, //this also doesn't work
                 singleField: true,
                 singleFieldDelimiter: " ",
                 singleFieldNode: $('#id_tags')
@@ -288,8 +290,8 @@
          var map;
          var idled = false;
          var oms;
-         var single_pin = '{% static "frontend/paw_print.png" %}';
-         var multi_pin = '{% static "frontend/small_shield.png" %}';
+         var single_pin = '{% static "frontend/puny_human.png" %}';
+         var multi_pin = '{% static "frontend/small_group.png" %}';
          var geocoder;
 
          function initialize() {
@@ -581,24 +583,24 @@
       </div>
     </div>
 
-        <div class="control-group ">
+        <div class="control-group {% if form.startTime.errors %}error{% endif %}">
                 <label class="control-label" for="id_startTime">Start:</label>
                 <div class="controls">
                 Date: <input class="datepicker" id="id_startTime_0" name="startTime_0" type="text" /><br/>Time: <input class="span1" id="id_startTime_1" name="startTime_1" type="text" />:<input class="span1" id="id_startTime_2" name="startTime_2" type="text" /> <select class="span1" id="id_startTime_3" name="startTime_3">
 <option value="AM">AM</option>
 <option value="PM">PM</option>
 </select>
-                <span class="help-block"></span>
+                <span class="help-block">{{ form.startTime.errors }}</span>
                 </div>
             </div>
-           <div class="control-group ">
+           <div class="control-group {% if form.endTime.errors %}error{% endif %}">
                 <label class="control-label" for="id_endTime">End:</label>
                 <div class="controls">
                 Date: <input class="datepicker" id="id_endTime_0" name="endTime_0" type="text" /><br/>Time: <input class="span1" id="id_endTime_1" name="endTime_1" type="text" />:<input class="span1" id="id_endTime_2" name="endTime_2" type="text" /> <select class="span1" id="id_endTime_3" name="endTime_3">
 <option value="AM">AM</option>
 <option value="PM">PM</option>
 </select>
-                <span class="help-block"></span>
+                <span class="help-block">{{ form.endTime.errors }}</span>
                 </div>
             </div>
 
