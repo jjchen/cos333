@@ -223,8 +223,8 @@
 
               {% for i in invites %}
 
-                <div class="events_item" id="{{e.id}}">
-                          <a class="link_button" href="#" class="'+rsvp_class+'" onclick="rsvp({{e.id}})" id="rsvp_{{e.id}}">RSVP</a>
+                <div class="events_item" id="{{i.event.id}}">
+                <a class="link_button" href="#" class="'+rsvp_class+'" onclick="rsvp({{i.event.id}})" id="rsvp_{{i.event.id}}">Attend</a>
 
                 <p> {{ i.event.name }} </p>
                 <p>
@@ -254,7 +254,7 @@
               {% for e in recommended %}
                 <div class="events_item" id="{{e.id}}">
                 <p> {{ e.name }}
-                <a class="link_button" href="#" class="'+rsvp_class+'" onclick="rsvp({{e.id}})" id="rsvp_{{e.id}}">RSVP</a>
+                <a class="link_button" href="#" class="'+rsvp_class+'" onclick="rsvp({{e.id}})" id="rsvp_{{e.id}}">Attend</a>
                 </p>
               </div>
               {% endfor %}
@@ -442,7 +442,7 @@
             if ('{{i.is_new}}' == "True") {
               $(".dropdown-toggle").addClass("red");
             }
-            html +=  "<li> {{i.event.name}} </li>"
+            html +=  "<li class='notification_item'> {{i.event.name}} </li>"
             {% endfor %}
             parent.innerHTML = html;
          }
