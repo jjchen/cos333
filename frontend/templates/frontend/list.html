@@ -47,7 +47,7 @@
                '<p>Location: {{event.location}}</p>' 
 
             {% if event.description != None and event.description != "" %}
-            contentString += "Description: {{event.description}} <br/>"
+            contentString += "Description: {{event.description|escapejs}} <br/>"
             {% endif %}
 
             contentString += '<a class="link_button_list" href="#" class="'+rsvp_class+'" onclick="rsvp({{event.id}}, '+rsvped+')" id="rsvp_{{event.id}}">'+rsvp_text+'</a>'
@@ -58,7 +58,7 @@
 
             oms.addMarker(marker); 
             {% else %}
-            codeAddress("{{event.location}}", "{{event.name}}", "{{event.startTime|date:"D d M Y H:i"}}", "{{event.description}}"); 
+            codeAddress("{{event.location}}", "{{event.name}}", "{{event.startTime|date:"D d M Y H:i"}}", "{{event.description|escapejs}}"); 
             {% endif %} 
             {% endfor %}
 
@@ -175,7 +175,9 @@
               var parent = document.getElementById("show_more_" + id);
               var html = ""
               {% if e.description != None and e.description != "" %}
-              html += "{{e.description}} <br/>"
+
+              html += "{{e.description|escapejs}} <br/>"
+
               {% endif %}
               html += "Groups: ";
               {% for group in e.groups.all %}

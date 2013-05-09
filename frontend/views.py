@@ -633,6 +633,7 @@ def filter(request):
 	cal_events = []
 	description = ""
 	for e in events_list:
+#		e.description = "a"
 		startTime = e.startTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
 		if e.endTime != None: 
 			endTime = e.endTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
@@ -679,6 +680,7 @@ def index(request, add_form=None):
 
 	cal_events = []
 	for e in events_list:
+#		e.description="a"
 		startTime = e.startTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
 		if e.endTime != None:
 			endTime = e.endTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
