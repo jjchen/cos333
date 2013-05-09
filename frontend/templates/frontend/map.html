@@ -177,7 +177,9 @@
             //-------------------------------
             $('#singleFieldTags').tagit({
                 availableTags: names,
+                maxLength: 15, //this doesn't work
                 // This will make Tag-it submit a single form value, as a comma-delimited field.
+                maxTags: 10, //this also doesn't work
                 singleField: true,
                 singleFieldDelimiter: " ",
                 singleFieldNode: $('#id_tags')
@@ -288,8 +290,8 @@
          var map;
          var idled = false;
          var oms;
-         var single_pin = '{% static "frontend/paw_print.png" %}';
-         var multi_pin = '{% static "frontend/small_shield.png" %}';
+         var single_pin = '{% static "frontend/puny_human.png" %}';
+         var multi_pin = '{% static "frontend/small_group.png" %}';
          var geocoder;
 
          function initialize() {
