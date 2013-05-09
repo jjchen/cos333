@@ -331,7 +331,7 @@
         names = []
 
         {% for u in other_users %}
-          names.push("{{u.user_id}}");
+          names.push("{{u.username}}");
         {% endfor %}
         $("#id_name").autocomplete({
           source: names

@@ -137,17 +137,18 @@
             scheduler.config.CSRF_Token = "{{ csrf_token }}";
 
             scheduler.config.multi_day = false;
+            scheduler.config.collision_limit = 0;
             scheduler.config.fix_tab_position = false; // tabs are positioned correctly, no need to fix it
 
             scheduler.config.xml_date = "%Y-%m-%d %H:%i";
             scheduler.config.readonly = true;
-            scheduler.init('scheduler_here', current_date, view);
-
-            alert("outside");
             scheduler.attachEvent("onEventCollision", function (ev, evs){
-              alert("HI");
               return true;
             });
+
+            scheduler.init('scheduler_here', current_date, view);
+
+
 
             scheduler.templates.event_class = function (start, end, event) {
                if (start < (new Date())) //if date in past
