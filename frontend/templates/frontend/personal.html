@@ -223,12 +223,12 @@
 
               {% for i in invites %}
 
-                <div class="events_item" id="{{e.id}}">
-                          <a class="link_button" href="#" class="'+rsvp_class+'" onclick="rsvp({{e.id}})" id="rsvp_{{e.id}}">RSVP</a>
+                <div class="events_item" id="{{i.event.id}}">
+                <a class="link_button" href="#" class="'+rsvp_class+'" onclick="rsvp({{i.event.id}})" id="rsvp_{{i.event.id}}">Attend</a>
 
                 <p> {{ i.event.name }} </p>
                 <p>
-                <small>{{i.invitee.first_name}} invited you. </small>
+                <small>{{i.inviter.first_name}} invited you. </small>
                 </p>
               </div>
               {% endfor %}
@@ -254,7 +254,7 @@
               {% for e in recommended %}
                 <div class="events_item" id="{{e.id}}">
                 <p> {{ e.name }}
-                <a class="link_button" href="#" class="'+rsvp_class+'" onclick="rsvp({{e.id}})" id="rsvp_{{e.id}}">RSVP</a>
+                <a class="link_button" href="#" class="'+rsvp_class+'" onclick="rsvp({{e.id}})" id="rsvp_{{e.id}}">Attend</a>
                 </p>
               </div>
               {% endfor %}
@@ -321,7 +321,7 @@
           </div>
         </div>
         <div id="right">
-          <div id="more" class="hidden">
+          <div id="more" class="hidden" style="position:fixed; width:300px;">
           </div>
         </div>
       </div>
@@ -442,7 +442,7 @@
             if ('{{i.is_new}}' == "True") {
               $(".dropdown-toggle").addClass("red");
             }
-            html +=  "<li> {{i.event.name}} </li>"
+            html +=  "<li class='notification_item'> {{i.event.name}} </li>"
             {% endfor %}
             parent.innerHTML = html;
          }
@@ -451,7 +451,7 @@
         $.post('{% url "frontend:removenew" %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(html){
           var json_parsed = $.parseJSON(json);
           if(json_parsed.success == 'true') {
-            
+            alert("success");
           }
         });        
       });

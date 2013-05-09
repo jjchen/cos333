@@ -31,9 +31,11 @@
     {% endfor %}
     </span>
     </div>
+
     <form action="{% url 'frontend:invite' %}" method="post" id="inviteform" class="form-horizontal">{% csrf_token %}
     <div class="hidden"> {{invite_form.event}}
     {{invite_form.inviter}} </div>
+    <b>Invite: </b>
     {{invite_form.invitee}}
-    <p><button class="btn" type="submit">Invite</button></p>
+    <button class="btn" type="submit">Send</button>
     </form>
