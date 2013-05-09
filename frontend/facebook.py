@@ -7,29 +7,86 @@ from django.http import HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from frontend.models import NewEvent
 
-def get_friends(user):
-    instance = UserSocialAuth.objects.get(user=user, provider='facebook')
-    token = instance.tokens['access_token']
-    graph = GraphAPI(token)
-    user_path = str(instance.uid) + "/friends"
-    friends = graph.get(user_path).get('data')
+# Facebook decorator to setup environment
+def facebook_decorator(func):
+    def wrapper(request, *args, **kwargs):
+        user = request.user
+        # User must me logged via FB backend in order to ensure we talk about 
+        # the same person
+        if not is_complete_authentication(request):
+            try:
+                user = social_complete(request, FacebookBackend.name)
+            except ValueError:
+                pass # no matter if failed
 
+        # Not recommended way for FB, but still something we need to be aware of
+        if isinstance(user, HttpResponse):
+            kwargs.update({'auth_response': user})
+        # Need to re-check the completion
+        else:
+            if is_complete_authentication(request):
+                token = get_access_token(request.user)
+                kwargs.update({'access_token': token})
+                graph = GraphAPI(token)
+                kwargs.update({'graph': graph})
+            else:
+                request.user = AnonymousUser()
+
+        signed_request = load_signed_request(
+            request.REQUEST.get('signed_request', ''))
+        if signed_request:
+            kwargs.update({'signed_request': signed_request})
+
+        return func(request, *args, **kwargs)
+
+    return wrapper
+
+@facebook_decorator
+def get_friends(request, **kwargs):
+    token = kwargs['access_token']
+    graph = kwargs['graph']
+    user_path = request.user.username + "/friends"
+    friends = graph.get(user_path).get('data')
     return friends
 
-def get_fb_groups(user):
-    instance = UserSocialAuth.objects.get(user=user, provider='facebook') 
-    token = instance.tokens['access_token']
-    graph = GraphAPI(token)
-    testall = UserSocialAuth.objects.all()
-    print testall
-    print testall[0].__dict__
-    print "Facebook instance: " + str(instance)
-
-    user_path = str(instance.uid) + "/groups"
+@facebook_decorator
+def get_fb_groups(request, **kwargs):
+    token = kwargs['access_token']
+    graph = kwargs['graph']
+    user_path = request.user.username + "/groups"
     groups = graph.get(user_path).get('data')
     return groups
 
-def importgroup(request, group):
+#first few functions taken from django_social_auth example at
+#https://github.com/omab/django-social-auth/blob/master/example/app/facebook.py
+def is_complete_authentication(request):
+    return request.user.is_authenticated() and \
+        FacebookBackend.__name__ in request.session.get(BACKEND_SESSION_KEY, '')
+
+def get_access_token(user):
+    key = str(user.id)
+    access_token = cache.get(key)
+
+    # If cache is empty read the database
+    if access_token is None:
+        try:
+            social_user = user.social_user if hasattr(user, 'social_user') \
+                else UserSocialAuth.objects.get(user=user.id, 
+                                                provider=FacebookBackend.name)
+        except UserSocialAuth.DoesNotExist:
+            return None
+
+        if social_user.extra_data:
+            access_token = social_user.extra_data.get('access_token')
+            expires = social_user.extra_data.get('expires')
+
+            cache.set(key, access_token, 
+                      int(expires) if expires is not None else 0)
+
+    return access_token
+
+@facebook_decorator
+def importgroup(request, group, **kwargs):
     #import a group from Facebook
     def create_ret_user(user_info):
         #if user doesn't exist, create it. Return None if Facebook is
@@ -47,13 +104,13 @@ def importgroup(request, group):
             return None
         new_user.save()
         return new_user
-
+    print "I am here"
     if request.user.username == "":
         return HttpResponse('Unauthorized access', status=401)
     this_user = MyUser.objects.get(username = request.user.username)	
-    instance = UserSocialAuth.objects.get(user=this_user, provider='facebook')        
-    token = instance.tokens['access_token']
-    graph = GraphAPI(token)	
+
+    token = kwargs['access_token']
+    graph = kwargs['graph']
 
     group_info = graph.get("/" + str(group))
     #check if this group already exists
@@ -98,18 +155,15 @@ def import_events(request):
 
     return HttpResponseRedirect('/')
 
-def process_export(user, event_obj):
+def process_export(user, event_obj, token, graph):
     #helper function to export event to Facebook
     #user and event_obj are MyUser and NewEvent type, respectively. Returns
     #True on success, False on failure
-    instance = UserSocialAuth.objects.get(user=user, provider='facebook')       
-    token = instance.tokens['access_token']
-    graph = GraphAPI(token)
     if event_obj.private:
         privacy_type = "SECRET"
     else:
         privacy_type = "OPEN"
-    event_path = str(instance.uid) + "/events"
+    event_path = user.username + "/events"
     event_data = {
         'name' : event_obj.name,
         'start_time' : event_obj.startTime.isoformat(),
@@ -123,7 +177,8 @@ def process_export(user, event_obj):
     else:
         return False
 
-def exportevent(request, event):
+@facebook_decorator
+def export_event(request, event, **kwargs):
     #export event to Facebook
     try:
         event_obj = NewEvent.objects.get(id = event)
@@ -133,9 +188,12 @@ def exportevent(request, event):
     this_user = MyUser.objects.get(username = request.user.username)
     if event_obj.creator != this_user:
         return HttpResponse('Unauthorized access', status=401)
-    success = process_export(this_user, event_obj)
+    success = process_export(this_user, event_obj, kwargs['access_token'],
+                             kwargs['graph'])
     if success:
         event_obj.exported = True
         event_obj.save()
         return HttpResponseRedirect('/frontend/personal')
     return HttpResponse('Export failed!', status=401)
+
+

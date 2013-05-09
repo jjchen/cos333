@@ -5,7 +5,9 @@
     <!-- getting Ajax refresh to see new content -->
     <div id="ajaxwrapper">
       <h2>Thank you for your submission!</h2>
-      <a href="{% url 'frontend:exportevent' event.id %}">Export to Facebook</a>
+      <a href="{% url 'frontend:export_event' event.id %}">
+	Export to Facebook
+      </a>
       <meta HTTP-EQUIV="REFRESH" content="0; url=/">
     </div>
   </body>
