@@ -46,8 +46,8 @@ class Migration(SchemaMigration):
         db.create_table(u'frontend_newevent', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=200)),
-            ('startTime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 5, 8, 0, 0))),
-            ('endTime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 5, 8, 0, 0))),
+            ('startTime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 5, 9, 0, 0))),
+            ('endTime', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 5, 9, 0, 0))),
             ('location', self.gf('django.db.models.fields.CharField')(default='Princeton University', max_length=200, null=True)),
             ('private', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('description', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
@@ -81,6 +81,16 @@ class Migration(SchemaMigration):
             ('myuser', models.ForeignKey(orm[u'frontend.myuser'], null=False))
         ))
         db.create_unique(u'frontend_newevent_rsvp', ['newevent_id', 'myuser_id'])
+
+        # Adding model 'Invite'
+        db.create_table(u'frontend_invite', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('event', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['frontend.NewEvent'])),
+            ('inviter', self.gf('django.db.models.fields.related.ForeignKey')(related_name='inviter', to=orm['frontend.MyUser'])),
+            ('invitee', self.gf('django.db.models.fields.related.ForeignKey')(related_name='invitee', to=orm['frontend.MyUser'])),
+            ('is_new', self.gf('django.db.models.fields.BooleanField')(default=True)),
+        ))
+        db.send_create_signal(u'frontend', ['Invite'])
 
         # Adding model 'Building'
         db.create_table(u'frontend_building', (
@@ -150,6 +160,9 @@ class Migration(SchemaMigration):
         # Removing M2M table for field rsvp on 'NewEvent'
         db.delete_table('frontend_newevent_rsvp')
 
+        # Deleting model 'Invite'
+        db.delete_table(u'frontend_invite')
+
         # Deleting model 'Building'
         db.delete_table(u'frontend_building')
 
@@ -194,6 +207,14 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'name'", 'to': u"orm['frontend.MyUser']"})
         },
+        u'frontend.invite': {
+            'Meta': {'object_name': 'Invite'},
+            'event': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['frontend.NewEvent']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'invitee': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'invitee'", 'to': u"orm['frontend.MyUser']"}),
+            'inviter': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'inviter'", 'to': u"orm['frontend.MyUser']"}),
+            'is_new': ('django.db.models.fields.BooleanField', [], {'default': 'True'})
+        },
         u'frontend.mygroup': {
             'Meta': {'object_name': 'MyGroup'},
             'creator': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
@@ -215,7 +236,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'NewEvent'},
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'creator'", 'null': 'True', 'to': u"orm['frontend.MyUser']"}),
             'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'endTime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 5, 8, 0, 0)'}),
+            'endTime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 5, 9, 0, 0)'}),
             'exported': ('django.db.models.fields.NullBooleanField', [], {'default': 'False', 'null': 'True', 'blank': 'True'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'groups'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['frontend.MyGroup']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -225,7 +246,7 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
             'private': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'rsvp': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'rsvp'", 'null': 'True', 'symmetrical': 'False', 'to': u"orm['frontend.MyUser']"}),
-            'startTime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 5, 8, 0, 0)'}),
+            'startTime': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 5, 9, 0, 0)'}),
             'tags': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['frontend.Tag']", 'symmetrical': 'False'})
         },
         u'frontend.tag': {
