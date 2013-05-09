@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from dateutil import tz
 
 from frontend.models import NewEvent
 #from frontend.models import NewEventForm
@@ -656,12 +657,20 @@ def filter(request):
 	tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	cal_events = []
 	description = ""
+	from_zone = tz.gettz('UTC')
+	to_zone = tz.gettz('America/New_York')
+
 	for e in events_list:
-#		e.description = "a"
-		startTime = e.startTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
-		if e.endTime != None: 
-			endTime = e.endTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
+#		e.description="a"
+		e.startTime.replace(tzinfo=from_zone)
+		e.endTime.replace(tzinfo=from_zone)
+		startTimeEDT = e.startTime.astimezone(to_zone)
+		endTimeEDT = e.endTime.astimezone(to_zone)
+		startTime = startTimeEDT.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
+		if e.endTime != None:
+			endTime = endTimeEDT.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
 			read_only = True
+
 			cal_events.append({'start_date': startTime, 'end_date': endTime, 'text': e.name, 'readonly': read_only});
 		context['cal_events'] = json.dumps(cal_events, cls=DjangoJSONEncoder);
 	print "end"
@@ -703,11 +712,18 @@ def index(request, add_form=None):
 	username = request.user.username
 
 	cal_events = []
+	from_zone = tz.gettz('UTC')
+	to_zone = tz.gettz('America/New_York')
+
 	for e in events_list:
 #		e.description="a"
-		startTime = e.startTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
+		e.startTime.replace(tzinfo=from_zone)
+		e.endTime.replace(tzinfo=from_zone)
+		startTimeEDT = e.startTime.astimezone(to_zone)
+		endTimeEDT = e.endTime.astimezone(to_zone)
+		startTime = startTimeEDT.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
 		if e.endTime != None:
-			endTime = e.endTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
+			endTime = endTimeEDT.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
 			read_only = True
 			cal_events.append({'start_date': startTime, 'end_date': endTime, 'text': e.name, 'readonly': read_only});
 		context['cal_events'] = json.dumps(cal_events, cls=DjangoJSONEncoder);
