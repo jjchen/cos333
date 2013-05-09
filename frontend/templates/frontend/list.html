@@ -180,13 +180,19 @@
 
               {% endif %}
               html += "Groups: ";
+              var groups = false;
               {% for group in e.groups.all %}
                 html += "{{group.name}}" + " ";
+                groups = true;
               {% endfor %}
+              if (!groups) html += "None"
               html += "<br/>Attending: ";
+              var hasrsvps = false;
               {% for this_user in e.rsvp.all %}
+                var hasrsvps = true;
                 if ('{{this_user.user_id}}' != '{{user.username}}') html += "{{this_user.first_name}}" + " ";
               {% endfor %}
+              if (!hasrsvps) html+= "None"
               if (rsvp_list['{{e.id}}']) html += "me"
               html += "<br/><small>"
               {% for tag in e.tags.all %}
@@ -203,7 +209,6 @@
             var html = "";
             var has_new = false;
             {% for i in invites %}
-              alert('{{i.event.name}}');
             if ('{{i.is_new}}' == "True") {
               $(".dropdown-toggle").addClass("red");
             }

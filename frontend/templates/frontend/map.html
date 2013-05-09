@@ -714,7 +714,6 @@
         $(".dropdown-toggle").click(function(){
           $(this).removeClass("red");
           $.post('{% url "frontend:removenew" %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(html){
-            alert("return success");
           });        
         });
     </script>

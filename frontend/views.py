@@ -626,7 +626,7 @@ def filter(request):
 		
 		show_list = False	
 	if len(events_list) != 0:
-		events_list = events_list.order_by("startTime")
+		events_list = events_list.order_by("startTime").distinct()
 	context['events_list'] = events_list
 
 	tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
