@@ -14,8 +14,8 @@
             {% endfor %}
 
 
-            var i = 0; 
-            {% for event in events_list %} 
+            var i = 0;
+            {% for event in events_list %}
             {% if event.lat %}
             var position = new google.maps.LatLng(
               {{event.lat}}, {{event.lon}});
