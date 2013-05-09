@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from dateutil import tz
 
 from frontend.models import NewEvent
 #from frontend.models import NewEventForm
@@ -374,6 +375,30 @@ def rmgroup(request, group):
 	group_obj.save()
 	return HttpResponseRedirect('/frontend/personal')
 
+def inviteall(request, event_id):
+	if request.method != 'POST':
+		return HttpResponseRedirect('/frontend/personal')
+	try:
+		event_obj = NewEvent.objects.get(id = event_id)
+	except ObjectDoesNotExist:
+		return HttpResponse('Tried removing non-existent event!', 
+				    status=401)
+	this_user = MyUser.objects.get(username = request.user.username)
+	if event_obj.creator != this_user:
+		return HttpResponse('Unauthorized access', status=401)
+
+	friend_obs = Friends.objects.filter(name = this_user.username)
+	assert(len(friends_obs) <= 1)
+	if len(friends_obs) == 1:
+		for f in friends_obs[0]:
+			#for every friend, send invite
+			invite = Invite()
+			invite.event = event_obj
+			invite.invitee = f
+			invite.inviter = this_user
+			invite.save()
+	return HttpResponseRedirect('/frontend/personal')	
+
 def rmevent(request, event):
 	try:
 		event_obj = NewEvent.objects.get(id = event)
@@ -660,12 +685,20 @@ def filter(request):
 	tags = ['cos', '333', 'music', 'needs', 'database', 'integration']
 	cal_events = []
 	description = ""
+	from_zone = tz.gettz('UTC')
+	to_zone = tz.gettz('America/New_York')
+
 	for e in events_list:
-#		e.description = "a"
-		startTime = e.startTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
-		if e.endTime != None: 
-			endTime = e.endTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
+#		e.description="a"
+		e.startTime.replace(tzinfo=from_zone)
+		e.endTime.replace(tzinfo=from_zone)
+		startTimeEDT = e.startTime.astimezone(to_zone)
+		endTimeEDT = e.endTime.astimezone(to_zone)
+		startTime = startTimeEDT.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
+		if e.endTime != None:
+			endTime = endTimeEDT.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
 			read_only = True
+
 			cal_events.append({'start_date': startTime, 'end_date': endTime, 'text': e.name, 'readonly': read_only});
 		context['cal_events'] = json.dumps(cal_events, cls=DjangoJSONEncoder);
 	print "end"
@@ -707,11 +740,18 @@ def index(request, add_form=None):
 	username = request.user.username
 
 	cal_events = []
+	from_zone = tz.gettz('UTC')
+	to_zone = tz.gettz('America/New_York')
+
 	for e in events_list:
 #		e.description="a"
-		startTime = e.startTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
+		e.startTime.replace(tzinfo=from_zone)
+		e.endTime.replace(tzinfo=from_zone)
+		startTimeEDT = e.startTime.astimezone(to_zone)
+		endTimeEDT = e.endTime.astimezone(to_zone)
+		startTime = startTimeEDT.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
 		if e.endTime != None:
-			endTime = e.endTime.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
+			endTime = endTimeEDT.strftime("%s %s" % ("%Y-%m-%d", "%H:%M:%S"));
 			read_only = True
 			cal_events.append({'start_date': startTime, 'end_date': endTime, 'text': e.name, 'readonly': read_only});
 		context['cal_events'] = json.dumps(cal_events, cls=DjangoJSONEncoder);
