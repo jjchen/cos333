@@ -62,6 +62,7 @@ class Invite(models.Model):
     event = models.ForeignKey(NewEvent)
     inviter = models.ForeignKey(MyUser, related_name="inviter")
     invitee = models.ForeignKey(MyUser, related_name="invitee")
+    is_new = models.BooleanField(default=True)
 
 class Building(models.Model):
     name = models.CharField(max_length=200)

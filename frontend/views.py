@@ -453,6 +453,20 @@ def logout(request):
 	django.contrib.auth.logout(request)
 	return HttpResponseRedirect("/frontend")
 
+def removenew(request):
+	if request.method == 'POST':
+		try:
+			this_user = MyUser.objects.get(username = request.user.username)
+			invites = Invite.objects.filter(invitee = this_user)
+			for invite in invites:
+				invite.is_new = False;
+				invite.save();
+		except ObjectDoesNotExist:
+				return HttpResponse('Tried rspving to non-existent event!', status=401)		
+		return HttpResponse('{"success":"true"}');
+	else:
+		return HttpResponse('{"success":"true"}');
+
 def personal(request):
 	print "Request is " + request.user.username
 	if request.user.username == "":
@@ -520,6 +534,7 @@ def filter(request):
 	else:
 		try:
 			user = MyUser.objects.get(username=username)
+			invites = Invite.objects.filter(invitee = user)
 			print user
 			lat = user.latitude
 			lon = user.longitude
@@ -531,6 +546,8 @@ def filter(request):
 			longitude = MyUser._meta.get_field_by_name('longitude')
 			lat = latitude[0].default
 			lon = longitude[0].default
+			invites = []
+		context['invites'] = invites
 		context['center_lat'] = lat
 		context['center_lon'] = lon
 	time_threshold = datetime.now() - timedelta(days = 1)

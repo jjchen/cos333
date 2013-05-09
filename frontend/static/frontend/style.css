@@ -156,14 +156,16 @@ div#minus_button{
 }
 
 div#hide_button{
-	bottom: 540px;
+	top: 110px;
+	height: 40px;
 	right: 226px;	
 	padding: 5px;
 	background-color: rgba(255,255,255,0.8);
 }
 
 div#expand_button{
-	bottom: 540px;
+	top: 110px;
+	height: 40px;
 	right: 20px;	
 	padding: 5px;
 	background-color: rgba(255,255,255,0.8);
@@ -203,6 +205,8 @@ div#hide_button:hover{
     display:inline-block;
     width: 25px;
     text-align: center;
+	z-index: 1;
+
 	box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
 }
 
@@ -365,7 +369,7 @@ div#hide_button:hover{
 	box-sizing: border-box;
 	box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 	box-sizing: border-box;
-	z-index: 1;
+	z-index: 2;
 	padding-bottom: 40px
 }
 
