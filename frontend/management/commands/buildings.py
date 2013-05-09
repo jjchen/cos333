@@ -32,4 +32,5 @@ class Command(BaseCommand):
 
 				for alias in building['aliases']:
 					newBuildingAlias = BuildingAlias(alias=alias, building=newBuilding)
+					print alias
 					newBuildingAlias.save()
