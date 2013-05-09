@@ -347,7 +347,6 @@
          google.maps.event.addDomListener(window, 'load', initialize);
 
          function codeAddress(buildingName, name, time, description) {
-	    var center = new google.maps.LatLng({{center_lat}},{{center_lon}});
             geocoder.geocode({
                'address': buildingName,
 		'latLng': map.getCenter()
