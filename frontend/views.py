@@ -73,6 +73,34 @@ class NewEventForm(forms.Form):
 	tags = forms.CharField(max_length=200, required=False, widget=forms.HiddenInput())
 	#tags = TagField(widget=TagAutocompleteTagIt(max_tags=False))
 
+	def clean(self):
+		form_data = self.cleaned_data
+		cleaned_data = super(NewEventForm, self).clean()
+		name = cleaned_data.get("name")
+		startTime = cleaned_data.get("startTime")
+		endTime = cleaned_data.get("endTime")
+		location = cleaned_data.get("location")
+		#if name:
+			#if form_data['name'] != "swaggin":
+			#	self._errors["name"] = "You ain't swaggin'"
+			#	del form_data['name']
+		if not name:
+			self._errors["name"] = "This field is required."
+		if startTime and endTime:
+			date1 = datetime.strptime(form_data['startTime'], "%Y-%m-%d %H:%M")
+			date2 = datetime.strptime(form_data['endTime'], "%Y-%m-%d %H:%M")
+			delta = date2 - date1
+			if delta.days > 117:
+				self._errors["startTime"] = "Your event must be less than four months long."
+				self._errors["endTime"] = "Your event must be less than four months long."
+
+		else:
+			self._errors["startTime"] = "This field is required."
+			self._errors["endTime"] = "This field is required."
+		if not location:
+			self._errors["location"] = "This field is required."
+		return form_data
+
 def accessible(event, user):
 	groups = MyGroup.objects.filter(users = user)
 	print event.groups.all()
@@ -785,6 +813,7 @@ def add(request):
 					 creator = this_user,
 					 description = data['description'])
 							#creator = this_user)
+			
 			event.save() #must save before adding groups
 			# new tagging method
 			tag_list = [Tag.objects.get_or_create(name=tag)[0] for tag in data['tags'].split()],
@@ -795,6 +824,8 @@ def add(request):
 			for group in data['groups']:
 				event.groups.add(group)
 			event.save() 
+			#if data['name'] != "swag":
+			#	raise ValidationError("no swag")
 			return render(request, 'frontend/success.html',
 				      {'event': event})			
 
