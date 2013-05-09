@@ -649,7 +649,7 @@ def filter(request):
 		except ObjectDoesNotExist:
 			events_list = NewEvent.objects.filter(Q(startTime__gt=time_threshold)).order_by("startTime")
 		
-		show_list = False	
+		show_list = False
 	if len(events_list) != 0:
 		events_list = events_list.order_by("startTime").distinct()
 	context['events_list'] = events_list
