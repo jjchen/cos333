@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from django.conf import settings
 from django.views.generic import TemplateView
 from frontend import views
 from frontend import facebook
@@ -45,3 +46,7 @@ urlpatterns = patterns('',
     url(r'^api/get_memnames/', views.get_memnames, name='get_memnames'),
 )
 
+if not settings.DEBUG:
+    urlpatterns += patterns('',
+        (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
+    )
