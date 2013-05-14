@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+{% load staticfiles %}
+<title>OC Tutorial</title>
+
+   <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+   
+   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+
+    <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
+
+<link rel="stylesheet" type="text/css" href="{% static "frontend/tutorial.css" %}" />
+
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  <!-- tooltip jquery and some css from http://www.red-team-design.com/image-map-with-css3-jquery-tooltips -->
+  <script>
+  $(document).ready(function(){
+
+    // set the wrapper width and height to match the img size
+    $('#wrapper').css({'width':$('#wrapper img').width(),
+                      'height':$('#wrapper img').height()
+    })
+    
+    //tooltip direction
+    var tooltipDirection;
+                 
+    for (i=0; i<$(".pin").length; i++)
+    {				
+        // set tooltip direction type - up or down             
+        if ($(".pin").eq(i).hasClass('pin-down')) {
+            tooltipDirection = 'tooltip-down';
+        } else {
+            tooltipDirection = 'tooltip-up';
+            }
+    
+        // append the tooltip
+        $("#wrapper").append("<div style='left:"+$(".pin").eq(i).data('xpos')+"px;top:"+$(".pin").eq(i).data('ypos')+"px' class='" + tooltipDirection +"'>\
+                                            <div class='tooltip'>" + $(".pin").eq(i).html() + "</div>\
+                                    </div>");
+    }    
+    
+    // show/hide the tooltip
+    $('.tooltip-up, .tooltip-down').mouseenter(function(){
+                $(this).children('.tooltip').fadeIn(100);
+            }).mouseleave(function(){
+                $(this).children('.tooltip').fadeOut(100);
+            })
+    });
+    </script>
+ <link href="http://fonts.googleapis.com/css?family=Arvo" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet" type=
+</head>
+
+<body>
+<h2> Hover over the tooltips to learn more about OC. </h2>
+<div id="wrapper">
+   <img width="1021" height="771" src="{% static "frontend/bg.png" %}" alt="OC Tutorial">   
+   <div class="pin pin-up" data-xpos="30" data-ypos="45">	  
+	  <h2>OC</h2>
+	  <ul>
+		<li><b></b> OC's logo. Click here at any time to return to the splash page - i.e., this view.</li>
+	  </ul>
+   </div>
+
+   <div class="pin pin-up" data-xpos="575" data-ypos="165">	  
+	  <h2>Notifications</h2>
+	  <ul>
+		<li><b></b> The arrow will glow red when you have been invited to an event, and clicking on it will show you what you have been invited to.</li>
+	  </ul>
+   </div>
+
+    <div class="pin pin-up" data-xpos="740" data-ypos="45">	  
+	  <h2>Personal Page</h2>
+	  <ul>
+		<li><b></b> Click here to go to your personal page - add friends, accept invites, send invites, manage your events, and form and edit groups.</li>
+	  </ul>
+   </div>
+
+    <div class="pin pin-up" data-xpos="847" data-ypos="45">	  
+	  <h2>Settings</h2>
+	  <ul>
+		<li><b></b> Modify your settings - change your name or default location.</li>
+	  </ul>
+   </div>
+
+   <div class="pin pin-up" data-xpos="927" data-ypos="45">	  
+	  <h2>Logout</h2>
+	  <ul>
+		<li><b></b>Log out of OC. Default behavior is to stay logged in despite the page closing.</li>
+	  </ul>
+   </div>
+
+    <div class="pin pin-down" data-xpos="55" data-ypos="650">	  
+	  <h2>Make View</h2>
+	  <ul>
+		<li><b></b>Make an event! Check Private to make the event visible to your selections in Groups. Add tags to make finding your event easier.
+		</li>
+	  </ul>
+   </div>
+
+    <div class="pin pin-down" data-xpos="190" data-ypos="650">	  
+	  <h2>Calendar View</h2>
+	  <ul>
+		<li><b></b>See what's happening today, this week, or this month in a calendar view. Filterable in the same way that the map is.
+		</li>
+	  </ul>
+   </div>
+
+   <div class="pin pin-down" data-xpos="317" data-ypos="650">	  
+	  <h2>List View</h2>
+	  <ul>
+		<li><b></b>See the events in list form - filterable in the way that the map and calendar are.
+		</li>
+	  </ul>
+   </div>
+
+   <div class="pin pin-up" data-xpos="835" data-ypos="620">	  
+	  <h2>Collections</h2>
+	  <ul>
+		<li><b></b>Three overarching collections of events. All shows all events, Recommended shows events your friends have created or are attending, and My Events shows any events you've created.
+		</li>
+	  </ul>
+   </div>
+
+   <div class="pin pin-up" data-xpos="875" data-ypos="500">	  
+	  <h2>Tags</h2>
+	  <ul>
+		<li><b></b>Shows all available tags and groups - click on one or any combination of them to show events corresponding your tag and group selection.
+		</li>
+	  </ul>
+   </div>
+
+
+<div class="pin pin-up" data-xpos="875" data-ypos="227">	  
+	  <h2>Search</h2>
+	  <ul>
+		<li><b></b>Search events by title, location, or tags.
+		</li>
+	  </ul>
+   </div>
+</div>
+
+<div class="pin pin-up" data-xpos="402" data-ypos="430">	  
+	  <h2>Single Event</h2>
+	  <ul>
+		<li><b></b>There is only one event at this location. Click on it
+to show the event's information. 
+		</li>
+	  </ul>
+   </div>
+</div>
+
+<div class="pin pin-up" data-xpos="274" data-ypos="510">	  
+	  <h2>Multiple Events</h2>
+	  <ul>
+		<li><b></b>There are two or more events at this location - click on the group to show all available events in spiral form, and click on a single person to show information regarding that event.
+		</li>
+	  </ul>
+   </div>
+</div>
+
+<br>
+<a href="{% url 'frontend:index' %}"><h2> On to the website... </h2></a>
+
+<!--	<a href="#" title="no">wtf mate</a>
+<img src="{% static "frontend/tutorialtomap.png" %}" alt="" width="1021" height="771" border="0" usemap="#Map" />
+<map name="Map" id="Map3">
+
+<area shape="circle" coords="772,580,17" href="#" />
+<area shape="circle" coords="769,376,17" href="#" />
+<area shape="circle" coords="767,207,17" href="#" />
+<area shape="circle" coords="336,684,17" href="#" />
+<area shape="circle" coords="213,683,17" href="#" />
+<area shape="circle" coords="74,684,17" href="#" />
+<area shape="circle" coords="387,345,17" href="#" />
+<area shape="circle" coords="991,19,17" href="#" />
+<area shape="circle" coords="292,530,17" href="#" />
+<area shape="circle" coords="865,63,17" href="#" />
+<area shape="circle" coords="760,62,17" href="#" />
+<area shape="circle" coords="485,92,17" href="#" />
+<area shape="circle" coords="88,19,17" href="#" />
+
+</map> -->
+</body>
+</html>

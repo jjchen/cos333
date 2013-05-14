@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+    <script src="{% static "frontend/bootstrap.js" %}"></script>
+
+    <link rel="stylesheet" href="{% static "frontend/bootstrap.min.css" %}" type="text/css"> 
+    <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
+    <link href="{% static "frontend/jquery.tagit.css" %}" rel="stylesheet" type="text/css">
+    <script src="{% static "frontend/tag-it.min.js" %}" type="text/javascript" charset="utf-8"></script>
+
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+
+    <!--<link href="{% static "frontend/jquery.tagit.css" %}" rel="stylesheet" type="text/css">-->
+    <link href="{% static "frontend/ui-autocomplete-tag-it.css" %}" rel="stylesheet" type="text/css">
+    <link href="{% static "frontend/tagit.ui-zendesk.css" %}" rel="stylesheet" type="text/css">
+
+
+      <!-- jQuery bootstrap stylesheets -->
+    <link rel="stylesheet" href="{% static "frontend/jquery-ui-1.9.2.custom.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "frontend/jquery-ui-1.10.0.custom.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "frontend/jquery.ui.1.9.2.ie.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "frontend/jquery.ui.1.10.0.ie.css" %}" type="text/css">
+
+    <link rel="stylesheet" type="text/css" href="{% static "frontend/tutorial.css" %}" />
+
+ <link href="http://fonts.googleapis.com/css?family=Arvo" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet" type="text/css">
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+
+     <!--<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>-->
+
+    <title>OC - Features</title>
+</head>
+<body> 
+      <div class="container-narrow">
+
+  <div class="jumbotron">
+        <h1>OC</h1>
+        <p class="lead">An introduction</p>
+        </div>
+
+              <hr class="featurette-divider">
+
+        <div class="featurette">
+        <img class="img-rounded featurette-image pull-right" src="{% static "frontend/feature1.png" %}">
+        <h2 class="featurette-heading">Looking for something to do?</h2>
+        <p>See what's happening around your area in a map, calendar or list view. Use the sidebar to filter by tags (green boxes), groups (red boxes), or collections (grey boxes). If you prefer to search for a specific title, location, or tag, you can do that as well.
+        </p>
+      </div>
+
+                    <hr class="featurette-divider">
+
+
+     
+        <h2 class="featurette-heading">Fight listserv spam</h2>
+        <p>If you want to watch Game of Thrones with others, skip the e-mail and make an event on OC. Missed dinner? Find the free food event or study break closest to you by clicking "food" and checking the map view - no need to comb through "FreeFood" e-mails. 
+        </p>
+            
+        <hr class="featurette-divider">
+
+        <div class="featurette">
+        <img class="img-rounded featurette-image pull-left" src="{% static "frontend/feature2test.png" %}">
+        <h2 class="featurette-heading">Plan events with friends</h2>
+        <p>Simply check "Private" in the Make view, select the group you want to restrict this event to, and hit Save to ensure that only they can see it.
+        </p>
+      </div>
+
+        <hr class="featurette-divider">
+
+        <h2 class="featurette-heading">Facebook integration</h2>
+        <p>Facebook integration allows you to easily import friends and groups from Facebook and export any events you have created in OC for easy cross-posting.
+        </p>
+
+        <hr class="featurette-divider">
+
+
+      <div class="featurette">
+        <img class="img-rounded featurette-image pull-right" src="{% static "frontend/feature3.png" %}">
+        <h2 class="featurette-heading">Go global</h2>
+        <p>While the map defaults to Princeton, the default location can easily be changed within the Settings view - use OC around the world.
+      </div>
+
+        <hr class="featurette-divider">
+
+        <h1> <a href="{% url 'frontend:tutorial' %}">Take a tour - see OC at a glance</a> </h1>
+
+      </div>
+
+</body>
+</html>
