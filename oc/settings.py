@@ -1,7 +1,7 @@
 # Django settings for oc project.
 
-DEBUG = False
-TEMPLATE_DEBUG = False
+DEBUG = True
+TEMPLATE_DEBUG = True
 
 # Public: www.cos333-oc.herokuapp.com/
 #FACEBOOK_APP_ID = '431733443585073'
