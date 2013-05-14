@@ -81,10 +81,6 @@ class NewEventForm(forms.Form):
 		startTime = cleaned_data.get("startTime")
 		endTime = cleaned_data.get("endTime")
 		location = cleaned_data.get("location")
-		#if name:
-			#if form_data['name'] != "swaggin":
-			#	self._errors["name"] = "You ain't swaggin'"
-			#	del form_data['name']
 		if not name:
 			self._errors["name"] = "This field is required."
 		if tags:
@@ -855,7 +851,7 @@ def add(request):
 	events_list = NewEvent.objects.all().order_by("startTime") # this is to refresh the events list without page refresh.
 	return render(request, '/frontend/map.html', {'form': form})
 
-# add a new event.  add is called when a new event is properly submitted.
+# edit an event
 def edit(request, event):
 	print "IN edit"
 	if request.method == 'POST':
