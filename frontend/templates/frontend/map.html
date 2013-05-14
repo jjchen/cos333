@@ -4,6 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>{% load staticfiles %}
 
+<title>OC</title>
+
     {{ form.media }}
 
     <!--<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />-->
@@ -102,6 +104,7 @@
     src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>-->
     <script type="text/javascript">
 
+  // simple Ajaxwrapper code - based on code from http://www.micahcarrick.com/ajax-form-submission-django.html
   jQuery(function() {
       var form = jQuery("#eventform");
       var tags = jQuery("#singleFieldTags");
@@ -347,10 +350,9 @@
          google.maps.event.addDomListener(window, 'load', initialize);
 
          function codeAddress(buildingName, name, time, description) {
-	    var center = new google.maps.LatLng({{center_lat}},{{center_lon}});
             geocoder.geocode({
                'address': buildingName,
-		'latLng': center
+		'latLng': map.getCenter()
             }, function (results, status) {
                if (status == google.maps.GeocoderStatus.OK) {
                   // map.setCenter(results[0].geometry.location);
@@ -501,7 +503,7 @@
       <div class="container">  
         <ul class="nav pull-left">  
           <li>  
-            <a class="brand logo" href="#" >Princeton University - OC</a>  
+            <a class="brand logo" href="#" >OC</a>  
           </li>
         </ul>
         <ul class="nav pull-right">  

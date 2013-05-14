@@ -77,15 +77,15 @@ class NewEventForm(forms.Form):
 		form_data = self.cleaned_data
 		cleaned_data = super(NewEventForm, self).clean()
 		name = cleaned_data.get("name")
+		tags = cleaned_data.get("tags")
 		startTime = cleaned_data.get("startTime")
 		endTime = cleaned_data.get("endTime")
 		location = cleaned_data.get("location")
-		#if name:
-			#if form_data['name'] != "swaggin":
-			#	self._errors["name"] = "You ain't swaggin'"
-			#	del form_data['name']
 		if not name:
 			self._errors["name"] = "This field is required."
+		if tags:
+			if len(tags) > 50:
+				self.errors["tags"] = "Please enter fewer tags."
 		if startTime and endTime:
 			date1 = datetime.strptime(form_data['startTime'], "%Y-%m-%d %H:%M")
 			date2 = datetime.strptime(form_data['endTime'], "%Y-%m-%d %H:%M")
@@ -93,10 +93,14 @@ class NewEventForm(forms.Form):
 			if delta.days > 117:
 				self._errors["startTime"] = "Your event must be less than four months long."
 				self._errors["endTime"] = "Your event must be less than four months long."
-
+			if date2 < date1:
+				self._errors["startTime"] = "Your event cannot go back in time."
+				self._errors["endTime"] = "Your event cannot go back in time."
 		else:
-			self._errors["startTime"] = "This field is required."
-			self._errors["endTime"] = "This field is required."
+			if not startTime:
+				self._errors["startTime"] = "Please enter a valid date (YYYY-MM-DD) and time (HH-MM)."
+			if not endTime:
+				self._errors["endTime"] = "Please enter a valid date (YYYY-MM-DD) and time (HH-MM)."
 		if not location:
 			self._errors["location"] = "This field is required."
 		return form_data
@@ -193,7 +197,7 @@ def get_tags(request):
 
 def settings(request):
 	if request.user.username == "":
-		return HttpResponse('Unauthorized access--you must sign in!', 
+		return HttpResponse('Please sign in!', 
 						status=401)
 	this_user = MyUser.objects.get(username = request.user.username)
 	#if len(MyGroup.objects.all()) > 0:
@@ -290,7 +294,7 @@ def addgroup(request):
 	#print request.user.username
 	print "addgroup is " + request.user.username
 	if request.user.username == "":
-		return HttpResponse('Unauthorized access', status=401)
+		return HttpResponse('Please sign in!', status=401)
 	if request.method == 'POST':
 		print "post"
 		form = AddgroupForm(request.POST) # A form bound to the POST data
@@ -327,7 +331,7 @@ def addfriend(request):
 	#print request.user.username
 	print "Request is " + request.user.username
 	if request.user.username == "":
-		return HttpResponse('Unauthorized access', status=401)
+		return HttpResponse('Please sign in!', status=401)
 	if request.method == 'POST':
 		form = AddfriendsForm(request.POST) # A form bound to the POST data
 		if form.is_valid():
@@ -472,7 +476,7 @@ def editevent(request, event):
 def editgroup(request, group):
 	#print request.user.username
 	if request.user.username == "":
-		return HttpResponse('Unauthorized access', status=401)
+		return HttpResponse('Please sign in!', status=401)
 	if request.method == 'POST':
 		try:
 			new_group = MyGroup.objects.get(id = group)
@@ -535,7 +539,7 @@ def removenew(request):
 def personal(request):
 	print "Request is " + request.user.username
 	if request.user.username == "":
-		return HttpResponse('Unauthorized access', status=401)
+		return HttpResponse('Please sign in', status=401)
 	this_user = MyUser.objects.get(username = request.user.username)
 #	groups = MyGroup.objects.filter(creator = request.user.username)
 	#groups = this_user.users_set.all()
@@ -797,11 +801,10 @@ def index(request, add_form=None):
 	context['logged_in'] = (username != "")
 	return render(request, 'frontend/map.html', context)
 
-# add a new event.  add is called when a new event is properly submitted.
+# add a new event. add is called when a new event is properly submitted.
 def add(request):
 	if request.user.username == "":
-		return HttpResponse('Unauthorized access--you must sign in!', 
-					status=401)		
+		return HttpResponse('Please sign in!', status=401)		
 	if request.method == 'POST':
 		username = request.user.username
 		this_user = MyUser.objects.get(username = username)
@@ -853,13 +856,13 @@ def add(request):
 	events_list = NewEvent.objects.all().order_by("startTime") # this is to refresh the events list without page refresh.
 	return render(request, '/frontend/map.html', {'form': form})
 
-# add a new event.  add is called when a new event is properly submitted.
+# edit an event
 def edit(request, event):
 	print "IN edit"
 	if request.method == 'POST':
 
 		if request.user.username == "":
-			return HttpResponse('Unauthorized access--you must sign in!', 
+			return HttpResponse('Please sign in!',
 						status=401)
 		try:
 			old_event = NewEvent.objects.get(id = event)

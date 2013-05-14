@@ -118,7 +118,7 @@ def importgroup(request, group, **kwargs):
         return new_user
     print "I am here"
     if request.user.username == "":
-        return HttpResponse('Unauthorized access', status=401)
+        return HttpResponse('Please sign in!', status=401)
     this_user = MyUser.objects.get(username = request.user.username)	
 
     token = kwargs['access_token']
