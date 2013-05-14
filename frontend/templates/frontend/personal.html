@@ -561,6 +561,7 @@ jQuery("#eventform").trigger("aCustomEvent")
             }
             html +=  "<li class='notification_item'> {{i.event.name}} </li>"
             {% endfor %}
+            if (html == "") html +=  "<li class='notification_item'> None :( </li>";
             parent.innerHTML = html;
          }
       $(".dropdown-toggle").click(function(){

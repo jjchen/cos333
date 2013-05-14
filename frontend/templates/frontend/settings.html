@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{% static "frontend/bootstrap.min.css" %}" type="text/css"> 
     <link rel="stylesheet" type="text/css" href="{% static "frontend/style.css" %}" />
 </head>
-<body>
+<body  onload="updateNotifications();">
 
   <div class="navbar navbar-fixed-top">  
     <div class="navbar-inner">  
@@ -31,9 +31,7 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <b class="caret"></b>
             </a>
-            <ul class="dropdown-menu">
-              <li> notification </li>
-              <li> notification </li>
+            <ul class="dropdown-menu" id="notifications">
             </ul>
           </li>
           <li class=""><a href="{% url 'frontend:personal' %}">{{user}}</a></li>  
@@ -98,6 +96,29 @@
  $(".gllpLongitude").change(function(){
     $("#id_longitude").val($(".gllpLongitude").val());
  });
+
+       function updateNotifications(){
+            var parent = document.getElementById("notifications");
+            var html = "";
+            var has_new = false;
+            {% for i in invites %}
+            if ('{{i.is_new}}' == "True") {
+              $(".dropdown-toggle").addClass("red");
+            }
+            html +=  "<li class='notification_item'> {{i.event.name}} </li>"
+            {% endfor %}
+            if (html == "") html +=  "<li class='notification_item'> None :( </li>";
+            parent.innerHTML = html;
+         }
+      $(".dropdown-toggle").click(function(){
+        $(this).removeClass("red");
+        $.post('{% url "frontend:removenew" %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'}, function(html){
+          var json_parsed = $.parseJSON(json);
+          if(json_parsed.success == 'true') {
+            alert("success");
+          }
+        });        
+      });
 </script>
 
 </body>
