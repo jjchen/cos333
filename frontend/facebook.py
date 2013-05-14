@@ -20,6 +20,7 @@ from social_auth.utils import setting
 from social_auth.backends.facebook import load_signed_request, FacebookBackend
 
 # Facebook decorator to setup environment
+# most of this from django_social_auth example app
 def facebook_decorator(func):
     def wrapper(request, *args, **kwargs):
         user = request.user

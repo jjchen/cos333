@@ -1,3 +1,5 @@
+#entire file from http://copiesofcopies.org/webl/2010/04/26/a-better-datetime-widget-for-django/
+
 from django import forms 
 from django.db import models 
 from django.template.loader import render_to_string 
