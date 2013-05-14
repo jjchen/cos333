@@ -201,7 +201,7 @@ def get_tags(request):
 
 def settings(request):
 	if request.user.username == "":
-		return HttpResponse('Unauthorized access--you must sign in!', 
+		return HttpResponse('Please sign in!', 
 						status=401)
 	this_user = MyUser.objects.get(username = request.user.username)
 	#if len(MyGroup.objects.all()) > 0:
@@ -294,7 +294,7 @@ def addgroup(request):
 	#print request.user.username
 	print "addgroup is " + request.user.username
 	if request.user.username == "":
-		return HttpResponse('Unauthorized access', status=401)
+		return HttpResponse('Please sign in!', status=401)
 	if request.method == 'POST':
 		print "post"
 		form = AddgroupForm(request.POST) # A form bound to the POST data
@@ -331,7 +331,7 @@ def addfriend(request):
 	#print request.user.username
 	print "Request is " + request.user.username
 	if request.user.username == "":
-		return HttpResponse('Unauthorized access', status=401)
+		return HttpResponse('Please sign in!', status=401)
 	if request.method == 'POST':
 		form = AddfriendsForm(request.POST) # A form bound to the POST data
 		if form.is_valid():
@@ -476,7 +476,7 @@ def editevent(request, event):
 def editgroup(request, group):
 	#print request.user.username
 	if request.user.username == "":
-		return HttpResponse('Unauthorized access', status=401)
+		return HttpResponse('Please sign in!', status=401)
 	if request.method == 'POST':
 		try:
 			new_group = MyGroup.objects.get(id = group)
@@ -539,7 +539,7 @@ def removenew(request):
 def personal(request):
 	print "Request is " + request.user.username
 	if request.user.username == "":
-		return HttpResponse('Unauthorized access', status=401)
+		return HttpResponse('Please sign in', status=401)
 	this_user = MyUser.objects.get(username = request.user.username)
 #	groups = MyGroup.objects.filter(creator = request.user.username)
 	#groups = this_user.users_set.all()
@@ -802,8 +802,7 @@ def index(request, add_form=None):
 # add a new event. add is called when a new event is properly submitted.
 def add(request):
 	if request.user.username == "":
-		return HttpResponse('Unauthorized access--you must sign in!', 
-					status=401)		
+		return HttpResponse('Please sign in!', status=401)		
 	if request.method == 'POST':
 		username = request.user.username
 		this_user = MyUser.objects.get(username = username)
@@ -861,7 +860,7 @@ def edit(request, event):
 	if request.method == 'POST':
 
 		if request.user.username == "":
-			return HttpResponse('Unauthorized access--you must sign in!', 
+			return HttpResponse('Please sign in!',
 						status=401)
 		try:
 			old_event = NewEvent.objects.get(id = event)
