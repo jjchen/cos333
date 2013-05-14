@@ -30,8 +30,11 @@ class JqSplitDateTimeField(fields.MultiValueField):
             if not (data_list[0] and data_list[1] and data_list[2] and \
                         data_list[3]): 
                 raise forms.ValidationError("Field is missing data.") 
-            input_time = strptime("%s:%s %s"%(data_list[1], data_list[2], 
-                                              data_list[3]), "%I:%M %p") 
+            try:    
+                input_time = strptime("%s:%s %s"%(data_list[1], data_list[2], 
+                                                    data_list[3]), "%I:%M %p") 
+            except:
+                raise forms.ValidationError("Invalid date or time.")
             datetime_string = "%s %s" % (data_list[0], 
                                          strftime('%H:%M', input_time)) 
             print "Datetime: %s"%datetime_string 

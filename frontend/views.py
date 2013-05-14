@@ -77,6 +77,7 @@ class NewEventForm(forms.Form):
 		form_data = self.cleaned_data
 		cleaned_data = super(NewEventForm, self).clean()
 		name = cleaned_data.get("name")
+		tags = cleaned_data.get("tags")
 		startTime = cleaned_data.get("startTime")
 		endTime = cleaned_data.get("endTime")
 		location = cleaned_data.get("location")
@@ -86,6 +87,9 @@ class NewEventForm(forms.Form):
 			#	del form_data['name']
 		if not name:
 			self._errors["name"] = "This field is required."
+		if tags:
+			if len(tags) > 50:
+				self.errors["tags"] = "Please enter fewer tags."
 		if startTime and endTime:
 			date1 = datetime.strptime(form_data['startTime'], "%Y-%m-%d %H:%M")
 			date2 = datetime.strptime(form_data['endTime'], "%Y-%m-%d %H:%M")
@@ -93,10 +97,14 @@ class NewEventForm(forms.Form):
 			if delta.days > 117:
 				self._errors["startTime"] = "Your event must be less than four months long."
 				self._errors["endTime"] = "Your event must be less than four months long."
-
+			if date2 < date1:
+				self._errors["startTime"] = "Your event cannot go back in time."
+				self._errors["endTime"] = "Your event cannot go back in time."
 		else:
-			self._errors["startTime"] = "This field is required."
-			self._errors["endTime"] = "This field is required."
+			if not startTime:
+				self._errors["startTime"] = "Please enter a valid date (YYYY-MM-DD) and time (HH-MM)."
+			if not endTime:
+				self._errors["endTime"] = "Please enter a valid date (YYYY-MM-DD) and time (HH-MM)."
 		if not location:
 			self._errors["location"] = "This field is required."
 		return form_data
@@ -791,7 +799,7 @@ def index(request, add_form=None):
 	context['logged_in'] = (username != "")
 	return render(request, 'frontend/map.html', context)
 
-# add a new event.  add is called when a new event is properly submitted.
+# add a new event. add is called when a new event is properly submitted.
 def add(request):
 	if request.user.username == "":
 		return HttpResponse('Unauthorized access--you must sign in!', 

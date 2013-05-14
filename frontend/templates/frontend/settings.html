@@ -72,9 +72,10 @@
         {{ form.longitude }}
     </div>
 
+<!-- Google Latitude/Longitude picker from http://www.wimagguc.com/projects/jquery-latitude-longitude-picker-gmaps/ -->
 <fieldset class="gllpLatlonPicker">
   <input type="text" class="gllpSearchField">
-  <input type="button" class="gllpSearchButton" value="search">
+  <input type="button" class="gllpSearchButton" value="Search">
   <div class="gllpMap">Google Maps</div>
   <input type="hidden" class="gllpLatitude" value="{{form.latitude.value}}"/>
   <input type="hidden" class="gllpLongitude" value="{{form.longitude.value}}"/>
