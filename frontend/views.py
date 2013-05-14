@@ -199,6 +199,10 @@ def settings(request):
 	#if len(MyGroup.objects.all()) > 0:
 	groups = MyGroup.objects.filter(creator = request.user.username)
 	#groups = []
+	invites = Invite.objects.filter(invitee = this_user)
+	rsvped = NewEvent.objects.filter(rsvp = this_user).order_by("startTime")
+	if len(invites) != 0 and len(rsvped) != 0:
+		invites = invites.filter(~Q(event__in = rsvped))
 	group_info = []
 	for group in groups:
 		all_users = group.users.all()
@@ -228,7 +232,7 @@ def settings(request):
 				 'latitude': this_user.latitude,
 				 'longitude': this_user.longitude})
 	return render(request, 'frontend/settings.html', {
-        'form': form, 'group_info': group_info
+        'form': form, 'group_info': group_info, 'invites':invites
 	})
 
 def signup(request):
@@ -552,16 +556,16 @@ def personal(request):
 		if (len(friends) != 0 and len(groups) != 0):
 			recommended = NewEvent.objects.filter(((reduce(operator.or_, (Q(rsvp=x) 
 				| Q(creator=x) for x in friends))) | (reduce(operator.or_, (Q(groups=x) for x in groups)))), (Q(private = False) 
-				| Q(groups__in=groups)))
+				| Q(groups__in=groups))).distinct()
 		elif (len(friends) != 0): 
 			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(rsvp=x) 
 				| Q(creator=x) for x in friends))), (Q(private = False) 
-				| Q(groups__in=groups)))
+				| Q(groups__in=groups))).distinct()
 		elif (len(groups) != 0):
 			recommended = NewEvent.objects.filter((reduce(operator.or_, (Q(groups=x) for x in groups))), (Q(private = False) 
-				| Q(groups__in=groups)))
+				| Q(groups__in=groups))).distinct()
 		if len(recommended) != 0:
-			recommended = recommended.filter(~Q(rsvp=this_user)).order_by("startTime")
+			recommended = recommended.filter(~Q(rsvp=this_user)).order_by("startTime").distinct()
 
 		other_users = all_users_obj.exclude(pk__in = friends)
 	except ObjectDoesNotExist:
@@ -600,7 +604,9 @@ def filter(request):
 		try:
 			user = MyUser.objects.get(username=username)
 			invites = Invite.objects.filter(invitee = user)
-			print user
+			rsvped = NewEvent.objects.filter(rsvp = user).order_by("startTime")
+			if len(invites) != 0 and len(rsvped) != 0:
+				invites = invites.filter(~Q(event__in = rsvped))
 			lat = user.latitude
 			lon = user.longitude
 			groups = MyGroup.objects.filter(users = user)

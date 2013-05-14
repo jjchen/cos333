@@ -137,12 +137,13 @@
             scheduler.config.CSRF_Token = "{{ csrf_token }}";
 
             scheduler.config.multi_day = false;
-            scheduler.config.collision_limit = 0;
+            scheduler.config.collision_limit = 2;
             scheduler.config.fix_tab_position = false; // tabs are positioned correctly, no need to fix it
 
             scheduler.config.xml_date = "%Y-%m-%d %H:%i";
             scheduler.config.readonly = true;
             scheduler.attachEvent("onEventCollision", function (ev, evs){
+              alert("HI");
               return true;
             });
 
@@ -197,10 +198,10 @@
               var hasrsvps = false;
               {% for this_user in e.rsvp.all %}
                 var hasrsvps = true;
-                if ('{{this_user.user_id}}' != '{{user.username}}') html += "{{this_user.first_name}}" + " ";
+                if ('{{this_user.username}}' != '{{user.username}}') html += "{{this_user.first_name}}" + " ";
               {% endfor %}
-              if (!hasrsvps) html+= "None"
-              if (rsvp_list['{{e.id}}']) html += "me"
+              if (rsvp_list['{{e.id}}']) html += "me";
+              else if (!hasrsvps) html+= "None"
               html += "<br/><small>"
               {% for tag in e.tags.all %}
                 html += '{{tag.name}} ';
@@ -221,5 +222,6 @@
             }
             html +=  "<li class='notification_item'> {{i.event.name}} </li>"
             {% endfor %}
+            if (html == "") html +=  "<li class='notification_item'> None :( </li>";
             parent.innerHTML = html;
          }
