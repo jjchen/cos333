@@ -21,7 +21,6 @@ class JqSplitDateTimeWidget(MultiWidget):
         super(JqSplitDateTimeWidget, self).__init__(widgets, attrs) 
 
     def decompress(self, value): 
-        print "decompress called"
         if value: 
             d = strftime("%Y-%m-%d", value.timetuple()) 
             hour = strftime("%I", value.timetuple()) 
@@ -29,7 +28,6 @@ class JqSplitDateTimeWidget(MultiWidget):
             meridian = strftime("%p", value.timetuple()) 
             return (d, hour, minute, meridian) 
         else: 
-            print "FJEWLKJFLKEW"
             return (None, None, None, None) 
 
     def format_output(self, rendered_widgets): 

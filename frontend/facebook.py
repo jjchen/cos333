@@ -117,7 +117,6 @@ def importgroup(request, group, **kwargs):
             return None
         new_user.save()
         return new_user
-    print "I am here"
     if request.user.username == "":
         return HttpResponse('Please sign in!', status=401)
     this_user = MyUser.objects.get(username = request.user.username)	
@@ -157,15 +156,6 @@ def import_events(request):
     user_path = str(instance.uid) + "/events"
 
     fb_events = graph.get(user_path).get('data')
-
-    print "HELLO WORLD"
-
-    print user_path
-    print fb_events
-
-    for e in fb_events:
-        print e
-
     return HttpResponseRedirect('/')
 
 def process_export(user, event_obj, token, graph):

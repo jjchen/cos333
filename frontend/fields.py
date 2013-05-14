@@ -39,6 +39,5 @@ class JqSplitDateTimeField(fields.MultiValueField):
                 raise forms.ValidationError("Invalid date or time.")
             datetime_string = "%s %s" % (data_list[0], 
                                          strftime('%H:%M', input_time)) 
-            print "Datetime: %s"%datetime_string 
             return datetime_string 
         return None
